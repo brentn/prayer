@@ -1,0 +1,1 @@
+import{fa as t,za as e}from"./chunk-NBPTNBXQ.js";var o=class i{dir=e("forward");direction=this.dir.asReadonly();setDirection(r){this.dir.set(r)}static \u0275fac=function(a){return new(a||i)};static \u0275prov=t({token:i,factory:i.\u0275fac,providedIn:"root"})};export{o as a};
