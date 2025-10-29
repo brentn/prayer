@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#8d6e63"/>
+      <stop offset="100%" stop-color="#6d4c41"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#23140f"/>
+  <!-- Large thought bubble -->
+  <g transform="translate(70,80)">
+    <ellipse cx="200" cy="140" rx="160" ry="110" fill="url(#g)"/>
+    <circle cx="110" cy="230" r="18" fill="url(#g)"/>
+    <circle cx="80" cy="260" r="12" fill="url(#g)"/>
+  </g>
+  <!-- Small overlapping thought bubble -->
+  <g transform="translate(250,200)">
+    <ellipse cx="100" cy="70" rx="80" ry="55" fill="#a98274"/>
+    <circle cx="40" cy="125" r="10" fill="#a98274"/>
+  </g>
+</svg>
