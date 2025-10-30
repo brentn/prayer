@@ -1,0 +1,38 @@
+<section (click)="onSectionClick()">
+    <div class="section-bar" (click)="$event.stopPropagation()">
+        <div class="title-stack" (click)="startEdit()">
+            @if (!editing) {
+                <h3 class="section-title">{{ (currentList()?.name) || 'Topics' }}</h3>
+            } @else {
+                <input class="edit-input" type="text" [value]="editName" (click)="$event.stopPropagation()"
+                    (input)="editName = $any($event.target).value" (keydown.enter)="saveEdit()"
+                    (keydown.escape)="cancelEdit()" autofocus />
+            }
+        </div>
+        @if (editing) {
+            <div class="section-menu">
+                @if (topics().length === 0) {
+                    <button mat-icon-button color="warn" class="trash-btn" [disabled]="topics().length > 0"
+                        (click)="onDelete(); $event.stopPropagation()" aria-label="Delete List">
+                        <mat-icon class="trash">delete</mat-icon>
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="cards">
+        @for (topic of topics(); track topic.id) {
+            <div class="card" (click)="openTopic(topic.id)" role="button" tabindex="0">
+                <div class="card-title">{{ topic.name }}</div>
+            </div>
+        }
+        <!-- Add Topic appears as the last list item, semi-transparent -->
+        <div class="card add-card" (click)="onAdd()" role="button" tabindex="0" aria-label="Add Topic">
+            <div class="card-title">
+                <mat-icon>add</mat-icon>
+                Add Topic
+            </div>
+        </div>
+    </div>
+</section>

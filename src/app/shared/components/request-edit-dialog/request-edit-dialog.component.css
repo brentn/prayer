@@ -1,0 +1,19 @@
+.mat-mdc-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+mat-slide-toggle {
+    margin-top: 4px;
+}
+
+.mat-mdc-dialog-actions.actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}

@@ -1,0 +1,8 @@
+<div class="pager-dots" aria-hidden="true">
+    @for (i of pages(); track $index) {
+        <span class="dot" [class.active]="$index === index()"></span>
+    }
+
+    <!-- Optional: show nothing for @empty (no dots) -->
+    @empty {}
+</div>

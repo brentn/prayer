@@ -1,0 +1,33 @@
+.settings {
+    padding: 1rem;
+    background: #ffffff;
+    color: var(--md-sys-color-on-primary-container, #3e2723);
+    min-height: calc(100vh - 3rem);
+}
+
+h2 {
+    margin: 0 0 1rem 0;
+    color: var(--md-sys-color-on-primary-container, #3e2723);
+}
+
+mat-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    padding: .25rem .5rem;
+}
+
+/* Make the slide toggle clearly visible on white */
+mat-slide-toggle {
+    --mdc-switch-unselected-track-color: #d7ccc8;
+    /* light brown */
+    --mdc-switch-unselected-handle-color: #6d4c41;
+    /* brown */
+    --mdc-switch-selected-track-color: #8d6e63;
+    /* lighter brown */
+    --mdc-switch-selected-handle-color: #ffffff;
+    /* white knob */
+}

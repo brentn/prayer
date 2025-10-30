@@ -1,0 +1,24 @@
+.pager-dots {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    pointer-events: none;
+    z-index: 200;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(62, 39, 35, 0.3);
+}
+
+.dot.active {
+    background: rgba(62, 39, 35, 0.9);
+    transform: scale(1.2);
+}

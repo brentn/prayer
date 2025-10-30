@@ -1,0 +1,17 @@
+<section>
+    <div class="cards">
+        @for (list of lists(); track list.id) {
+            <div class="card" (click)="openList(list.id)" role="button" tabindex="0">
+                <div class="card-title">{{ list.name }}</div>
+                <div class="badge" title="Topics">{{ list.topicIds.length || 0 }}</div>
+            </div>
+        }
+        <!-- Add List appears as the last list item, semi-transparent -->
+        <div class="card add-card" (click)="onAdd()" role="button" tabindex="0" aria-label="Add a New Prayer List">
+            <div class="card-title">
+                <mat-icon>add</mat-icon>
+                Add a Prayer List
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<div mat-dialog-content>
+    <mat-form-field appearance="outline" style="width:100%;">
+        <mat-label>{{ data.label }}</mat-label>
+        @if (data.multiline) {
+            <textarea matInput rows="4" [placeholder]="data.placeholder || ''" [formControl]="value"></textarea>
+        } @else {
+            <input matInput [placeholder]="data.placeholder || ''" [formControl]="value" />
+        }
+    </mat-form-field>
+</div>
+
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="primary" [disabled]="value.invalid" (click)="onSave()">Save</button>
+</div>

@@ -1,0 +1,20 @@
+/* Ensure buttons are visible with the dark theme */
+[mat-dialog-actions] {
+    display: flex;
+    gap: 8px;
+}
+
+[mat-dialog-actions] button[mat-button] {
+    /* Ensure visible text button on light dialog surface */
+    color: var(--md-sys-color-on-primary-container) !important;
+    /* dark brown text */
+    --mdc-text-button-label-text-color: var(--md-sys-color-on-primary-container);
+}
+
+[mat-dialog-actions] button[mat-flat-button] {
+    /* Lighter brown filled button */
+    background-color: var(--md-sys-color-primary-container) !important;
+    color: var(--md-sys-color-on-primary) !important;
+    --mdc-filled-button-container-color: var(--md-sys-color-primary-container);
+    --mdc-filled-button-label-text-color: var(--md-sys-color-on-primary);
+}

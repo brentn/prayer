@@ -1,12 +1,85 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, effect, inject, OnInit } from '@angular/core';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { trigger, transition, style, animate, query, group } from '@angular/animations';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { Store } from '@ngrx/store';
+import { selectAllLists } from './store/lists/list.selectors';
+import { WakeLockService } from './shared/services/wake-lock.service';
+import { SettingsService } from './shared/services/settings.service';
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+    selector: 'app-root',
+    standalone: true,
+    imports: [RouterOutlet, RouterLink, MatIconModule, MatButtonModule, MatMenuModule],
+    templateUrl: './app.html',
+    styleUrl: './app.css',
+    animations: [
+        trigger('routeSlide', [
+            // Forward: when depth increases
+            transition(':increment', [
+                query(':enter, :leave', style({ position: 'absolute', top: 0, left: 0, width: '100%' }), { optional: true }),
+                query(':enter', style({ transform: 'translateX(100%)', 'z-index': 2 }), { optional: true }),
+                group([
+                    query(':leave', animate('500ms ease-in-out', style({ transform: 'translateX(-100%)' })), { optional: true }),
+                    query(':enter', animate('500ms ease-in-out', style({ transform: 'translateX(0)' })), { optional: true })
+                ])
+            ]),
+            // Back: when depth decreases
+            transition(':decrement', [
+                query(':enter, :leave', style({ position: 'absolute', top: 0, left: 0, width: '100%' }), { optional: true }),
+                query(':enter', style({ transform: 'translateX(-100%)', 'z-index': 2 }), { optional: true }),
+                group([
+                    query(':leave', animate('500ms ease-in-out', style({ transform: 'translateX(100%)' })), { optional: true }),
+                    query(':enter', animate('500ms ease-in-out', style({ transform: 'translateX(0)' })), { optional: true })
+                ])
+            ])
+        ])
+    ]
 })
-export class App {
-  protected title = 'Prayer';
+export class App implements OnInit {
+    protected title = 'Prayer';
+    private router = inject(Router);
+    // Keep screen awake when permitted by setting
+    private wake = inject(WakeLockService);
+    private settings = inject(SettingsService);
+
+    ngOnInit(): void {
+        // Initialize auto-renew
+        this.wake.initAutoRenew();
+        // React to keepAwake setting changes
+        effect(() => {
+            const enabled = this.settings.keepAwake();
+            if (enabled) this.wake.request();
+            else this.wake.release();
+        });
+    }
+    private store = inject(Store);
+    lists = this.store.selectSignal(selectAllLists);
+
+    get showBack(): boolean {
+        const url = this.router.url || '';
+        return url.startsWith('/list/') || url.startsWith('/topic/');
+    }
+
+    backFromHeader(): void {
+        const url = this.router.url || '';
+        if (url.startsWith('/topic/')) {
+            const topicId = Number(url.split('/')[2]);
+            if (!isNaN(topicId)) {
+                const list = this.lists().find(l => (l.topicIds || []).includes(topicId));
+                if (list) {
+                    this.router.navigate(['/list', list.id]);
+                    return;
+                }
+            }
+        }
+        // default: go back to main
+        this.router.navigate(['/']);
+    }
+
+    getDepth(outlet: RouterOutlet): any {
+        return outlet?.activatedRouteData?.['depth'] ?? 0;
+    }
 }

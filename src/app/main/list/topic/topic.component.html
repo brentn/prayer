@@ -1,0 +1,102 @@
+<section (click)="onSectionClick()">
+    <div class="section-bar" (click)="$event.stopPropagation()">
+        <div class="title-stack" (click)="startEdit()">
+            @if (!editing) {
+                <h3 class="section-title">{{ (currentTopic()?.name) || 'Topic' }}</h3>
+            } @else {
+                <input class="edit-input" type="text" [value]="editName" (click)="$event.stopPropagation()"
+                    (input)="editName = $any($event.target).value" (keydown.enter)="saveEdit()"
+                    (keydown.escape)="cancelEdit()" autofocus />
+            }
+            @if (currentList(); as l) {
+                <div class="section-subtitle">from list: {{ l.name }}</div>
+            }
+        </div>
+        @if (editing) {
+            <div class="section-menu">
+                @if (requests().length===0) {
+                    <button mat-icon-button color="warn" class="trash-btn" [disabled]="requests().length > 0"
+                        (click)="onDeleteTopic(); $event.stopPropagation()" aria-label="Delete Topic">
+                        <mat-icon class="trash">delete</mat-icon>
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    <mat-tab-group [(selectedIndex)]="activeTabIndex" class="tabs">
+        <mat-tab label="Requests">
+            <div class="requests" #requestsContainer>
+                @for (req of openRequests(); track req.id) {
+                    @if (editingRequestId === req.id) {
+                        <div class="request-card editing">
+                            <textarea class="edit-textarea" rows="3" [value]="editingRequestText"
+                                (input)="editingRequestText = $any($event.target).value"
+                                (keydown.enter)="saveInline(req.id)" placeholder="Type your request..."
+                                autofocus></textarea>
+                            <div class="inline-actions">
+                                <div class="left">
+                                    @if (editingExisting) {
+                                        <button mat-icon-button color="warn" (click)="onInlineDelete()">
+                                            <mat-icon class="trash">delete</mat-icon>
+                                        </button>
+                                        <button mat-icon-button color="primary" (click)="markAnsweredInline(req.id)"
+                                            [disabled]="!editingRequestText.trim()">
+                                            <mat-icon class="answered">check</mat-icon>
+                                        </button>
+                                    }
+                                </div>
+                                <div class="right">
+                                    <button mat-button (click)="cancelInline()">Cancel</button>
+                                    <button mat-flat-button color="primary" [disabled]="!editingRequestText.trim()"
+                                        (click)="saveInline(req.id)">
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="request-card" (click)="onEditRequest(req.id)">
+                            <div class="request-text">{{ req.description }}</div>
+                            <div class="request-date">{{ req.createdDate | date:'short' }}</div>
+                        </div>
+                    }
+                }
+            </div>
+        </mat-tab>
+        <mat-tab label="Answers">
+            <div class="requests">
+                @for (req of answeredRequests(); track req.id) {
+                    @if (editingRequestId === req.id) {
+                        <div class="request-card editing">
+                            <textarea class="edit-textarea" rows="3" [value]="editingRequestText"
+                                (input)="editingRequestText = $any($event.target).value"
+                                (keydown.enter)="saveInline(req.id)" placeholder="Update your request..."
+                                autofocus></textarea>
+                            <div class="inline-actions">
+                                <div class="right">
+                                    <button mat-button (click)="cancelInline()">Cancel</button>
+                                    <button mat-flat-button color="primary" [disabled]="!editingRequestText.trim()"
+                                        (click)="saveInline(req.id)">
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="request-card" (click)="onEditRequest(req.id)">
+                            <div class="request-text">{{ req.description }}</div>
+                            <div class="request-date">{{ req.createdDate | date:'short' }}</div>
+                        </div>
+                    }
+                }
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+
+    @if (!editing && editingRequestId === null) {
+        <button class="fab mat-mdc-extended-fab" mat-fab color="primary" (click)="onAdd()" aria-label="Add Request">
+            <mat-icon>add</mat-icon> Add Request
+        </button>
+    }
+</section>

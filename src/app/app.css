@@ -1,0 +1,40 @@
+    .app-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        background: var(--md-sys-color-surface, #faf3e9);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .app-title {
+        margin: 0;
+        font-size: 1.35rem;
+        letter-spacing: 0.02em;
+        padding: .2rem;
+        color: var(--md-sys-color-on-surface, #4e342e);
+    }
+
+    .header-back {
+        position: absolute;
+        left: 8px;
+    }
+
+    .header-menu {
+        position: absolute;
+        right: 8px;
+    }
+
+    .app-main {
+        will-change: transform;
+        height: calc(100vh - 4rem);
+        /* ensure full viewport height */
+        box-sizing: border-box;
+        position: relative;
+        /* allow absolute-positioned route views to overlap */
+        overflow: hidden;
+        /* hide offscreen slide during animations */
+    }

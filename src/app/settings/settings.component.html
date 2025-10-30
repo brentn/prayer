@@ -1,0 +1,10 @@
+<section class="settings">
+    <h2>Settings</h2>
+    <mat-nav-list>
+        <mat-list-item>
+            <span matListItemTitle>Keep screen awake</span>
+            <mat-slide-toggle [checked]="keepAwake()" (change)="toggleKeepAwake($event)">
+            </mat-slide-toggle>
+        </mat-list-item>
+    </mat-nav-list>
+</section>

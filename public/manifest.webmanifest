@@ -1,0 +1,18 @@
+{
+    "name": "Prayer",
+    "short_name": "Prayer",
+    "start_url": "/prayer/",
+    "scope": "/prayer/",
+    "display": "standalone",
+    "background_color": "#23140f",
+    "theme_color": "#23140f",
+    "description": "Prayer lists and topics",
+    "icons": [
+        {
+            "src": "/icons/thought-bubbles.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

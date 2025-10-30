@@ -1,0 +1,60 @@
+@use '@angular/material' as mat;
+
+// Dark brown theme using Material Design 3 theming API with CSS variables
+$theme: mat.define-theme((color: (theme-type: dark,
+                use-system-variables: true,
+            ),
+        ));
+
+@include mat.core();
+@include mat.all-component-themes($theme);
+
+:root {
+    /* Very dark brown app background and near-white text */
+    --md-sys-color-surface: #23140f;
+    /* app background */
+    --md-sys-color-on-surface: #f7f3ef;
+    /* default text */
+    /* Primary used for cards and primary buttons (regular/lighter brown) */
+    --md-sys-color-primary: #6d4c41;
+    /* regular brown */
+    --md-sys-color-on-primary: #fffaf6;
+    /* nearly white text */
+
+    /* Slightly lighter brown container for chips/badges if needed */
+    --md-sys-color-primary-container: #8d6e63;
+    --md-sys-color-on-primary-container: #1f130e;
+
+    /* Optional tertiary */
+    --md-sys-color-tertiary: #a98274;
+    --md-sys-color-on-tertiary: #1b120f;
+
+    /* App-specific: a darker primary for headers/bars (between surface and primary) */
+    --app-color-primary-darker: #5b4037;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    font-family: "Roboto Flex", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.25rem;
+}
+
+/* Solid background for Material menus (fix transparent look on dark theme) */
+/* The menu surface classes are on the same element as mat-mdc-menu-panel */
+.mat-mdc-menu-panel,
+.mat-mdc-menu-panel.mdc-menu-surface {
+    background-color: var(--md-sys-color-primary) !important;
+    color: var(--md-sys-color-on-primary) !important;
+}
+
+.mat-mdc-menu-item .mat-mdc-menu-item-text,
+.mat-mdc-menu-item .mat-icon {
+    color: var(--md-sys-color-on-primary) !important;
+}
