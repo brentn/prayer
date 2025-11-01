@@ -13,11 +13,12 @@ import { selectAllTopics } from '../store/topics/topic.selectors';
 import { selectAllLists } from '../store/lists/list.selectors';
 import { SettingsService } from '../shared/services/settings.service';
 import { updateRequest } from '../store/requests/request.actions';
+import { PrayerCardComponent } from './prayer-card/prayer-card.component';
 
 @Component({
     standalone: true,
     selector: 'app-pray',
-    imports: [CommonModule, FormsModule, MatListModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressBarModule],
+    imports: [CommonModule, FormsModule, MatListModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressBarModule, PrayerCardComponent],
     templateUrl: './pray.component.html',
     styleUrl: './pray.component.css',
     host: { '[class.fullscreen]': 'fullScreen' }
@@ -41,7 +42,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
 
     // Combined list of items to pray for: requests, plus topics with no requests
     items = computed(() => {
-    const lid = this.effectiveListId();
+        const lid = this.effectiveListId();
         const allTopics = this.topics();
         const allRequests = this.requests();
         const shuffle = this.settings.shuffleRequests();
@@ -83,9 +84,11 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
             const weighted: ItemVm[] = [];
             for (const r of scopedRequests) {
                 const ownerTopic = scopedTopics.find(t => (t.requestIds || []).includes(r.id));
+                const ownerList = this.lists().find(l => ownerTopic && (l.topicIds || []).includes(ownerTopic.id));
+                const topicName = [ownerList?.name, ownerTopic?.name].filter(n => n).join(': ');
                 const repeats = Math.max(1, Number(r.priority) || 1);
                 for (let i = 0; i < repeats; i++) {
-                    weighted.push({ kind: 'request', id: r.id, description: r.description, topicName: ownerTopic?.name, priority: r.priority, prayerCount: r.prayerCount });
+                    weighted.push({ kind: 'request', id: r.id, description: r.description, topicName: topicName, priority: r.priority, prayerCount: r.prayerCount });
                 }
             }
             for (const t of emptyTopics) weighted.push({ kind: 'topic', id: t.id, name: t.name });
@@ -127,6 +130,9 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
 
     // UI state for carousel and session
     @ViewChild('carousel', { static: false }) carousel?: ElementRef<HTMLDivElement>;
+    @ViewChild('track', { static: false }) track?: ElementRef<HTMLDivElement>;
+    @ViewChild('bar', { static: false }) bar?: ElementRef<HTMLElement>;
+    @ViewChild('footer', { static: false }) footer?: ElementRef<HTMLElement>;
     currentIndex = signal(0); // 0 = settings slide; >=1 means items
     private scrollDebounceId?: any;
     isDragging = false;
@@ -137,6 +143,8 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
     slideWidth = signal(0);
     private readonly peek = 16; // pixels to show next/prev card edges
     private readonly slideGap = 12; // space between slides in px
+    stepSize = signal(0); // measured slide width + gap in px
+    viewportHeight = signal(0);
 
     // Selection sliders
     get maxSelectable(): number { return this.items().length; }
@@ -181,14 +189,45 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit(): void {
         const measure = () => {
-            const el = this.carousel?.nativeElement;
-            const w = el?.clientWidth || window.innerWidth;
+            const vp = this.carousel?.nativeElement;
+            const w = vp?.clientWidth || window.innerWidth;
             this.containerWidth.set(w);
-            this.slideWidth.set(Math.max(0, w - this.peek * 2));
+
+            const trackEl = this.track?.nativeElement;
+            const slides = trackEl?.querySelectorAll<HTMLElement>('.slide') || [] as any;
+            let slideW = w;
+            let step = w;
+            if (slides && (slides as any).length) {
+                const rect0 = (slides as any)[0].getBoundingClientRect();
+                slideW = rect0.width || w;
+                if ((slides as any).length >= 2) {
+                    const rect1 = (slides as any)[1].getBoundingClientRect();
+                    step = Math.abs(rect1.left - rect0.left) || (slideW);
+                } else {
+                    const styles = trackEl ? getComputedStyle(trackEl) : undefined;
+                    const gap = styles ? parseFloat((styles as any).columnGap || (styles as any).gap || '0') : this.slideGap;
+                    step = slideW + (isNaN(gap) ? 0 : gap);
+                }
+            }
+            this.slideWidth.set(slideW);
+            this.stepSize.set(step);
+
+            const headerH = this.bar?.nativeElement?.offsetHeight || 0;
+            const footerH = this.footer?.nativeElement?.offsetHeight || 0;
+            // section vertical padding approx 24px; leave a small margin
+            const viewH = Math.max(200, window.innerHeight - headerH - footerH - 24);
+            this.viewportHeight.set(viewH);
         };
         this.measureRef = measure;
         measure();
+        // Re-measure on next frame to capture final layout (avoids early partial widths)
+        requestAnimationFrame(() => measure());
         window.addEventListener('resize', measure);
+        // Re-measure when the number of slides changes
+        effect(() => {
+            const _ = this.selectedItems().length;
+            setTimeout(() => measure(), 0);
+        });
     }
 
     ngOnDestroy(): void {
@@ -218,7 +257,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         if (!this.isDragging) return;
         this.isDragging = false;
         const dx = this.deltaX();
-    const w = this.slideWidth() || this.containerWidth() || 1;
+        const w = this.slideWidth() || this.containerWidth() || 1;
         const threshold = Math.max(60, w * 0.15);
         let next = this.currentIndex();
         if (dx <= -threshold) next += 1;
@@ -326,8 +365,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
     }
 
     carouselTransform(): string {
-        const w = (this.slideWidth() || this.containerWidth());
-        const step = w + this.slideGap;
+        const step = this.stepSize() || this.containerWidth();
         const offset = -this.currentIndex() * step + this.deltaX();
         return `translateX(${offset}px)`;
     }

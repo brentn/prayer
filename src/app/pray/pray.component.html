@@ -1,5 +1,5 @@
 <section>
-    <div class="section-bar">
+    <div class="section-bar" #bar>
         <button mat-icon-button class="close" aria-label="Close" (click)="onClose()">
             <mat-icon>close</mat-icon>
         </button>
@@ -12,66 +12,57 @@
             <div class="empty">No requests yet.</div>
         </div>
     } @else {
-        <div class="carousel-viewport" #carousel
-             (pointerdown)="onPointerDown($event)"
-             (pointermove)="onPointerMove($event)"
-             (pointerup)="onPointerUp($event)"
-             (pointerleave)="onPointerUp($event)"
-             (pointercancel)="onPointerUp($event)"
-             [class.dragging]="isDragging">
-            <div class="carousel-track" [style.transform]="carouselTransform()" [class.dragging]="isDragging">
-            <!-- Settings slide (index 0) -->
-            <div class="slide settings-slide">
-                <div class="prayer-card">
-                    <div class="controls">
-                        <div class="control">
-                            <div class="label">Number of items</div>
-                            <div class="value">{{ formatCountLabel() }}</div>
-                            <mat-slider [min]="1" [max]="safeMaxSelectable" [step]="1" [showTickMarks]="true">
-                                <input matSliderThumb [(ngModel)]="selectCountModel" (ngModelChange)="onSelectCountChange($event)"
-                                       (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
-                            </mat-slider>
-                        </div>
-                        <div class="control">
-                            <div class="label">Time limit</div>
-                            <div class="value">{{ formatTimeLabel() }}</div>
-                            <mat-slider [min]="1" [max]="121" [step]="1" [showTickMarks]="true">
-                                <input matSliderThumb [(ngModel)]="timeValueModel" (ngModelChange)="onTimeChange($event)"
-                                       (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
-                            </mat-slider>
-                        </div>
-                        <div class="hint">Swipe left to begin</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Prayer slides (index >= 1) -->
-            @for (item of selectedItems(); track item.kind + '-' + item.id) {
-                <div class="slide">
+        <div class="carousel-viewport" #carousel [style.height.px]="viewportHeight()"
+            (pointerdown)="onPointerDown($event)" (pointermove)="onPointerMove($event)"
+            (pointerup)="onPointerUp($event)" (pointerleave)="onPointerUp($event)" (pointercancel)="onPointerUp($event)"
+            [class.dragging]="isDragging">
+            <div class="carousel-track" #track [style.transform]="carouselTransform()" [class.dragging]="isDragging">
+                <!-- Settings slide (index 0) -->
+                <div class="slide settings-slide">
                     <div class="prayer-card">
-                        @if (item.kind === 'request') {
-                            <div class="card">
-                                <mat-icon class="card-icon">favorite</mat-icon>
-                                <div class="card-title">{{ item.description }}</div>
-                                @if (item.topicName) {
-                                    <div class="card-sub">{{ item.topicName }}</div>
-                                }
+                        <div class="controls">
+                            <div class="control">
+                                <div class="label">Number of items</div>
+                                <div class="value">{{ formatCountLabel() }}</div>
+                                <mat-slider [min]="1" [max]="safeMaxSelectable" [step]="1" [showTickMarks]="true">
+                                    <input matSliderThumb [(ngModel)]="selectCountModel"
+                                        (ngModelChange)="onSelectCountChange($event)"
+                                        (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+                                </mat-slider>
                             </div>
-                        } @else {
-                            <div class="card">
-                                <mat-icon class="card-icon">label</mat-icon>
-                                <div class="card-title">{{ item.name }}</div>
-                                <div class="card-sub">Topic (no requests)</div>
+                            <div class="control">
+                                <div class="label">Time limit</div>
+                                <div class="value">{{ formatTimeLabel() }}</div>
+                                <mat-slider [min]="1" [max]="121" [step]="1" [showTickMarks]="true">
+                                    <input matSliderThumb [(ngModel)]="timeValueModel"
+                                        (ngModelChange)="onTimeChange($event)" (pointerdown)="$event.stopPropagation()"
+                                        (click)="$event.stopPropagation()">
+                                </mat-slider>
                             </div>
-                        }
+                            <div class="hint">Swipe left to begin</div>
+                        </div>
                     </div>
                 </div>
-            }
+
+                <!-- Prayer slides (index >= 1) -->
+                @for (item of selectedItems(); track item.kind + '-' + item.id) {
+                    <div class="slide">
+                        <div class="prayer-card">
+                            @if (item.kind === 'request') {
+                                <app-prayer-card icon="favorite" [title]="item.description"
+                                    [subtitle]="item.topicName || ''"></app-prayer-card>
+                            } @else {
+                                <app-prayer-card icon="label" [title]="item.name"
+                                    subtitle="Topic (no requests)"></app-prayer-card>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     }
 
-    <div class="pray-footer">
+    <div class="pray-footer" #footer>
         <div class="footer-left">
             @if (currentIndex() >= 1) {
                 @if (unlimited) {
