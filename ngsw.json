@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1762024634576,
+  "timestamp": 1762024874116,
   "index": "/prayer/index.html",
   "assetGroups": [
     {
@@ -105,7 +105,7 @@
     "/prayer/icons/thought-bubbles.svg": "23f1cae164e25c607a8f72c9cf9042758345933e",
     "/prayer/index.html": "6ac5b370c4646f9c9cbb78525661f4838254db45",
     "/prayer/main-X4N74FMK.js": "30e1ebbb3abb92c260171149356d64eac9ad1273",
-    "/prayer/manifest.webmanifest": "1b9c57c8b5fb3fd94a2bf046a00be468e9a69714",
+    "/prayer/manifest.webmanifest": "4321aaf0b461f3beebde706ca4a0278bd4ebd319",
     "/prayer/polyfills-5CFQRCPP.js": "f2241e9a25858f895ce299d15f6f22e849e2fd72",
     "/prayer/styles-YXR4CXFP.css": "a7c98972bea391cc0ff641f2e18126ec5308e117"
   },
