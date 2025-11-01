@@ -10,8 +10,46 @@ An Angular 20 app scaffolded with NgRx for state management, persisted to `local
 - Lists page: card layout with rounded borders and a right-aligned badge showing topic counts; tap to open Topics; swipe right to delete with confirmation
 - Topics page: scoped by selected list (via route `topics/:listId`), back button to Lists
 - Requests page: simple list of requests with created date
+- **Progressive Web App (PWA)**: Installable on mobile devices with offline functionality
 
 Tip: To reset data, clear the app's local storage key in your browser devtools (usually under Application > Local Storage > `prayer-app-state`).
+
+## Progressive Web App (PWA)
+
+This app is configured as a Progressive Web App (PWA) with the following features:
+
+- **Web App Manifest**: Defines app metadata, icons, and display mode for installation
+- **Installable**: Can be installed on mobile devices and desktops
+- **Standalone Mode**: Opens without browser UI when installed
+
+### PWA Requirements Met ✅
+
+- **Web App Manifest**: Complete with proper metadata and icon set
+- **HTTPS/Localhost**: Required for installation (automatic in production)
+- **Service Worker**: Optional for basic installation (currently disabled)
+
+### Service Worker Decision
+
+Since your app works entirely offline and doesn't need internet connectivity, the service worker has been **disabled**. This means:
+
+- ✅ **Still Installable**: Modern browsers allow PWA installation based primarily on the manifest
+- ✅ **No Unnecessary Complexity**: No service worker code to maintain
+- ✅ **Works Offline**: Your app functions perfectly without network dependencies
+- ⚠️ **Limited PWA Features**: No background sync, push notifications, or advanced caching
+
+### PWA Installation
+
+Users can install your app by:
+1. **Mobile**: Tapping "Add to Home Screen" in their browser menu
+2. **Desktop**: Clicking the install icon in the address bar (Chrome) or using the app menu
+
+The app will open in standalone mode without browser UI, providing a native app-like experience.
+
+You can generate these icons from the existing SVG using online tools or design software.
+
+## Development server
+
+To start a local development server, run:
 
 ## Development server
 
