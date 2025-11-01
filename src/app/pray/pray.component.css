@@ -73,6 +73,7 @@ section {
     will-change: transform;
     transition: transform 280ms ease;
     gap: var(--gap, 12px);
+    height: calc(100% - 4rem);
 }
 
 .carousel-track.dragging {
@@ -93,6 +94,17 @@ section {
     padding: 8px 12px;
 }
 
+.settings-slide .prayer-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.settings-slide .prayer-card .hint {
+    margin-top: auto;
+    margin-bottom: 8px;
+}
+
 .settings-slide mat-slider {
     width: 100%;
     touch-action: none;
@@ -111,7 +123,7 @@ section {
 .carousel-track .prayer-card {
     max-width: none;
     width: 100%;
-    height: calc(100% - 16px);
+    height: 100%;
     margin: 8px 0;
 }
 
@@ -128,8 +140,8 @@ section {
 
 .hint {
     text-align: center;
-    opacity: .8;
-    margin-top: 8px;
+    opacity: .5;
+    margin: 16px 0 8px;
 }
 
 .card {
@@ -206,9 +218,18 @@ section {
     grid-template-columns: 160px 1fr;
     align-items: center;
     gap: 12px;
-    padding: 16px 14px 18px;
+    padding: 20px 18px 24px;
     background: rgba(20, 15, 12, 0.85);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px 16px 0 0;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.pray-footer.visible {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .footer-left .timer {

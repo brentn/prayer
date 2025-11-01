@@ -15,6 +15,8 @@ import { SettingsService } from '../shared/services/settings.service';
 import { updateRequest } from '../store/requests/request.actions';
 import { PrayerCardComponent } from './prayer-card/prayer-card.component';
 
+const REGISTER_SECONDS = 12; // seconds of viewing a request card to register a prayer
+
 @Component({
     standalone: true,
     selector: 'app-pray',
@@ -77,7 +79,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         const emptyTopics = scopedTopics.filter(t => (t.requestIds || []).length === 0);
 
         // Map to a simple VM with kind
-        type ItemVm = { kind: 'request', id: number, description: string, topicName?: string, priority?: number, prayerCount?: number } | { kind: 'topic', id: number, name: string };
+        type ItemVm = { kind: 'request', id: number, description: string, topicName?: string, priority?: number, prayerCount?: number } | { kind: 'topic', id: number, name: string, listName?: string };
 
         if (shuffle) {
             // Expand requests by priority, include topics as single items
@@ -91,7 +93,10 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
                     weighted.push({ kind: 'request', id: r.id, description: r.description, topicName: topicName, priority: r.priority, prayerCount: r.prayerCount });
                 }
             }
-            for (const t of emptyTopics) weighted.push({ kind: 'topic', id: t.id, name: t.name });
+            for (const t of emptyTopics) {
+                const ownerList = this.lists().find(l => (l.topicIds || []).includes(t.id));
+                weighted.push({ kind: 'topic', id: t.id, name: t.name, listName: ownerList?.name });
+            }
 
             // Fisher-Yates shuffle
             for (let i = weighted.length - 1; i > 0; i--) {
@@ -123,7 +128,10 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
                 items.push({ kind: 'request', id: r.id, description: r.description, topicName: ownerTopic?.name, priority: r.priority, prayerCount: r.prayerCount });
             }
             // Put topics with no requests after sorted requests (preserve earlier behavior)
-            for (const t of emptyTopics) items.push({ kind: 'topic', id: t.id, name: t.name });
+            for (const t of emptyTopics) {
+                const ownerList = this.lists().find(l => (l.topicIds || []).includes(t.id));
+                items.push({ kind: 'topic', id: t.id, name: t.name, listName: ownerList?.name });
+            }
             return items;
         }
     });
@@ -311,7 +319,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
                 const newCount = (curItem.prayerCount || 0) + 1;
                 this.store.dispatch(updateRequest({ id: startId, changes: { prayerCount: newCount } }));
             }
-        }, 5000);
+        }, 1000 * REGISTER_SECONDS);
     }
 
     onSelectCountChange(val: number) {

@@ -1,10 +1,10 @@
 <section>
     <div class="section-bar" #bar>
+        <span class="right-spacer" aria-hidden="true"></span>
+        <h3 class="section-title">Pray</h3>
         <button mat-icon-button class="close" aria-label="Close" (click)="onClose()">
             <mat-icon>close</mat-icon>
         </button>
-        <h3 class="section-title">Pray</h3>
-        <span class="right-spacer" aria-hidden="true"></span>
     </div>
 
     @if (selectedItems().length === 0) {
@@ -39,8 +39,8 @@
                                         (click)="$event.stopPropagation()">
                                 </mat-slider>
                             </div>
-                            <div class="hint">Swipe left to begin</div>
                         </div>
+                        <div class="hint">Swipe left to begin</div>
                     </div>
                 </div>
 
@@ -53,7 +53,7 @@
                                     [subtitle]="item.topicName || ''"></app-prayer-card>
                             } @else {
                                 <app-prayer-card icon="label" [title]="item.name"
-                                    subtitle="Topic (no requests)"></app-prayer-card>
+                                    [subtitle]="'from ' + item.listName"></app-prayer-card>
                             }
                         </div>
                     </div>
@@ -62,7 +62,7 @@
         </div>
     }
 
-    <div class="pray-footer" #footer>
+    <div class="pray-footer" #footer [class.visible]="currentIndex() >= 1">
         <div class="footer-left">
             @if (currentIndex() >= 1) {
                 @if (unlimited) {

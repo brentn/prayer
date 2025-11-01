@@ -66,8 +66,9 @@ export class App implements OnInit {
 
     get showPrayTab(): boolean {
         const url = this.router.url || '';
-        // Show on main and list pages only
-        return url === '/' || url.startsWith('/list/');
+        // Show on main and list pages only, but only if there are lists with topics
+        const hasListsWithTopics = this.lists().some(list => (list.topicIds || []).length > 0);
+        return hasListsWithTopics && (url === '/' || url.startsWith('/list/'));
     }
 
     get currentListId(): number | undefined {
