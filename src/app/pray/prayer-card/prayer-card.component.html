@@ -1,5 +1,26 @@
 <div class="card">
-    <mat-icon class="card-icon">{{ icon }}</mat-icon>
-    <div class="card-title">{{ title }}</div>
-    <div class="card-sub" *ngIf="subtitle">{{ subtitle }}</div>
+    <div class="card-header">
+        <div>
+            @if (priority && priority > 1) {
+                <div class="priority-badge" [class]="getPriorityClass()">{{ priority }}</div>
+            }
+        </div>
+        <div class="header-right">
+            @if (prayerCount !== undefined) {
+                <span class="prayer-count-badge">{{ prayerCount }}</span>
+            }
+            @if (createdDate) {
+                <span class="since-text">since {{ createdDate | date }}</span>
+            }
+        </div>
+    </div>
+    <div class="card-content">
+        <mat-icon class="card-icon">{{ icon }}</mat-icon>
+        <div class="card-title">{{ title }}</div>
+    </div>
+    @if (listName || topicName) {
+        <div class="card-footer">
+            {{ listName || '' }}{{ listName && topicName ? ': ' : '' }}{{ topicName || '' }}
+        </div>
+    }
 </div>

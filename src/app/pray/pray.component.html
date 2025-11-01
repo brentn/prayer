@@ -49,8 +49,9 @@
                     <div class="slide">
                         <div class="prayer-card">
                             @if (item.kind === 'request') {
-                                <app-prayer-card icon="favorite" [title]="item.description"
-                                    [subtitle]="item.topicName || ''"></app-prayer-card>
+                                <app-prayer-card icon="favorite" [title]="item.description" [listName]="item.listName"
+                                    [topicName]="item.topicName" [createdDate]="item.createdDate"
+                                    [prayerCount]="item.prayerCount" [priority]="item.priority"></app-prayer-card>
                             } @else {
                                 <app-prayer-card icon="label" [title]="item.name"
                                     [subtitle]="'from ' + item.listName"></app-prayer-card>

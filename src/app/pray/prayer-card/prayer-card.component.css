@@ -1,7 +1,8 @@
 .card {
-    display: grid;
-    justify-items: center;
-    align-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
     gap: 10px;
     min-height: 48vh;
     border-radius: 12px;
@@ -9,6 +10,66 @@
     background: rgba(0, 0, 0, 0.22);
     border: 1px solid rgba(255, 255, 255, 0.08);
     height: calc(100% - 2.5rem);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.priority-badge {
+    background: #4caf50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.priority-badge.priority-2 {
+    background: #ffeb3b;
+    color: black;
+}
+
+.priority-badge.priority-3 {
+    background: #ff9800;
+    color: white;
+}
+
+.priority-badge.priority-4 {
+    background: #f44336;
+    color: white;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.prayer-count-badge {
+    background: rgba(255, 193, 7, 0.9);
+    color: black;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.since-text {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 10px;
 }
 
 .card-icon {
@@ -24,7 +85,21 @@
     color: rgba(255, 255, 255, 0.96);
 }
 
-.card-sub {
-    font-size: .9rem;
+.card-footer {
+    text-align: center;
+    font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.75);
+}
+
+.card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 8px;
+}
+
+.detail {
+    text-align: center;
 }
