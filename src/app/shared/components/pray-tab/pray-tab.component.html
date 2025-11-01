@@ -1,0 +1,17 @@
+<!-- Bottom-attached tab -->
+<button type="button"
+        class="pray-tab"
+        mat-fab
+        extended
+        [@tabSlide]="tabVisible() ? 'visible' : 'hidden'"
+        [@tabLift]="overlayOpen() ? 'withOverlay' : 'atBottom'"
+        (click)="openOverlay()"
+        aria-label="Pray">
+  <mat-icon>cloud_upload</mat-icon>
+  Pray
+</button>
+
+<!-- Fullscreen overlay with slide-up PrayComponent -->
+<div class="pray-overlay" *ngIf="overlayOpen()" [@overlaySlide]="overlayOpen() ? 'open' : 'closed'">
+  <app-pray [fullScreen]="true" [listId]="listId" (close)="closeOverlay()"></app-pray>
+</div>

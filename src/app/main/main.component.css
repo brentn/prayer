@@ -24,6 +24,8 @@ section {
     color: var(--md-sys-color-on-primary) !important;
 }
 
+/* pray button moved to app-pray-tab component */
+
 /* Full-width add button removed; replaced by add-card in the list grid */
 
 .cards {

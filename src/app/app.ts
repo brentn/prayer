@@ -8,11 +8,12 @@ import { Store } from '@ngrx/store';
 import { selectAllLists } from './store/lists/list.selectors';
 import { WakeLockService } from './shared/services/wake-lock.service';
 import { SettingsService } from './shared/services/settings.service';
+import { PrayTabComponent } from './shared/components/pray-tab/pray-tab.component';
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [RouterOutlet, RouterLink, MatIconModule, MatButtonModule, MatMenuModule],
+    imports: [RouterOutlet, RouterLink, MatIconModule, MatButtonModule, MatMenuModule, PrayTabComponent],
     templateUrl: './app.html',
     styleUrl: './app.css',
     animations: [
@@ -61,6 +62,21 @@ export class App implements OnInit {
     get showBack(): boolean {
         const url = this.router.url || '';
         return url.startsWith('/list/') || url.startsWith('/topic/');
+    }
+
+    get showPrayTab(): boolean {
+        const url = this.router.url || '';
+        // Show on main and list pages only
+        return url === '/' || url.startsWith('/list/');
+    }
+
+    get currentListId(): number | undefined {
+        const url = this.router.url || '';
+        if (url.startsWith('/list/')) {
+            const maybe = Number(url.split('/')[2]);
+            if (!isNaN(maybe)) return maybe;
+        }
+        return undefined;
     }
 
     backFromHeader(): void {

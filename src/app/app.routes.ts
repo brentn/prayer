@@ -7,6 +7,16 @@ export const routes: Routes = [
         data: { depth: 0 }
     },
     {
+        path: 'pray',
+        loadComponent: () => import('./pray/pray.component').then(m => m.PrayComponent),
+        data: { depth: 'none' }
+    },
+    {
+        path: 'pray/:listId',
+        loadComponent: () => import('./pray/pray.component').then(m => m.PrayComponent),
+        data: { depth: 'none' }
+    },
+    {
         path: 'list/:id',
         loadComponent: () => import('./main/list/list.component').then(m => m.ListComponent),
         data: { depth: 1 }

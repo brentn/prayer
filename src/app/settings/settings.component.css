@@ -5,6 +5,13 @@
     min-height: calc(100vh - 3rem);
 }
 
+.settings-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
 h2 {
     margin: 0 0 1rem 0;
     color: var(--md-sys-color-on-primary-container, #3e2723);
@@ -21,13 +28,7 @@ mat-list-item {
 }
 
 /* Make the slide toggle clearly visible on white */
-mat-slide-toggle {
-    --mdc-switch-unselected-track-color: #d7ccc8;
-    /* light brown */
-    --mdc-switch-unselected-handle-color: #6d4c41;
-    /* brown */
-    --mdc-switch-selected-track-color: #8d6e63;
-    /* lighter brown */
-    --mdc-switch-selected-handle-color: #ffffff;
-    /* white knob */
+/* Push form controls to the right if needed */
+mat-checkbox {
+    margin-left: auto;
 }

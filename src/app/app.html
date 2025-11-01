@@ -23,3 +23,6 @@
     <router-outlet #outlet="outlet" />
 
 </main>
+@if (showPrayTab) {
+    <app-pray-tab [listId]="currentListId"></app-pray-tab>
+}

@@ -1,0 +1,89 @@
+<section>
+    <div class="section-bar">
+        <button mat-icon-button class="close" aria-label="Close" (click)="onClose()">
+            <mat-icon>close</mat-icon>
+        </button>
+        <h3 class="section-title">Pray</h3>
+        <span class="right-spacer" aria-hidden="true"></span>
+    </div>
+
+    @if (selectedItems().length === 0) {
+        <div class="prayer-card">
+            <div class="empty">No requests yet.</div>
+        </div>
+    } @else {
+        <div class="carousel-viewport" #carousel
+             (pointerdown)="onPointerDown($event)"
+             (pointermove)="onPointerMove($event)"
+             (pointerup)="onPointerUp($event)"
+             (pointerleave)="onPointerUp($event)"
+             (pointercancel)="onPointerUp($event)"
+             [class.dragging]="isDragging">
+            <div class="carousel-track" [style.transform]="carouselTransform()" [class.dragging]="isDragging">
+            <!-- Settings slide (index 0) -->
+            <div class="slide settings-slide">
+                <div class="prayer-card">
+                    <div class="controls">
+                        <div class="control">
+                            <div class="label">Number of items</div>
+                            <div class="value">{{ formatCountLabel() }}</div>
+                            <mat-slider [min]="1" [max]="safeMaxSelectable" [step]="1" [showTickMarks]="true">
+                                <input matSliderThumb [(ngModel)]="selectCountModel" (ngModelChange)="onSelectCountChange($event)"
+                                       (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+                            </mat-slider>
+                        </div>
+                        <div class="control">
+                            <div class="label">Time limit</div>
+                            <div class="value">{{ formatTimeLabel() }}</div>
+                            <mat-slider [min]="1" [max]="121" [step]="1" [showTickMarks]="true">
+                                <input matSliderThumb [(ngModel)]="timeValueModel" (ngModelChange)="onTimeChange($event)"
+                                       (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+                            </mat-slider>
+                        </div>
+                        <div class="hint">Swipe left to begin</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prayer slides (index >= 1) -->
+            @for (item of selectedItems(); track item.kind + '-' + item.id) {
+                <div class="slide">
+                    <div class="prayer-card">
+                        @if (item.kind === 'request') {
+                            <div class="card">
+                                <mat-icon class="card-icon">favorite</mat-icon>
+                                <div class="card-title">{{ item.description }}</div>
+                                @if (item.topicName) {
+                                    <div class="card-sub">{{ item.topicName }}</div>
+                                }
+                            </div>
+                        } @else {
+                            <div class="card">
+                                <mat-icon class="card-icon">label</mat-icon>
+                                <div class="card-title">{{ item.name }}</div>
+                                <div class="card-sub">Topic (no requests)</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            </div>
+        </div>
+    }
+
+    <div class="pray-footer">
+        <div class="footer-left">
+            @if (currentIndex() >= 1) {
+                @if (unlimited) {
+                    <span class="timer">Unlimited</span>
+                } @else {
+                    <span class="timer">{{ formatRemaining() }}</span>
+                }
+            }
+        </div>
+        <div class="footer-right">
+            <div class="progress-label">@if (currentIndex() >= 1) { {{ currentSlide }} / {{ totalSlides }} }</div>
+            <mat-progress-bar mode="determinate" [value]="progressPercent()"></mat-progress-bar>
+        </div>
+    </div>
+</section>

@@ -86,6 +86,8 @@ section {
     color: var(--md-sys-color-on-primary) !important;
 }
 
+/* pray button moved to app-pray-tab component */
+
 button {
     padding: .4rem .6rem;
 }
