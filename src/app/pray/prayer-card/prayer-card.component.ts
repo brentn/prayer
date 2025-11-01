@@ -23,6 +23,7 @@ export class PrayerCardComponent {
         if (!this.priority || this.priority <= 1) return '';
         if (this.priority === 2) return 'priority-2';
         if (this.priority === 3) return 'priority-3';
-        return 'priority-4';
+        if (this.priority === 4) return 'priority-4';
+        return 'priority-5';
     }
 }

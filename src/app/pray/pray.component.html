@@ -54,7 +54,7 @@
                                     [prayerCount]="item.prayerCount" [priority]="item.priority"></app-prayer-card>
                             } @else {
                                 <app-prayer-card icon="label" [title]="item.name"
-                                    [subtitle]="'from ' + item.listName"></app-prayer-card>
+                                    [listName]="'from ' + item.listName"></app-prayer-card>
                             }
                         </div>
                     </div>

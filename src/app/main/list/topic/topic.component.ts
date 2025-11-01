@@ -1,9 +1,10 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { Store } from '@ngrx/store';
 import { selectAllRequests } from '../../../store/requests/request.selectors';
 import { addRequestWithId, removeRequest, updateRequest } from '../../../store/requests/request.actions';
@@ -12,6 +13,7 @@ import { ViewChild, ElementRef } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { selectAllTopics } from '../../../store/topics/topic.selectors';
 import { selectAllLists } from '../../../store/lists/list.selectors';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
     standalone: true,
@@ -25,11 +27,13 @@ export class TopicComponent {
     private dialog = inject(MatDialog);
     private route = inject(ActivatedRoute);
     private router = inject(Router);
+    private cdr = inject(ChangeDetectorRef);
 
     editing = false;
     editName = '';
     editingRequestId: number | null = null;
     editingRequestText = '';
+    editingRequestPriority = signal(1);
     editingExisting = false;
 
     allRequests = this.store.selectSignal(selectAllRequests);
@@ -104,6 +108,7 @@ export class TopicComponent {
         // Begin inline editing
         this.editingRequestId = nextId;
         this.editingRequestText = '';
+        this.editingRequestPriority.set(1);
         this.editingExisting = false;
         this.scrollToBottomSoon();
     }
@@ -155,16 +160,18 @@ export class TopicComponent {
         if (this.editingRequestId === id) return; // already editing inline
         this.editingRequestId = id;
         this.editingRequestText = req.description;
+        this.editingRequestPriority.set(req.priority || 1);
         this.editingExisting = true;
     }
 
     async saveInline(id: number) {
         const desc = (this.editingRequestText || '').trim();
         if (!desc) return;
-        const changes: any = { description: desc };
+        const changes: any = { description: desc, priority: this.editingRequestPriority() };
         this.store.dispatch(updateRequest({ id, changes }));
         this.editingRequestId = null;
         this.editingRequestText = '';
+        this.editingRequestPriority.set(1);
         this.editingExisting = false;
     }
 
@@ -178,6 +185,7 @@ export class TopicComponent {
         }
         this.editingRequestId = null;
         this.editingRequestText = '';
+        this.editingRequestPriority.set(1);
         this.editingExisting = false;
     }
 
@@ -187,6 +195,7 @@ export class TopicComponent {
         await this.onRemove(id);
         this.editingRequestId = null;
         this.editingRequestText = '';
+        this.editingRequestPriority.set(1);
         this.editingExisting = false;
     }
 
@@ -200,12 +209,18 @@ export class TopicComponent {
     async markAnsweredInline(id: number) {
         const desc = (this.editingRequestText || '').trim();
         if (!desc) return;
-        const changes: any = { description: desc, answeredDate: new Date().toISOString() };
+        const changes: any = { description: desc, answeredDate: new Date().toISOString(), priority: this.editingRequestPriority() };
         this.store.dispatch(updateRequest({ id, changes }));
         this.editingRequestId = null;
         this.editingRequestText = '';
+        this.editingRequestPriority.set(1);
         this.editingExisting = false;
         // Move to Answers tab after marking answered
         this.activeTabIndex = 1;
+    }
+
+    cyclePriority() {
+        const current = this.editingRequestPriority();
+        this.editingRequestPriority.set(current >= 5 ? 1 : current + 1);
     }
 }

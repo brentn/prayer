@@ -4,6 +4,12 @@
         <mat-label>Description</mat-label>
         <textarea matInput rows="4" [formControl]="description" placeholder="Update request..."></textarea>
     </mat-form-field>
+    <div class="priority-section">
+        <label>Priority:</label>
+        <button mat-button class="priority-btn" [ngClass]="'priority-' + priority.value" (click)="cyclePriority()">
+            {{ priority.value }}
+        </button>
+    </div>
     <mat-slide-toggle [formControl]="answered">Answered</mat-slide-toggle>
 </div>
 <div mat-dialog-actions class="actions">

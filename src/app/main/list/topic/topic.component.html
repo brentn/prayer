@@ -32,8 +32,7 @@
                         <div class="request-card editing">
                             <textarea class="edit-textarea" rows="3" [value]="editingRequestText"
                                 (input)="editingRequestText = $any($event.target).value"
-                                (keydown.enter)="saveInline(req.id)" placeholder="Type your request..."
-                                autofocus></textarea>
+                                placeholder="Type your request..." autofocus></textarea>
                             <div class="inline-actions">
                                 <div class="left">
                                     @if (editingExisting) {
@@ -45,6 +44,11 @@
                                             <mat-icon class="answered">check</mat-icon>
                                         </button>
                                     }
+                                    <button mat-button class="priority-btn"
+                                        [ngClass]="'priority-' + editingRequestPriority()" (click)="cyclePriority()"
+                                        [disabled]="!editingRequestText.trim()">
+                                        {{ editingRequestPriority() }}
+                                    </button>
                                 </div>
                                 <div class="right">
                                     <button mat-button (click)="cancelInline()">Cancel</button>
@@ -57,6 +61,11 @@
                         </div>
                     } @else {
                         <div class="request-card" (click)="onEditRequest(req.id)">
+                            <div class="request-header">
+                                @if (req.priority && req.priority > 1) {
+                                    <div class="priority-dot" [class]="'priority-' + req.priority"></div>
+                                }
+                            </div>
                             <div class="request-text">{{ req.description }}</div>
                             <div class="request-date">{{ req.createdDate | date:'short' }}</div>
                         </div>
@@ -71,9 +80,15 @@
                         <div class="request-card editing">
                             <textarea class="edit-textarea" rows="3" [value]="editingRequestText"
                                 (input)="editingRequestText = $any($event.target).value"
-                                (keydown.enter)="saveInline(req.id)" placeholder="Update your request..."
-                                autofocus></textarea>
+                                placeholder="Update your request..." autofocus></textarea>
                             <div class="inline-actions">
+                                <div class="left">
+                                    <button mat-button class="priority-btn"
+                                        [ngClass]="'priority-' + editingRequestPriority()" (click)="cyclePriority()"
+                                        [disabled]="!editingRequestText.trim()">
+                                        {{ editingRequestPriority() }}
+                                    </button>
+                                </div>
                                 <div class="right">
                                     <button mat-button (click)="cancelInline()">Cancel</button>
                                     <button mat-flat-button color="primary" [disabled]="!editingRequestText.trim()"
@@ -85,6 +100,11 @@
                         </div>
                     } @else {
                         <div class="request-card" (click)="onEditRequest(req.id)">
+                            <div class="request-header">
+                                @if (req.priority && req.priority > 1) {
+                                    <div class="priority-dot" [class]="'priority-' + req.priority"></div>
+                                }
+                            </div>
                             <div class="request-text">{{ req.description }}</div>
                             <div class="request-date">{{ req.createdDate | date:'short' }}</div>
                         </div>
