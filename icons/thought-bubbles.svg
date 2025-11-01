@@ -8,13 +8,13 @@
   </defs>
   <rect width="512" height="512" rx="96" fill="#23140f"/>
   <!-- Large thought bubble -->
-  <g transform="translate(70,80)">
+  <g transform="translate(70,120)">
     <ellipse cx="200" cy="140" rx="160" ry="110" fill="url(#g)"/>
     <circle cx="110" cy="230" r="18" fill="url(#g)"/>
     <circle cx="80" cy="260" r="12" fill="url(#g)"/>
   </g>
-  <!-- Small overlapping thought bubble -->
-  <g transform="translate(250,200)">
+  <!-- Small thought bubble coming from above -->
+  <g transform="translate(252,104) rotate(180 100 70)">
     <ellipse cx="100" cy="70" rx="80" ry="55" fill="#a98274"/>
     <circle cx="40" cy="125" r="10" fill="#a98274"/>
   </g>
