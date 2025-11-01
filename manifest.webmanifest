@@ -1,7 +1,7 @@
 {
     "name": "Prayer",
     "short_name": "Prayer",
-    "start_url": "/",
+    "start_url": "./",
     "scope": "/prayer/",
     "display": "standalone",
     "orientation": "portrait",
