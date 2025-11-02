@@ -2,7 +2,7 @@
     "name": "Prayer",
     "short_name": "Prayer",
     "start_url": "./",
-    "scope": "/prayer/",
+    "scope": "/",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#23140f",

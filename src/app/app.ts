@@ -46,15 +46,18 @@ export class App implements OnInit {
     private wake = inject(WakeLockService);
     private settings = inject(SettingsService);
 
-    ngOnInit(): void {
-        // Initialize auto-renew
-        this.wake.initAutoRenew();
+    constructor() {
         // React to keepAwake setting changes
         effect(() => {
             const enabled = this.settings.keepAwake();
             if (enabled) this.wake.request();
             else this.wake.release();
         });
+    }
+
+    ngOnInit(): void {
+        // Initialize auto-renew
+        this.wake.initAutoRenew();
     }
     private store = inject(Store);
     lists = this.store.selectSignal(selectAllLists);

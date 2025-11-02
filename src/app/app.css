@@ -30,7 +30,8 @@
 
     .app-main {
         will-change: transform;
-        height: calc(100vh - 4rem);
+        height: calc(100vh - 3.56rem);
+        /* view height minus header height */
         /* ensure full viewport height */
         box-sizing: border-box;
         position: relative;

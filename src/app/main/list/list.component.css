@@ -1,9 +1,13 @@
 section {
     position: relative;
     height: calc(100vh - 6rem);
+    min-height: calc(100vh - 6rem);
     margin: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .section-bar {
@@ -13,6 +17,7 @@ section {
     gap: 1rem;
     margin-bottom: .5rem;
     position: relative;
+    flex-shrink: 0;
 }
 
 .section-title {
@@ -27,6 +32,8 @@ section {
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
 }
+
+
 
 .section-menu {
     position: absolute;
@@ -96,7 +103,12 @@ button {
     display: grid;
     grid-template-columns: 1fr;
     padding: .5rem;
+    padding-bottom: 3rem;
     gap: 1rem;
+    flex: 1;
+    overflow-y: auto;
+    align-items: start;
+    grid-auto-rows: min-content;
 }
 
 @media (min-width: 600px) {
@@ -124,6 +136,7 @@ button {
     touch-action: pan-y;
     position: relative;
     z-index: 1;
+    align-self: start;
 }
 
 .card:focus,
