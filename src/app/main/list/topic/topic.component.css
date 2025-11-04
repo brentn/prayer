@@ -1,6 +1,6 @@
 section {
     position: relative;
-    height: calc(100vh - 6rem);
+    height: calc(100vh - 4rem);
     display: flex;
     flex-direction: column;
 }
@@ -38,10 +38,7 @@ section {
     margin-top: -4px;
 }
 
-.mat-tab-body {
-    height: calc(100vh - 10rem);
-    overflow-y: auto;
-}
+.mat-tab-body {}
 
 .requests {
     display: flex;
@@ -50,6 +47,8 @@ section {
     padding: 1rem 1rem 5rem 1rem;
     /* leave space for FAB */
     flex: 1 1 auto;
+    height: calc(100vh - 18rem);
+    overflow-y: auto;
 }
 
 .request-card {
@@ -175,7 +174,7 @@ section {
 }
 
 .fab {
-    position: fixed;
+    position: absolute;
     bottom: 24px;
     right: 24px;
     z-index: 100;
