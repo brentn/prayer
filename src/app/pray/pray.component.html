@@ -33,7 +33,7 @@
                             <div class="control">
                                 <div class="label">Time limit</div>
                                 <div class="value">{{ formatTimeLabel() }}</div>
-                                <mat-slider [min]="1" [max]="121" [step]="1" [showTickMarks]="true">
+                                <mat-slider [min]="1" [max]="61" [step]="1" [showTickMarks]="true">
                                     <input matSliderThumb [(ngModel)]="timeValueModel"
                                         (ngModelChange)="onTimeChange($event)" (pointerdown)="$event.stopPropagation()"
                                         (click)="$event.stopPropagation()">

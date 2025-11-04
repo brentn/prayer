@@ -227,12 +227,12 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
     get selectCountModel(): number { return this.selectCount(); }
     set selectCountModel(v: number) { this.onSelectCountChange(v); }
 
-    // Time slider: 1..121, 121 = unlimited. Initialize from settings (default handled in service)
+    // Time slider: 1..61, 61 = unlimited. Initialize from settings (default handled in service)
     timeValue = signal<number>(this.settings.prayTimeValue() ?? 60);
     get timeValueModel(): number { return this.timeValue(); }
     set timeValueModel(v: number) { this.onTimeChange(v); }
-    get unlimited(): boolean { return this.timeValue() >= 121; }
-    get timeMinutes(): number { return Math.min(this.timeValue(), 120); }
+    get unlimited(): boolean { return this.timeValue() >= 61; }
+    get timeMinutes(): number { return Math.min(this.timeValue(), 60); }
 
     selectedItems = computed(() => {
         const all = this.items();
@@ -404,8 +404,8 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
     }
 
     onTimeChange(val: number) {
-        // expect 1..121, where 121 = unlimited
-        const v = Math.max(1, Math.min(val, 121));
+        // expect 1..61, where 61 = unlimited
+        const v = Math.max(1, Math.min(val, 61));
         this.timeValue.set(v);
         // persist
         this.settings.setPrayTimeValue(v);
