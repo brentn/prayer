@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card" [class.answered]="isAnswered">
     <div class="card-header">
         <div>
             @if (priority && priority > 1) {
@@ -6,11 +6,18 @@
             }
         </div>
         <div class="header-right">
-            @if (prayerCount !== undefined) {
-                <span class="prayer-count-badge">{{ prayerCount }}</span>
-            }
-            @if (createdDate) {
-                <span class="since-text">since {{ createdDate | date }}</span>
+            @if (isAnswered) {
+                <div class="answered-info">
+                    <div class="answered-summary">{{ getAnsweredSummary() }}</div>
+                    <div class="answered-date">{{ getAnsweredDateText() }}</div>
+                </div>
+            } @else {
+                @if (prayerCount !== undefined) {
+                    <span class="prayer-count-badge">{{ prayerCount }}</span>
+                }
+                @if (createdDate) {
+                    <span class="since-text">since {{ createdDate | date }}</span>
+                }
             }
         </div>
     </div>
@@ -20,6 +27,11 @@
             <div class="card-topic">{{topicName}}:</div>
         }
         <div class="card-title">{{ title }}</div>
+        @if (isAnswered && answerDescription) {
+            <div class="answer-description-box">
+                {{ answerDescription }}
+            </div>
+        }
     </div>
     @if (listName) {
         <div class="card-footer">

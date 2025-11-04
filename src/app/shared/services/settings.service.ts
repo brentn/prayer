@@ -7,6 +7,7 @@ export interface AppSettings {
     shuffleRequests: boolean;
     praySelectCount: number; // last used number of items in pray session
     prayTimeValue: number;   // last used time value (1..121, 121 = unlimited)
+    prayAnsweredCount: number; // number of answered requests to prepend
 }
 
 const defaultSettings: AppSettings = {
@@ -14,6 +15,7 @@ const defaultSettings: AppSettings = {
     shuffleRequests: true,
     praySelectCount: 0,
     prayTimeValue: 60,
+    prayAnsweredCount: 0,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -25,6 +27,7 @@ export class SettingsService {
     shuffleRequests = signal<boolean>(this._settings().shuffleRequests);
     praySelectCount = signal<number>(this._settings().praySelectCount);
     prayTimeValue = signal<number>(this._settings().prayTimeValue);
+    prayAnsweredCount = signal<number>(this._settings().prayAnsweredCount);
 
     setKeepAwake(value: boolean) {
         this.keepAwake.set(value);
@@ -46,12 +49,18 @@ export class SettingsService {
         this.save();
     }
 
+    setPrayAnsweredCount(value: number) {
+        this.prayAnsweredCount.set(value);
+        this.save();
+    }
+
     private save() {
         const s: AppSettings = {
             keepAwake: this.keepAwake(),
             shuffleRequests: this.shuffleRequests(),
             praySelectCount: this.praySelectCount(),
             prayTimeValue: this.prayTimeValue(),
+            prayAnsweredCount: this.prayAnsweredCount(),
         };
         try {
             localStorage.setItem(KEY, JSON.stringify(s));

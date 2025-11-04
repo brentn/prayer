@@ -21,6 +21,17 @@
                 <div class="slide settings-slide">
                     <div class="prayer-card">
                         <div class="controls">
+                            @if (maxAnswered > 0) {
+                                <div class="control">
+                                    <div class="label">Start session with answered prayer</div>
+                                    <div class="value">{{ formatAnsweredLabel() }}</div>
+                                    <mat-slider [min]="0" [max]="maxAnswered" [step]="1" [showTickMarks]="true">
+                                        <input matSliderThumb [(ngModel)]="answeredValueModel"
+                                            (ngModelChange)="onAnsweredChange($event)"
+                                            (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+                                    </mat-slider>
+                                </div>
+                            }
                             <div class="control">
                                 <div class="label">Number of items</div>
                                 <div class="value">{{ formatCountLabel() }}</div>
@@ -51,7 +62,7 @@
                             @if (item.kind === 'request') {
                                 <app-prayer-card icon="favorite" [title]="item.description" [listName]="item.listName"
                                     [topicName]="item.topicName" [createdDate]="item.createdDate"
-                                    [prayerCount]="item.prayerCount" [priority]="item.priority"></app-prayer-card>
+                                    [prayerCount]="item.prayerCount" [priority]="item.priority" [isAnswered]="item.isAnswered || false" [answeredDate]="item.answeredDate" [answerDescription]="item.answerDescription"></app-prayer-card>
                             } @else {
                                 <app-prayer-card icon="label" [title]="item.name"
                                     [listName]="'from ' + item.listName"></app-prayer-card>

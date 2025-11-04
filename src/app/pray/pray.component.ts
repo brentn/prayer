@@ -17,7 +17,7 @@ import { PrayerCardComponent } from './prayer-card/prayer-card.component';
 
 const REGISTER_SECONDS = 12; // seconds of viewing a request card to register a prayer
 
-type ItemVm = { kind: 'request', id: number, description: string, listName?: string, topicName?: string, createdDate?: string, prayerCount?: number, priority?: number } | { kind: 'topic', id: number, name: string, listName?: string };
+type ItemVm = { kind: 'request', id: number, description: string, listName?: string, topicName?: string, createdDate?: string, prayerCount?: number, priority?: number, isAnswered?: boolean, answeredDate?: string, answerDescription?: string } | { kind: 'topic', id: number, name: string, listName?: string };
 
 @Component({
     standalone: true,
@@ -40,6 +40,8 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
     lists = this.store.selectSignal(selectAllLists);
     topics = this.store.selectSignal(selectAllTopics);
     requests = this.store.selectSignal(selectAllRequests);
+
+    answeredRequests = computed(() => this.requests().filter(r => r.answeredDate));
 
     listIdFromRoute = computed(() => Number(this.route.snapshot.paramMap.get('listId')) || undefined);
     effectiveListId = computed(() => this.listId ?? this.listIdFromRoute());
@@ -223,6 +225,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
     // Selection sliders
     get maxSelectable(): number { return this.items().length; }
     get safeMaxSelectable(): number { return Math.max(1, this.maxSelectable); }
+    get maxAnswered(): number { return this.answeredRequests().length; }
     selectCount = signal<number>(this.settings.praySelectCount() || this.maxSelectable);
     get selectCountModel(): number { return this.selectCount(); }
     set selectCountModel(v: number) { this.onSelectCountChange(v); }
@@ -234,12 +237,52 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
     get unlimited(): boolean { return this.timeValue() >= 61; }
     get timeMinutes(): number { return Math.min(this.timeValue(), 60); }
 
+    // Answered slider: 0..max answered requests
+    answeredValue = signal<number>(this.settings.prayAnsweredCount() ?? 0);
+    get answeredValueModel(): number { return this.answeredValue(); }
+    set answeredValueModel(v: number) { this.onAnsweredChange(v); }
+
     selectedItems = computed(() => {
         const all = this.items();
         const count = this.selectCount();
-        if (!all || all.length === 0) return [] as ReturnType<typeof this.items>;
-        if (count >= all.length) return all;
-        return all.slice(0, Math.max(1, count));
+        let selected: ItemVm[] = [];
+        if (!all || all.length === 0) return selected;
+
+        // Prepend answered requests if any
+        const answeredCount = this.answeredValue();
+        if (answeredCount > 0) {
+            const answeredReqs = this.answeredRequests();
+            // Shuffle and take the first answeredCount
+            const shuffledAnswered = [...answeredReqs].sort(() => Math.random() - 0.5).slice(0, answeredCount);
+            // Convert to ItemVm
+            const answeredItems: ItemVm[] = shuffledAnswered.map(r => {
+                const ownerTopic = this.topics().find(t => (t.requestIds || []).includes(r.id));
+                const ownerList = this.lists().find(l => ownerTopic && (l.topicIds || []).includes(ownerTopic.id));
+                return {
+                    kind: 'request' as const,
+                    id: r.id,
+                    description: r.description,
+                    listName: ownerList?.name,
+                    topicName: ownerTopic?.name,
+                    createdDate: r.createdDate,
+                    prayerCount: r.prayerCount,
+                    priority: r.priority,
+                    isAnswered: true,
+                    answeredDate: r.answeredDate || undefined,
+                    answerDescription: r.answerDescription
+                };
+            });
+            selected = selected.concat(answeredItems);
+        }
+
+        // Then add the regular items
+        if (count >= all.length) {
+            selected = selected.concat(all);
+        } else {
+            selected = selected.concat(all.slice(0, Math.max(1, count)));
+        }
+
+        return selected;
     });
 
     // Keep selection count in sync with items length without overriding user choice unnecessarily
@@ -375,7 +418,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         const idx = this.currentIndex();
         if (idx < 1) return; // not on a request card
         const item = this.selectedItems()[idx - 1];
-        if (!item || item.kind !== 'request') return;
+        if (!item || item.kind !== 'request' || item.isAnswered) return;
         if (this.sessionCounted.has(item.id)) return;
         const startId = item.id;
         const startIndex = idx;
@@ -411,6 +454,14 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         this.settings.setPrayTimeValue(v);
     }
 
+    onAnsweredChange(val: number) {
+        const max = this.answeredRequests().length;
+        const v = Math.max(0, Math.min(val, max));
+        this.answeredValue.set(v);
+        // persist
+        this.settings.setPrayAnsweredCount(v);
+    }
+
     formatCountLabel(): string {
         const max = this.maxSelectable;
         const v = this.selectCount();
@@ -421,6 +472,12 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         if (this.unlimited) return 'Unlimited';
         const m = this.timeMinutes;
         return `${m} min`;
+    }
+
+    formatAnsweredLabel(): string {
+        const v = this.answeredValue();
+        if (v === 0) return 'None';
+        return String(v);
     }
 
     progressPercent(): number {

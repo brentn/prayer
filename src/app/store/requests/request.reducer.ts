@@ -9,6 +9,7 @@ export interface RequestEntity {
     description: string;
     createdDate: string; // ISO string for storage simplicity
     answeredDate?: string | null;
+    answerDescription?: string;
     prayerCount: number;
     priority: number; // 1 (low) to 5 (high)
 }
@@ -29,11 +30,11 @@ export const reducer = createReducer(
     on(RequestActions.addRequest, (state, { description }) => {
         const id = nextId(state);
         const now = new Date().toISOString();
-        return adapter.addOne({ id, description, createdDate: now, answeredDate: null, prayerCount: 0, priority: 1 }, state);
+        return adapter.addOne({ id, description, createdDate: now, answeredDate: null, answerDescription: undefined, prayerCount: 0, priority: 1 }, state);
     }),
     on(RequestActions.addRequestWithId, (state, { id, description }) => {
         const now = new Date().toISOString();
-        return adapter.addOne({ id, description, createdDate: now, answeredDate: null, prayerCount: 0, priority: 1 }, state);
+        return adapter.addOne({ id, description, createdDate: now, answeredDate: null, answerDescription: undefined, prayerCount: 0, priority: 1 }, state);
     }),
     on(RequestActions.updateRequest, (state, { id, changes }) => adapter.updateOne({ id, changes }, state)),
     on(RequestActions.removeRequest, (state, { id }) => adapter.removeOne(id, state)),

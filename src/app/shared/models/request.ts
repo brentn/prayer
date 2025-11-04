@@ -5,6 +5,7 @@ export class Request {
     description: string;
     createdDate: Date;
     answeredDate?: Date;
+    answerDescription?: string;
     prayerCount: number;
     priority: number; // 1 (low) to 5 (high)
 
