@@ -84,6 +84,11 @@
     color: rgba(255, 193, 7, 0.9);
 }
 
+.card-topic {
+    font-size: .8rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
 .card-title {
     text-align: center;
     font-size: 1.3rem;

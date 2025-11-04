@@ -16,11 +16,12 @@
     </div>
     <div class="card-content">
         <mat-icon class="card-icon">{{ icon }}</mat-icon>
+        <div class="card-topic">{{topicName}}:</div>
         <div class="card-title">{{ title }}</div>
     </div>
-    @if (listName || topicName) {
+    @if (listName) {
         <div class="card-footer">
-            {{ listName || '' }}{{ listName && topicName ? ': ' : '' }}{{ topicName || '' }}
+            {{ listName}}
         </div>
     }
 </div>
