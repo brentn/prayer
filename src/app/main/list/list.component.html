@@ -1,13 +1,19 @@
 <section (click)="onSectionClick()">
     <div class="section-bar" (click)="$event.stopPropagation()">
         <div class="title-stack" (click)="startEdit()">
-            @if (!editing) {
-                <h3 class="section-title">{{ (currentList()?.name) || 'Topics' }}</h3>
-            } @else {
-                <input class="edit-input" type="text" [value]="editName" (click)="$event.stopPropagation()"
-                    (input)="editName = $any($event.target).value" (keydown.enter)="saveEdit()"
-                    (keydown.escape)="cancelEdit()" autofocus />
-            }
+            <div class="section-title">
+                @if (!editing) {
+                    <h3>{{ (currentList()?.name) || 'Topics' }}</h3>
+                } @else {
+                    <input class="edit-input" type="text" [value]="editName" (click)="$event.stopPropagation()"
+                        (input)="editName = $any($event.target).value" (keydown.enter)="saveEdit()"
+                        (keydown.escape)="cancelEdit()" autofocus />
+                    <mat-checkbox [checked]="editExcludeFromAll" (change)="editExcludeFromAll = $event.checked"
+                        class="exclude-checkbox">
+                        Exclude when praying for all lists?
+                    </mat-checkbox>
+                }
+            </div>
         </div>
         @if (editing) {
             <div class="section-menu">

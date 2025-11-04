@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Store } from '@ngrx/store';
 import { selectAllTopics } from '../../store/topics/topic.selectors';
 import { addTopicWithId, removeTopic } from '../../store/topics/topic.actions';
@@ -11,7 +12,7 @@ import { selectAllLists } from '../../store/lists/list.selectors';
 
 @Component({
     standalone: true,
-    imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+    imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatCheckboxModule],
     templateUrl: './list.component.html',
     styleUrl: './list.component.css'
 })
@@ -23,6 +24,7 @@ export class ListComponent {
 
     editing = false;
     editName = '';
+    editExcludeFromAll = false;
 
     allTopics = this.store.selectSignal(selectAllTopics);
     lists = this.store.selectSignal(selectAllLists);
@@ -111,6 +113,7 @@ export class ListComponent {
         const l = this.currentList();
         this.editing = true;
         this.editName = l?.name || '';
+        this.editExcludeFromAll = l?.excludeFromAll || false;
     }
 
     async saveEdit() {
@@ -119,7 +122,10 @@ export class ListComponent {
         const value = (this.editName || '').trim();
         if (value && value !== l.name) {
             const { updateList } = await import('../../store/lists/list.actions');
-            this.store.dispatch(updateList({ id: l.id, changes: { name: value } }));
+            this.store.dispatch(updateList({ id: l.id, changes: { name: value, excludeFromAll: this.editExcludeFromAll } }));
+        } else if (this.editExcludeFromAll !== (l.excludeFromAll || false)) {
+            const { updateList } = await import('../../store/lists/list.actions');
+            this.store.dispatch(updateList({ id: l.id, changes: { excludeFromAll: this.editExcludeFromAll } }));
         }
         this.editing = false;
     }
@@ -127,6 +133,7 @@ export class ListComponent {
     cancelEdit() {
         this.editing = false;
         this.editName = '';
+        this.editExcludeFromAll = false;
     }
 
     onSectionClick() {

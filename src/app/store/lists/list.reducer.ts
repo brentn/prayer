@@ -8,6 +8,7 @@ export interface ListEntity {
     id: number;
     name: string;
     topicIds: number[];
+    excludeFromAll?: boolean;
 }
 
 export type ListsState = EntityState<ListEntity>;

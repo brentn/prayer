@@ -2,7 +2,7 @@
     <div class="cards">
         @for (list of lists(); track list.id) {
             <div class="card" (click)="openList(list.id)" role="button" tabindex="0">
-                <div class="card-title">{{ list.name }}</div>
+                <div class="card-title" [class.italic]="list.excludeFromAll">{{ list.name }}</div>
                 <div class="badge" title="Topics">{{ list.topicIds.length || 0 }}</div>
             </div>
         }

@@ -4,11 +4,13 @@ export class List {
     id: number;
     name: string;
     topicIds: number[];
+    excludeFromAll?: boolean;
 
     constructor(context: Partial<List>) {
         if (!context.name) { throw new Error('Empty Context') }
         this.id = context.id ?? NEW_CONTEXT_ID;
         this.name = context.name;
         this.topicIds = context.topicIds ?? [];
+        this.excludeFromAll = context.excludeFromAll ?? false;
     }
 }

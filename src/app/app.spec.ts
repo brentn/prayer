@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideStore } from '@ngrx/store';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
 import { listsReducer } from './store/lists/list.reducer';
 import { topicsReducer } from './store/topics/topic.reducer';
 import { requestsReducer } from './store/requests/request.reducer';
@@ -12,6 +14,7 @@ describe('App', () => {
             imports: [App],
             providers: [
                 provideNoopAnimations(),
+                provideRouter(routes),
                 provideStore({
                     lists: listsReducer,
                     topics: topicsReducer,

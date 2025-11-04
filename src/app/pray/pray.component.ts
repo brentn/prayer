@@ -55,6 +55,16 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         if (lid) {
             const list = this.lists().find(l => l.id === lid);
             scopedTopicIds = list?.topicIds || [];
+        } else {
+            // When praying for all lists, exclude topics from lists marked as excludeFromAll
+            const excludedListIds = new Set(this.lists().filter(l => l.excludeFromAll).map(l => l.id));
+            scopedTopicIds = allTopics
+                .filter(t => {
+                    // Find which list this topic belongs to
+                    const topicList = this.lists().find(l => (l.topicIds || []).includes(t.id));
+                    return topicList && !excludedListIds.has(topicList.id);
+                })
+                .map(t => t.id);
         }
 
         // Build a set of scoped topics
@@ -117,6 +127,16 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         if (lid) {
             const list = this.lists().find(l => l.id === lid);
             scopedTopicIds = list?.topicIds || [];
+        } else {
+            // When praying for all lists, exclude topics from lists marked as excludeFromAll
+            const excludedListIds = new Set(this.lists().filter(l => l.excludeFromAll).map(l => l.id));
+            scopedTopicIds = allTopics
+                .filter(t => {
+                    // Find which list this topic belongs to
+                    const topicList = this.lists().find(l => (l.topicIds || []).includes(t.id));
+                    return topicList && !excludedListIds.has(topicList.id);
+                })
+                .map(t => t.id);
         }
         const topicSet = new Set(scopedTopicIds ?? allTopics.map(t => t.id));
         const scopedTopics = allTopics.filter(t => topicSet.has(t.id));

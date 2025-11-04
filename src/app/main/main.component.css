@@ -99,6 +99,10 @@ section {
     color: var(--md-sys-color-on-primary);
 }
 
+.card-title.italic {
+    font-style: italic;
+}
+
 .badge {
     padding: 2px 8px;
     border-radius: 999px;
