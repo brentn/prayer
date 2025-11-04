@@ -55,9 +55,16 @@ export class App implements OnInit {
         });
     }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         // Initialize auto-renew
         this.wake.initAutoRenew();
+
+        // Create default "My Family" list if no lists exist
+        const currentLists = this.lists();
+        if (currentLists.length === 0) {
+            const { addList } = await import('./store/lists/list.actions');
+            this.store.dispatch(addList({ name: 'My Family' }));
+        }
     }
     private store = inject(Store);
     lists = this.store.selectSignal(selectAllLists);
