@@ -23,8 +23,10 @@
                         <div class="controls">
                             @if (maxAnswered > 0) {
                                 <div class="control">
-                                    <div class="label">Start session with answered prayer</div>
-                                    <div class="value">{{ formatAnsweredLabel() }}</div>
+                                    <div class="label-value-row">
+                                        <div class="label">Start with answered requests</div>
+                                        <div class="value">{{ formatAnsweredLabel() }}</div>
+                                    </div>
                                     <mat-slider [min]="0" [max]="maxAnswered" [step]="1" [showTickMarks]="true">
                                         <input matSliderThumb [(ngModel)]="answeredValueModel"
                                             (ngModelChange)="onAnsweredChange($event)"
@@ -33,8 +35,10 @@
                                 </div>
                             }
                             <div class="control">
-                                <div class="label">Number of items</div>
-                                <div class="value">{{ formatCountLabel() }}</div>
+                                <div class="label-value-row">
+                                    <div class="label">Number of requests</div>
+                                    <div class="value">{{ formatCountLabel() }}</div>
+                                </div>
                                 <mat-slider [min]="1" [max]="safeMaxSelectable" [step]="1" [showTickMarks]="true">
                                     <input matSliderThumb [(ngModel)]="selectCountModel"
                                         (ngModelChange)="onSelectCountChange($event)"
@@ -42,8 +46,10 @@
                                 </mat-slider>
                             </div>
                             <div class="control">
-                                <div class="label">Time limit</div>
-                                <div class="value">{{ formatTimeLabel() }}</div>
+                                <div class="label-value-row">
+                                    <div class="label">Time limit</div>
+                                    <div class="value">{{ formatTimeLabel() }}</div>
+                                </div>
                                 <mat-slider [min]="1" [max]="61" [step]="1" [showTickMarks]="true">
                                     <input matSliderThumb [(ngModel)]="timeValueModel"
                                         (ngModelChange)="onTimeChange($event)" (pointerdown)="$event.stopPropagation()"

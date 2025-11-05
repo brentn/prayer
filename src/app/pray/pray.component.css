@@ -107,6 +107,7 @@ section {
 
 .settings-slide mat-slider {
     width: 100%;
+    margin: 0;
     touch-action: none;
 }
 
@@ -127,15 +128,34 @@ section {
     margin: 8px 0;
 }
 
+.control {
+    display: flex;
+    flex-direction: column;
+    /* gap: 8px; */
+}
+
+.control .label-value-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
 .control .label {
     font-size: .9rem;
     color: rgba(255, 245, 235, 0.85);
+    flex: 1;
 }
 
 .control .value {
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.96);
-    margin-bottom: 6px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.control mat-slider {
+    width: 100%;
 }
 
 .hint {
