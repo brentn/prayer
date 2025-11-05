@@ -1,5 +1,5 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { trigger, transition, style, animate, query, group } from '@angular/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +9,7 @@ import { selectAllLists } from './store/lists/list.selectors';
 import { WakeLockService } from './shared/services/wake-lock.service';
 import { SettingsService } from './shared/services/settings.service';
 import { PrayTabComponent } from './shared/components/pray-tab/pray-tab.component';
+import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'app-root',
@@ -46,18 +47,37 @@ export class App implements OnInit {
     private wake = inject(WakeLockService);
     private settings = inject(SettingsService);
 
+    // Track current URL for wake lock logic
+    currentUrl = signal<string>('');
+
     constructor() {
-        // React to keepAwake setting changes
+        // React to keepAwake setting and route changes
         effect(() => {
             const enabled = this.settings.keepAwake();
-            if (enabled) this.wake.request();
-            else this.wake.release();
+            const url = this.currentUrl();
+            const isOnPrayPage = url.startsWith('/pray');
+
+            if (enabled && isOnPrayPage) {
+                this.wake.request();
+            } else {
+                this.wake.release();
+            }
         });
     }
 
     async ngOnInit(): Promise<void> {
         // Initialize auto-renew
         this.wake.initAutoRenew();
+
+        // Track URL changes for wake lock logic
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd)
+        ).subscribe((event: NavigationEnd) => {
+            this.currentUrl.set(event.url);
+        });
+
+        // Set initial URL
+        this.currentUrl.set(this.router.url);
 
         // Create default "My Family" list if no lists exist
         const currentLists = this.lists();
