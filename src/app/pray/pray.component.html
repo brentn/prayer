@@ -70,7 +70,8 @@
                                     [topicName]="item.topicName" [createdDate]="item.createdDate"
                                     [prayerCount]="item.prayerCount" [priority]="item.priority"
                                     [isAnswered]="item.isAnswered || false" [answeredDate]="item.answeredDate"
-                                    [answerDescription]="item.answerDescription"></app-prayer-card>
+                                    [answerDescription]="item.answerDescription"
+                                    (answered)="onRequestAnswered(item.id, $event)"></app-prayer-card>
                             } @else {
                                 <app-prayer-card icon="label" [title]="item.name"
                                     [listName]="'from ' + item.listName"></app-prayer-card>

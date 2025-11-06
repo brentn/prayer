@@ -515,6 +515,16 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         return Math.min(idx, this.totalSlides);
     }
 
+    onRequestAnswered(requestId: number, event: { answerDescription: string }) {
+        this.store.dispatch(updateRequest({
+            id: requestId,
+            changes: {
+                answeredDate: new Date().toISOString(),
+                answerDescription: event.answerDescription
+            }
+        }));
+    }
+
     onClose() {
         // In overlay (fullscreen) mode, emit close event; otherwise navigate home
         if (this.fullScreen) { this.close.emit(); return; }

@@ -1,15 +1,40 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @Component({
     standalone: true,
     selector: 'app-prayer-card',
-    imports: [CommonModule, MatIconModule],
+    imports: [CommonModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule, TextFieldModule],
     templateUrl: './prayer-card.component.html',
-    styleUrl: './prayer-card.component.css'
+    styleUrl: './prayer-card.component.css',
+    animations: [
+        trigger('slideInOut', [
+            state('in', style({ height: '*', opacity: 1, transform: 'translateY(0)' })),
+            transition('void => *', [
+                style({ height: 0, opacity: 0, transform: 'translateY(-10px)' }),
+                animate('400ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+            ]),
+            transition('* => void', [
+                animate('300ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+                    style({ height: 0, opacity: 0, transform: 'translateY(-10px)' }))
+            ])
+        ]),
+        trigger('answerFadeIn', [
+            transition('void => *', [
+                style({ opacity: 0, transform: 'translateY(-10px)' }),
+                animate('350ms 200ms cubic-bezier(0.4, 0.0, 0.2, 1)') // Start after form begins closing
+            ])
+        ])
+    ]
 })
-export class PrayerCardComponent {
+export class PrayerCardComponent implements OnChanges {
     @Input() icon: string = 'favorite';
     @Input() title: string = '';
     @Input() subtitle?: string;
@@ -21,6 +46,45 @@ export class PrayerCardComponent {
     @Input() isAnswered: boolean = false;
     @Input() answeredDate?: string;
     @Input() answerDescription?: string;
+
+    @Output() answered = new EventEmitter<{ answerDescription: string }>();
+
+    showAnswerForm = false;
+    answerText = '';
+    localIsAnswered = false;
+    localAnswerDescription = '';
+
+    ngOnChanges(changes: SimpleChanges) {
+        // When the authoritative answerDescription is updated from props, clear local state
+        if (changes['answerDescription'] && changes['answerDescription'].currentValue) {
+            this.localIsAnswered = false;
+            this.localAnswerDescription = '';
+        }
+        if (changes['isAnswered'] && changes['isAnswered'].currentValue) {
+            this.localIsAnswered = false;
+            this.localAnswerDescription = '';
+        }
+    }
+
+    onAnsweredClick() {
+        this.showAnswerForm = true;
+    }
+
+    onAnswerSubmit() {
+        if (this.answerText.trim()) {
+            const trimmedAnswer = this.answerText.trim();
+            this.answered.emit({ answerDescription: trimmedAnswer });
+            this.localIsAnswered = true;
+            this.localAnswerDescription = trimmedAnswer;
+            this.showAnswerForm = false;
+            this.answerText = '';
+        }
+    }
+
+    onAnswerCancel() {
+        this.showAnswerForm = false;
+        this.answerText = '';
+    }
 
     getPriorityClass(): string {
         if (!this.priority || this.priority <= 1) return '';

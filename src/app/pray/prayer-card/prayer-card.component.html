@@ -1,4 +1,9 @@
-<div class="card" [class.answered]="isAnswered">
+<div class="card" [class.answered]="isAnswered || localIsAnswered">
+    @if (!(isAnswered || localIsAnswered) && !showAnswerForm) {
+        <button mat-button class="answer-tab" (click)="onAnsweredClick()" title="Mark as Answered">
+            record answer
+        </button>
+    }
     <div class="card-header">
         <div>
             @if (priority && priority > 1) {
@@ -6,7 +11,7 @@
             }
         </div>
         <div class="header-right">
-            @if (isAnswered) {
+            @if (isAnswered || localIsAnswered) {
                 <div class="answered-info">
                     <div class="answered-summary">{{ getAnsweredSummary() }}</div>
                     <div class="answered-date">{{ getAnsweredDateText() }}</div>
@@ -27,9 +32,22 @@
             <div class="card-topic">{{topicName}}:</div>
         }
         <div class="card-title">{{ title }}</div>
-        @if (isAnswered && answerDescription) {
-            <div class="answer-description-box">
-                {{ answerDescription }}
+        @if ((isAnswered || localIsAnswered) && (answerDescription || localAnswerDescription)) {
+            <div class="answer-description-box" [@answerFadeIn]>
+                {{ answerDescription || localAnswerDescription }}
+            </div>
+        }
+        @if (showAnswerForm) {
+            <div class="answer-form" [@slideInOut]>
+                <button mat-icon-button class="cancel-x" (click)="onAnswerCancel()" title="Cancel">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <mat-form-field appearance="outline" class="answer-textarea">
+                    <mat-label>How was this request answered?</mat-label>
+                    <textarea matInput [(ngModel)]="answerText" (blur)="onAnswerSubmit()" rows="4"
+                        placeholder="Describe the answer..." cdkTextareaAutosize cdkAutosizeMinRows="3"
+                        cdkAutosizeMaxRows="6"></textarea>
+                </mat-form-field>
             </div>
         }
     </div>
