@@ -234,17 +234,19 @@ section {
     left: 0;
     right: 0;
     bottom: 0;
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    align-items: center;
-    gap: 12px;
-    padding: 20px 18px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    /* Reduced gap between progress bars */
+    padding: 12px 18px 18px;
     background: rgba(20, 15, 12, 0.85);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px 16px 0 0;
     transform: translateY(100%);
     opacity: 0;
     transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .pray-footer.visible {
@@ -252,26 +254,25 @@ section {
     opacity: 1;
 }
 
-.footer-left .timer {
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.96);
-    margin-right: 6px;
+.progress-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.footer-left .timer-label {
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.footer-right mat-progress-bar {
-    height: 6px;
-    border-radius: 999px;
-}
-
-.footer-right .progress-label {
-    text-align: right;
+.progress-section .progress-label {
     font-size: .9rem;
     color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 6px;
+    white-space: nowrap;
+    width: 60px;
+    /* Fixed width to ensure equal progress bar lengths */
+    flex-shrink: 0;
+}
+
+.progress-section mat-progress-bar {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
 }
 
 .sub {

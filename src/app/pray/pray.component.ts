@@ -149,6 +149,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         if ((this.lastIds !== ids || this.lastShuffle !== shuffle) && !this.sessionStarted()) {
             this.lastIds = ids;
             this.lastShuffle = shuffle;
+            this.countdownStarted.set(false); // Reset countdown flag for new session
 
             if (shuffle) {
                 // Expand requests by priority, include topics as single items
@@ -300,6 +301,8 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
 
     // Countdown timer
     countdownSeconds = signal<number>(0);
+    initialCountdownSeconds = signal<number>(0);
+    countdownStarted = signal<boolean>(false);
     private countdownId?: any;
     private sessionCounted = new Set<number>();
     private viewTimerId?: any;
@@ -393,8 +396,11 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         if (clamped >= 1 && !this.sessionStarted()) {
             this.sessionStarted.set(true);
         }
-        // Start countdown when first request appears
-        if (clamped === 1) this.startCountdownIfNeeded();
+        // Start countdown when first request appears (only once per session)
+        if (clamped === 1 && !this.countdownStarted()) {
+            this.startCountdownIfNeeded();
+            this.countdownStarted.set(true);
+        }
         this.handleViewTimer();
     }
 
@@ -402,6 +408,7 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         if (this.unlimited) return;
         const total = this.timeMinutes * 60;
         this.countdownSeconds.set(total);
+        this.initialCountdownSeconds.set(total);
         if (this.countdownId) clearInterval(this.countdownId);
         this.countdownId = setInterval(() => {
             const next = this.countdownSeconds() - 1;
@@ -486,6 +493,15 @@ export class PrayComponent implements AfterViewInit, OnDestroy {
         const idx = this.currentIndex();
         if (idx < 1) return 0;
         return Math.min(100, Math.max(0, (idx / totalSlides) * 100));
+    }
+
+    timeProgressPercent(): number {
+        if (this.unlimited) return 0;
+        const initial = this.initialCountdownSeconds();
+        const current = this.countdownSeconds();
+        if (initial <= 0) return 0;
+        const elapsed = initial - current;
+        return Math.min(100, Math.max(0, (elapsed / initial) * 100));
     }
 
     formatRemaining(): string {
