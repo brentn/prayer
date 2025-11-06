@@ -31,6 +31,9 @@
         @for (topic of topics(); track topic.id) {
             <div class="card" (click)="openTopic(topic.id)" role="button" tabindex="0">
                 <div class="card-title">{{ topic.name }}</div>
+                @if (getRequestCount(topic.id) > 0) {
+                    <div class="badge" title="Requests">{{ getRequestCount(topic.id) }}</div>
+                }
             </div>
         }
         <!-- Add Topic appears as the last list item, semi-transparent -->

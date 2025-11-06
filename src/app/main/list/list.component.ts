@@ -9,6 +9,7 @@ import { selectAllTopics } from '../../store/topics/topic.selectors';
 import { addTopicWithId, removeTopic } from '../../store/topics/topic.actions';
 import { ActivatedRoute, Router } from '@angular/router';
 import { selectAllLists } from '../../store/lists/list.selectors';
+import { selectAllRequests } from '../../store/requests/request.selectors';
 
 @Component({
     standalone: true,
@@ -28,6 +29,7 @@ export class ListComponent {
 
     allTopics = this.store.selectSignal(selectAllTopics);
     lists = this.store.selectSignal(selectAllLists);
+    requests = this.store.selectSignal(selectAllRequests);
     listId = Number(this.route.snapshot.paramMap.get('id')) || undefined;
     currentList = computed(() => this.lists().find(l => l.id === this.listId));
     topics = computed(() => {
@@ -134,6 +136,11 @@ export class ListComponent {
         this.editing = false;
         this.editName = '';
         this.editExcludeFromAll = false;
+    }
+
+    getRequestCount(topicId: number): number {
+        const topic = this.allTopics().find(t => t.id === topicId);
+        return topic?.requestIds?.length || 0;
     }
 
     onSectionClick() {
