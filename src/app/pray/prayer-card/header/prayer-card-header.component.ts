@@ -27,6 +27,7 @@ export class PrayerCardHeaderComponent {
     @Input() answeredSummary = '';
     @Input() answeredDateText = '';
     @Input() showAnswerForm = false;
+    @Input() isTopic = false;
     @Input() onAnsweredClick!: () => void;
 
     getPriorityClass(): string {

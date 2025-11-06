@@ -1,4 +1,4 @@
-@if (!(isAnswered || localIsAnswered) && !showAnswerForm) {
+@if (!(isAnswered || localIsAnswered) && !showAnswerForm && !isTopic) {
     <button mat-button class="answer-tab" (click)="onAnsweredClick()" title="Mark as Answered">
         record answer
     </button>

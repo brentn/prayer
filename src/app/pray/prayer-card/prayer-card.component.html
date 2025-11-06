@@ -2,7 +2,7 @@
     <app-prayer-card-header [priority]="priority" [isAnswered]="isAnswered" [localIsAnswered]="localIsAnswered()"
         [prayerCount]="prayerCount" [createdDate]="createdDate" [answeredDate]="answeredDate"
         [answeredSummary]="answeredSummary()" [answeredDateText]="answeredDateText()"
-        [showAnswerForm]="showAnswerForm()" [onAnsweredClick]="onAnsweredClick.bind(this)">
+        [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName" [onAnsweredClick]="onAnsweredClick.bind(this)">
     </app-prayer-card-header>
     <app-prayer-card-content [icon]="icon" [title]="title" [topicName]="topicName" [isAnswered]="isAnswered"
         [localIsAnswered]="localIsAnswered()" [answerDescription]="answerDescription"
