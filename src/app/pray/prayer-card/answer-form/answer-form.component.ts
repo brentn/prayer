@@ -44,6 +44,7 @@ export class AnswerFormComponent {
     }
 
     onCancel() {
+        this.onAnswerCancel();
         this.showAnswerForm.set(false);
         this.answerText.set('');
     }

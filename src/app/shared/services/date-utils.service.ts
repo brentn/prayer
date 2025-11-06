@@ -8,7 +8,7 @@ export class DateUtilsService {
     getTimeSpan(start: Date, end: Date): string {
         const diffMs = end.getTime() - start.getTime();
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffMonths = Math.floor(diffDays / 30);
+        const diffMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
         const diffYears = Math.floor(diffDays / 365);
 
         if (diffYears > 0) {
