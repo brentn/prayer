@@ -1,19 +1,20 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, signal, computed, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { TextFieldModule } from '@angular/cdk/text-field';
+import { PrayerCardHeaderComponent } from './header/prayer-card-header.component';
+import { PrayerCardContentComponent } from './content/prayer-card-content.component';
+import { AnswerFormComponent } from './answer-form/answer-form.component';
+import { DateUtilsService } from '../../shared/services/date-utils.service';
 
 @Component({
     standalone: true,
     selector: 'app-prayer-card',
-    imports: [CommonModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule, TextFieldModule],
+    imports: [CommonModule, MatIconModule, MatButtonModule, PrayerCardHeaderComponent, PrayerCardContentComponent, AnswerFormComponent],
     templateUrl: './prayer-card.component.html',
     styleUrl: './prayer-card.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('slideInOut', [
             state('in', style({ height: '*', opacity: 1, transform: 'translateY(0)' })),
@@ -35,9 +36,10 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     ]
 })
 export class PrayerCardComponent implements OnChanges {
+    private dateUtils = inject(DateUtilsService);
+
     @Input() icon: string = 'favorite';
     @Input() title: string = '';
-    @Input() subtitle?: string;
     @Input() listName?: string;
     @Input() topicName?: string;
     @Input() createdDate?: string;
@@ -49,83 +51,40 @@ export class PrayerCardComponent implements OnChanges {
 
     @Output() answered = new EventEmitter<{ answerDescription: string }>();
 
-    showAnswerForm = false;
-    answerText = '';
-    localIsAnswered = false;
-    localAnswerDescription = '';
+    showAnswerForm = signal(false);
+    answerText = signal('');
+    localIsAnswered = signal(false);
+    localAnswerDescription = signal('');
+
+    answeredSummary = computed(() => this.dateUtils.formatAnsweredSummary(this.prayerCount, this.createdDate, this.answeredDate));
+    answeredDateText = computed(() => this.dateUtils.formatAnsweredDateText(this.isAnswered, this.answeredDate));
 
     ngOnChanges(changes: SimpleChanges) {
         // When the authoritative answerDescription is updated from props, clear local state
         if (changes['answerDescription'] && changes['answerDescription'].currentValue) {
-            this.localIsAnswered = false;
-            this.localAnswerDescription = '';
+            this.localIsAnswered.set(false);
+            this.localAnswerDescription.set('');
         }
         if (changes['isAnswered'] && changes['isAnswered'].currentValue) {
-            this.localIsAnswered = false;
-            this.localAnswerDescription = '';
+            this.localIsAnswered.set(false);
+            this.localAnswerDescription.set('');
         }
     }
 
     onAnsweredClick() {
-        this.showAnswerForm = true;
+        this.showAnswerForm.set(true);
     }
 
-    onAnswerSubmit() {
-        if (this.answerText.trim()) {
-            const trimmedAnswer = this.answerText.trim();
-            this.answered.emit({ answerDescription: trimmedAnswer });
-            this.localIsAnswered = true;
-            this.localAnswerDescription = trimmedAnswer;
-            this.showAnswerForm = false;
-            this.answerText = '';
-        }
+    onAnswerSubmit(text: string) {
+        this.answered.emit({ answerDescription: text });
+        this.localIsAnswered.set(true);
+        this.localAnswerDescription.set(text);
+        this.showAnswerForm.set(false);
+        this.answerText.set('');
     }
 
     onAnswerCancel() {
-        this.showAnswerForm = false;
-        this.answerText = '';
-    }
-
-    getPriorityClass(): string {
-        if (!this.priority || this.priority <= 1) return '';
-        if (this.priority === 2) return 'priority-2';
-        if (this.priority === 3) return 'priority-3';
-        if (this.priority === 4) return 'priority-4';
-        return 'priority-5';
-    }
-
-    getAnsweredSummary(): string {
-        if (!this.isAnswered || !this.prayerCount || !this.createdDate || !this.answeredDate) {
-            return '';
-        }
-
-        const created = new Date(this.createdDate);
-        const answered = new Date(this.answeredDate);
-        const timeSpan = this.getTimeSpan(created, answered);
-
-        const countText = this.prayerCount === 1 ? '1 time' : `${this.prayerCount} times`;
-        return `Prayed ${countText} over ${timeSpan}`;
-    }
-
-    getAnsweredDateText(): string {
-        if (!this.isAnswered || !this.answeredDate) return '';
-        return `Answered ${new Date(this.answeredDate).toLocaleDateString()}`;
-    }
-
-    private getTimeSpan(start: Date, end: Date): string {
-        const diffMs = end.getTime() - start.getTime();
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffMonths = Math.floor(diffDays / 30);
-        const diffYears = Math.floor(diffDays / 365);
-
-        if (diffYears > 0) {
-            return diffYears === 1 ? '1 year' : `${diffYears} years`;
-        } else if (diffMonths > 0) {
-            return diffMonths === 1 ? '1 month' : `${diffMonths} months`;
-        } else if (diffDays > 0) {
-            return diffDays === 1 ? '1 day' : `${diffDays} days`;
-        } else {
-            return 'less than a day';
-        }
+        this.showAnswerForm.set(false);
+        this.answerText.set('');
     }
 }

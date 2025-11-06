@@ -1,0 +1,12 @@
+<div class="card-content">
+    <mat-icon class="card-icon">{{ icon }}</mat-icon>
+    @if (topicName) {
+        <div class="card-topic">{{topicName}}:</div>
+    }
+    <div class="card-title">{{ title }}</div>
+    @if ((isAnswered || localIsAnswered) && (answerDescription || localAnswerDescription)) {
+        <div class="answer-description-box" [@answerFadeIn]>
+            {{ answerDescription || localAnswerDescription }}
+        </div>
+    }
+</div>

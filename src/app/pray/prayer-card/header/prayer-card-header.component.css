@@ -1,0 +1,95 @@
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.priority-badge {
+    background: #4caf50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.priority-badge.priority-2 {
+    background: #ffeb3b;
+    color: black;
+}
+
+.priority-badge.priority-3 {
+    background: #ff9800;
+    color: white;
+}
+
+.priority-badge.priority-4 {
+    background: #f44336;
+    color: white;
+}
+
+.priority-badge.priority-5 {
+    background: #9c27b0;
+    color: white;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.prayer-count-badge {
+    background: rgba(255, 193, 7, 0.9);
+    color: black;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.since-text {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+.answered-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    font-size: 0.75rem;
+}
+
+.answered-summary {
+    color: #8B4513;
+    font-weight: 500;
+}
+
+.answered-date {
+    color: #A0522D;
+    font-style: italic;
+}
+
+.answer-tab {
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: 2px solid #FFD700;
+    border-radius: 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 0px .6rem;
+    height: 2rem;
+    font-size: .8rem;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.answer-tab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.6);
+}
