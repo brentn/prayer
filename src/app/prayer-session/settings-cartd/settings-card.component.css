@@ -1,0 +1,49 @@
+.controls {
+    display: grid;
+    gap: 16px;
+    padding: 8px 12px;
+}
+
+.control {
+    display: flex;
+    flex-direction: column;
+}
+
+.control .label-value-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.control .label {
+    font-size: .9rem;
+    color: rgba(255, 245, 235, 0.85);
+    flex: 1;
+}
+
+.control .value {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.96);
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.control mat-slider {
+    width: 100%;
+}
+
+/* Improve slider visibility on dark background */
+mat-slider {
+    --mdc-slider-active-track-color: rgba(255, 255, 255, 0.95);
+    --mdc-slider-inactive-track-color: rgba(255, 255, 255, 0.32);
+    --mdc-slider-handle-color: rgba(255, 193, 7, 0.95);
+    --mdc-slider-focus-handle-color: rgba(255, 193, 7, 0.95);
+    --mdc-slider-hover-handle-color: rgba(255, 193, 7, 0.95);
+}
+
+.hint {
+    text-align: center;
+    opacity: .5;
+    margin: 16px 0 8px;
+}

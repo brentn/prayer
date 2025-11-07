@@ -1,0 +1,19 @@
+.progress-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-section .progress-label {
+    font-size: .9rem;
+    color: rgba(255, 255, 255, 0.8);
+    white-space: nowrap;
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.progress-section mat-progress-bar {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+}

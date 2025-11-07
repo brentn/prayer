@@ -1,0 +1,7 @@
+<div class="carousel-viewport" #carousel [style.height.px]="viewportHeight" (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)" (pointerup)="onPointerUp($event)" (pointerleave)="onPointerUp($event)"
+    (pointercancel)="onPointerUp($event)" [class.dragging]="isDragging">
+    <div class="carousel-track" #track [style.transform]="carouselTransform()" [class.dragging]="isDragging">
+        <ng-content></ng-content>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+.carousel-viewport {
+    --peek: 16px;
+    overflow: hidden;
+    width: 100%;
+    touch-action: pan-y;
+    cursor: grab;
+}
+
+.carousel-viewport.dragging {
+    cursor: grabbing;
+}
+
+.carousel-track {
+    display: flex;
+    flex-direction: row;
+    will-change: transform;
+    transition: transform 280ms ease;
+    gap: var(--gap, 12px);
+    height: calc(100% - 4rem);
+}
+
+.carousel-track.dragging {
+    transition: none;
+}

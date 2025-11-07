@@ -1,0 +1,17 @@
+@if (visible) {
+    @if (unlimited) {
+        <div class="progress-section">
+            <div class="progress-label">Progress</div>
+            <mat-progress-bar mode="determinate" [value]="progressPercent"></mat-progress-bar>
+        </div>
+    } @else {
+        <div class="progress-section">
+            <div class="progress-label">Time</div>
+            <mat-progress-bar mode="determinate" [value]="timeProgressPercent"></mat-progress-bar>
+        </div>
+        <div class="progress-section">
+            <div class="progress-label">Progress</div>
+            <mat-progress-bar mode="determinate" [value]="progressPercent"></mat-progress-bar>
+        </div>
+    }
+}

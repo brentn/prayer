@@ -1,0 +1,38 @@
+<div class="controls">
+    @if (maxAnswered() > 0) {
+        <div class="control">
+            <div class="label-value-row">
+                <div class="label">Start with answered requests</div>
+                <div class="value">{{ formatAnsweredLabel() }}</div>
+            </div>
+            <mat-slider [min]="0" [max]="maxAnswered()" [step]="1" [showTickMarks]="true">
+                <input matSliderThumb [(ngModel)]="answeredValueModel"
+                    (ngModelChange)="answeredValueChange.emit($event)"
+                    (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+            </mat-slider>
+        </div>
+    }
+    <div class="control">
+        <div class="label-value-row">
+            <div class="label">Number of requests</div>
+            <div class="value">{{ formatCountLabel() }}</div>
+        </div>
+        <mat-slider [min]="1" [max]="safeMaxSelectable()" [step]="1" [showTickMarks]="true">
+            <input matSliderThumb [(ngModel)]="selectCountModel"
+                (ngModelChange)="selectCountChange.emit($event)"
+                (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+        </mat-slider>
+    </div>
+    <div class="control">
+        <div class="label-value-row">
+            <div class="label">Time limit</div>
+            <div class="value">{{ formatTimeLabel() }}</div>
+        </div>
+        <mat-slider [min]="1" [max]="61" [step]="1" [showTickMarks]="true">
+            <input matSliderThumb [(ngModel)]="timeValueModel"
+                (ngModelChange)="timeChange.emit($event)" (pointerdown)="$event.stopPropagation()"
+                (click)="$event.stopPropagation()">
+        </mat-slider>
+    </div>
+</div>
+<div class="hint">Swipe left to begin</div>
