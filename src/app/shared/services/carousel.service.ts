@@ -81,7 +81,7 @@ export class CarouselService {
             this.stepSize.set(step);
 
             const headerH = 0; // Will be calculated by component
-            const footerH = 0; // Will be calculated by component
+            const footerH = 100; // Always reserve space for footer (approximate height)
             const viewH = Math.max(200, window.innerHeight - headerH - footerH - 24);
             this.viewportHeight.set(viewH);
         };
