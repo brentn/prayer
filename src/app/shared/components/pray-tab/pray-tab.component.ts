@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { PrayComponent } from '../../../pray/pray.component';
+import { PrayerSessionComponent } from '../../../prayer-session/prayer-session.component';
 
 @Component({
     standalone: true,
     selector: 'app-pray-tab',
-    imports: [CommonModule, MatButtonModule, MatIconModule, PrayComponent],
+    imports: [CommonModule, MatButtonModule, MatIconModule, PrayerSessionComponent],
     templateUrl: './pray-tab.component.html',
     styleUrl: './pray-tab.component.css',
     animations: [

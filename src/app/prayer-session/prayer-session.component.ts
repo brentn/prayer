@@ -21,13 +21,13 @@ type ItemVm = { kind: 'request', id: number, description: string, listName?: str
 
 @Component({
     standalone: true,
-    selector: 'app-pray',
+    selector: 'app-prayer-session',
     imports: [CommonModule, FormsModule, MatListModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressBarModule, PrayerCardComponent],
-    templateUrl: './pray.component.html',
-    styleUrl: './pray.component.css',
+    templateUrl: './prayer-session.component.html',
+    styleUrl: './prayer-session.component.css',
     host: { '[class.fullscreen]': 'fullScreen' }
 })
-export class PrayComponent implements AfterViewInit, OnDestroy {
+export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private store = inject(Store);
     private route = inject(ActivatedRoute);
     private router = inject(Router);

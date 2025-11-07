@@ -8,12 +8,12 @@ export const routes: Routes = [
     },
     {
         path: 'pray',
-        loadComponent: () => import('./pray/pray.component').then(m => m.PrayComponent),
+        loadComponent: () => import('./prayer-session/prayer-session.component').then(m => m.PrayerSessionComponent),
         data: { depth: 'none' }
     },
     {
         path: 'pray/:listId',
-        loadComponent: () => import('./pray/pray.component').then(m => m.PrayComponent),
+        loadComponent: () => import('./prayer-session/prayer-session.component').then(m => m.PrayerSessionComponent),
         data: { depth: 'none' }
     },
     {
