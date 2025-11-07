@@ -316,17 +316,15 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             const trackEl = this.track?.nativeElement;
             const slides = trackEl?.querySelectorAll<HTMLElement>('.slide') || [] as any;
             let slideW = w;
-            let step = w;
+            let step = Math.min(w, 880); // Match prayer card max-width for visual step size
             if (slides && (slides as any).length) {
                 const rect0 = (slides as any)[0].getBoundingClientRect();
                 slideW = rect0.width || w;
                 if ((slides as any).length >= 2) {
                     const rect1 = (slides as any)[1].getBoundingClientRect();
-                    step = Math.abs(rect1.left - rect0.left) || (slideW);
+                    step = Math.abs(rect1.left - rect0.left) || step;
                 } else {
-                    const styles = trackEl ? getComputedStyle(trackEl) : undefined;
-                    const gap = styles ? parseFloat((styles as any).columnGap || (styles as any).gap || '0') : this.slideGap;
-                    step = slideW + (isNaN(gap) ? 0 : gap);
+                    step = slideW;
                 }
             }
             this.slideWidth.set(slideW);
