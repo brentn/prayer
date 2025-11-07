@@ -14,10 +14,11 @@ import { selectAllLists } from '../store/lists/list.selectors';
 import { SettingsService } from '../shared/services/settings.service';
 import { updateRequest } from '../store/requests/request.actions';
 import { PrayerCardComponent } from './prayer-card/prayer-card.component';
+import { TimerService } from '../shared/services/timer.service';
+import { CarouselService } from '../shared/services/carousel.service';
+import { PrayerSessionItem } from '../shared/models/prayer-session.interface';
 
 const REGISTER_SECONDS = 12; // seconds of viewing a request card to register a prayer
-
-type ItemVm = { kind: 'request', id: number, description: string, listName?: string, topicName?: string, createdDate?: string, prayerCount?: number, priority?: number, isAnswered?: boolean, answeredDate?: string, answerDescription?: string } | { kind: 'topic', id: number, name: string, listName?: string };
 
 @Component({
     standalone: true,
@@ -32,6 +33,8 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     private settings = inject(SettingsService);
+    private timerService = inject(TimerService);
+    private carouselService = inject(CarouselService);
 
     @Input() listId?: number;
     @Input() fullScreen = false;
@@ -97,7 +100,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             score: (Number(r.priority) || 1) * 10 - (Number(r.prayerCount) || 0),
         }));
         scored.sort((a, b) => b.score - a.score);
-        const items: ItemVm[] = [];
+        const items: PrayerSessionItem[] = [];
         for (const { r } of scored) {
             const ownerTopic = scopedTopics.find(t => (t.requestIds || []).includes(r.id));
             const ownerList = this.lists().find(l => ownerTopic && (l.topicIds || []).includes(ownerTopic.id));
@@ -112,7 +115,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     });
 
     // Shuffled or sorted items, fixed for the session
-    shuffledItems = signal<ItemVm[]>([]);
+    shuffledItems = signal<PrayerSessionItem[]>([]);
     private lastIds = '';
     private lastShuffle = false;
     private sessionStarted = signal(false);
@@ -149,11 +152,11 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         if ((this.lastIds !== ids || this.lastShuffle !== shuffle) && !this.sessionStarted()) {
             this.lastIds = ids;
             this.lastShuffle = shuffle;
-            this.countdownStarted.set(false); // Reset countdown flag for new session
+            this.timerService.getCountdownStarted().set(false); // Reset countdown flag for new session
 
             if (shuffle) {
                 // Expand requests by priority, include topics as single items
-                const weighted: ItemVm[] = [];
+                const weighted: PrayerSessionItem[] = [];
                 for (const r of scopedRequests) {
                     const ownerTopic = scopedTopics.find(t => (t.requestIds || []).includes(r.id));
                     const ownerList = this.lists().find(l => ownerTopic && (l.topicIds || []).includes(ownerTopic.id));
@@ -175,7 +178,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
                 // Deduplicate by request id (keep first occurrence), topics are unique
                 const seenReq = new Set<number>();
-                const deduped: ItemVm[] = [];
+                const deduped: PrayerSessionItem[] = [];
                 for (const item of weighted) {
                     if (item.kind === 'topic') { deduped.push(item); continue; }
                     if (!seenReq.has(item.id)) {
@@ -210,18 +213,14 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     @ViewChild('track', { static: false }) track?: ElementRef<HTMLDivElement>;
     @ViewChild('bar', { static: false }) bar?: ElementRef<HTMLElement>;
     @ViewChild('footer', { static: false }) footer?: ElementRef<HTMLElement>;
-    currentIndex = signal(0); // 0 = settings slide; >=1 means items
+    currentIndex = this.carouselService.getCurrentIndex();
     private scrollDebounceId?: any;
-    isDragging = false;
-    private startX = 0;
-    private measureRef?: () => void;
-    deltaX = signal(0);
-    containerWidth = signal(0);
-    slideWidth = signal(0);
-    private readonly peek = 16; // pixels to show next/prev card edges
-    private readonly slideGap = 12; // space between slides in px
-    stepSize = signal(0); // measured slide width + gap in px
-    viewportHeight = signal(0);
+    isDragging = this.carouselService.getIsDragging();
+    deltaX = this.carouselService.getDeltaX();
+    containerWidth = this.carouselService.getContainerWidth();
+    slideWidth = this.carouselService.getSlideWidth();
+    stepSize = this.carouselService.getStepSize();
+    viewportHeight = this.carouselService.getViewportHeight();
 
     // Selection sliders
     get maxSelectable(): number { return this.items().length; }
@@ -246,7 +245,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     selectedItems = computed(() => {
         const all = this.items();
         const count = this.selectCount();
-        let selected: ItemVm[] = [];
+        let selected: PrayerSessionItem[] = [];
         if (!all || all.length === 0) return selected;
 
         // Prepend answered requests if any
@@ -256,7 +255,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             // Shuffle and take the first answeredCount
             const shuffledAnswered = [...answeredReqs].sort(() => Math.random() - 0.5).slice(0, answeredCount);
             // Convert to ItemVm
-            const answeredItems: ItemVm[] = shuffledAnswered.map(r => {
+            const answeredItems: PrayerSessionItem[] = shuffledAnswered.map(r => {
                 const ownerTopic = this.topics().find(t => (t.requestIds || []).includes(r.id));
                 const ownerList = this.lists().find(l => ownerTopic && (l.topicIds || []).includes(ownerTopic.id));
                 return {
@@ -300,144 +299,83 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     });
 
     // Countdown timer
-    countdownSeconds = signal<number>(0);
-    initialCountdownSeconds = signal<number>(0);
-    countdownStarted = signal<boolean>(false);
-    private countdownId?: any;
+    countdownSeconds = this.timerService.getCountdownSeconds();
+    initialCountdownSeconds = this.timerService.getInitialCountdownSeconds();
     private sessionCounted = new Set<number>();
-    private viewTimerId?: any;
 
     ngAfterViewInit(): void {
-        const measure = () => {
-            const vp = this.carousel?.nativeElement;
-            const w = vp?.clientWidth || window.innerWidth;
-            this.containerWidth.set(w);
+        if (this.carousel && this.track) {
+            this.carouselService.initialize(this.carousel, this.track, { items: this.selectedItems() });
+        }
 
-            const trackEl = this.track?.nativeElement;
-            const slides = trackEl?.querySelectorAll<HTMLElement>('.slide') || [] as any;
-            let slideW = w;
-            let step = Math.min(w, 880); // Match prayer card max-width for visual step size
-            if (slides && (slides as any).length) {
-                const rect0 = (slides as any)[0].getBoundingClientRect();
-                slideW = rect0.width || w;
-                if ((slides as any).length >= 2) {
-                    const rect1 = (slides as any)[1].getBoundingClientRect();
-                    step = Math.abs(rect1.left - rect0.left) || step;
-                } else {
-                    step = slideW;
-                }
-            }
-            this.slideWidth.set(slideW);
-            this.stepSize.set(step);
-
-            const headerH = this.bar?.nativeElement?.offsetHeight || 0;
-            const footerH = this.footer?.nativeElement?.offsetHeight || 0;
-            // section vertical padding approx 24px; leave a small margin
-            const viewH = Math.max(200, window.innerHeight - headerH - footerH - 24);
-            this.viewportHeight.set(viewH);
-        };
-        this.measureRef = measure;
-        measure();
-        // Re-measure on next frame to capture final layout (avoids early partial widths)
-        requestAnimationFrame(() => measure());
-        window.addEventListener('resize', measure);
         // Re-measure when the number of slides changes
         effect(() => {
             const _ = this.selectedItems().length;
-            setTimeout(() => measure(), 0);
+            setTimeout(() => {
+                if (this.carousel && this.track) {
+                    this.carouselService.initialize(this.carousel, this.track, { items: this.selectedItems() });
+                }
+            }, 0);
         });
     }
 
     ngOnDestroy(): void {
-        if (this.measureRef) window.removeEventListener('resize', this.measureRef);
-        if (this.countdownId) clearInterval(this.countdownId);
-        if (this.scrollDebounceId) clearTimeout(this.scrollDebounceId);
-        if (this.viewTimerId) clearTimeout(this.viewTimerId);
+        this.carouselService.destroy();
+        this.timerService.destroy();
     }
 
     onPointerDown(ev: PointerEvent) {
-        // Don't start swipe when interacting with a slider
-        const target = ev.target as HTMLElement;
-        if (target.closest('mat-slider')) return;
-        this.isDragging = true;
-        this.startX = ev.clientX;
-        this.deltaX.set(0);
-        // avoid pointer capture to let inner controls work naturally
+        this.carouselService.onPointerDown(ev);
     }
 
     onPointerMove(ev: PointerEvent) {
-        if (!this.isDragging) return;
-        const dx = ev.clientX - this.startX;
-        this.deltaX.set(dx);
+        this.carouselService.onPointerMove(ev);
     }
 
     onPointerUp(ev: PointerEvent) {
-        if (!this.isDragging) return;
-        this.isDragging = false;
-        const dx = this.deltaX();
-        const w = this.slideWidth() || this.containerWidth() || 1;
-        const threshold = Math.max(60, w * 0.15);
-        let next = this.currentIndex();
-        if (dx <= -threshold) next += 1;
-        else if (dx >= threshold) next -= 1;
-        const max = this.selectedItems().length; // last slide index == number of items
-        next = Math.max(0, Math.min(next, max));
-        this.deltaX.set(0);
-        this.setIndex(next);
+        const maxIndex = this.selectedItems().length;
+        const newIndex = this.carouselService.onPointerUp(ev, maxIndex);
+        this.setIndex(newIndex);
     }
 
     setIndex(idx: number) {
         const clamped = Math.max(0, Math.min(idx, this.selectedItems().length)); // length because 0 is settings, items start at 1
-        if (clamped === this.currentIndex()) return;
-        this.currentIndex.set(clamped);
+        this.carouselService.setIndex(clamped);
         // Mark session as started when user begins praying
         if (clamped >= 1 && !this.sessionStarted()) {
             this.sessionStarted.set(true);
         }
         // Start countdown when first request appears (only once per session)
-        if (clamped === 1 && !this.countdownStarted()) {
+        if (clamped === 1 && !this.timerService.getCountdownStarted()()) {
             this.startCountdownIfNeeded();
-            this.countdownStarted.set(true);
         }
         this.handleViewTimer();
     }
 
     private startCountdownIfNeeded() {
-        if (this.unlimited) return;
-        const total = this.timeMinutes * 60;
-        this.countdownSeconds.set(total);
-        this.initialCountdownSeconds.set(total);
-        if (this.countdownId) clearInterval(this.countdownId);
-        this.countdownId = setInterval(() => {
-            const next = this.countdownSeconds() - 1;
-            this.countdownSeconds.set(Math.max(0, next));
-            if (next <= 0 && this.countdownId) {
-                clearInterval(this.countdownId);
-                this.countdownId = undefined;
-            }
-        }, 1000);
+        this.timerService.startCountdown({ timeMinutes: this.timeMinutes, unlimited: this.unlimited });
     }
 
     private handleViewTimer() {
-        if (this.viewTimerId) { clearTimeout(this.viewTimerId); this.viewTimerId = undefined; }
         const idx = this.currentIndex();
-        if (idx < 1) return; // not on a request card
+        if (idx < 1) return;
         const item = this.selectedItems()[idx - 1];
         if (!item || item.kind !== 'request' || item.isAnswered) return;
         if (this.sessionCounted.has(item.id)) return;
-        const startId = item.id;
-        const startIndex = idx;
-        this.viewTimerId = setTimeout(() => {
-            // still on the same card?
-            const curIdx = this.currentIndex();
-            const curItem = this.selectedItems()[curIdx - 1];
-            if (curIdx === startIndex && curItem && curItem.kind === 'request' && curItem.id === startId) {
-                // Increment once per session
-                this.sessionCounted.add(startId);
-                const newCount = (curItem.prayerCount || 0) + 1;
-                this.store.dispatch(updateRequest({ id: startId, changes: { prayerCount: newCount } }));
+
+        this.timerService.startViewTimer(
+            item.id,
+            idx,
+            this.selectedItems(),
+            REGISTER_SECONDS,
+            (itemId: number) => {
+                const currentItem = this.selectedItems().find(i => i.kind === 'request' && i.id === itemId);
+                if (currentItem && currentItem.kind === 'request') {
+                    const newCount = (currentItem.prayerCount || 0) + 1;
+                    this.store.dispatch(updateRequest({ id: itemId, changes: { prayerCount: newCount } }));
+                }
             }
-        }, 1000 * REGISTER_SECONDS);
+        );
     }
 
     onSelectCountChange(val: number) {
@@ -486,47 +424,27 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     }
 
     progressPercent(): number {
-        const totalSlides = this.selectedItems().length;
-        if (totalSlides <= 0) return 0;
-        const idx = this.currentIndex();
-        if (idx < 1) return 0;
-        return Math.min(100, Math.max(0, (idx / totalSlides) * 100));
+        return this.carouselService.getProgressPercent(this.selectedItems());
     }
 
     timeProgressPercent(): number {
-        if (this.unlimited) return 0;
-        const initial = this.initialCountdownSeconds();
-        const current = this.countdownSeconds();
-        if (initial <= 0) return 0;
-        const elapsed = initial - current;
-        return Math.min(100, Math.max(0, (elapsed / initial) * 100));
+        return this.timerService.getTimeProgressPercent();
     }
 
     formatRemaining(): string {
-        if (this.unlimited) return 'Unlimited';
-        const total = this.countdownSeconds();
-        if (total >= 60) {
-            const m = Math.ceil(total / 60);
-            return `${m} min`;
-        } else {
-            return `${total} sec`;
-        }
+        return this.timerService.formatRemaining();
     }
 
     carouselTransform(): string {
-        const step = this.stepSize() || this.containerWidth();
-        const offset = -this.currentIndex() * step + this.deltaX();
-        return `translateX(${offset}px)`;
+        return this.carouselService.getCarouselTransform();
     }
 
     get totalSlides(): number {
-        return this.selectedItems().length;
+        return this.carouselService.getTotalSlides(this.selectedItems());
     }
 
     get currentSlide(): number {
-        const idx = this.currentIndex();
-        if (idx < 1) return 0;
-        return Math.min(idx, this.totalSlides);
+        return this.carouselService.getCurrentSlide(this.selectedItems());
     }
 
     onRequestAnswered(requestId: number, event: { answerDescription: string }) {
