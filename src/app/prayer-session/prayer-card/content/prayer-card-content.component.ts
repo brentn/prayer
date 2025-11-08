@@ -1,12 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
     standalone: true,
     selector: 'app-prayer-card-content',
-    imports: [CommonModule, MatIconModule],
+    imports: [CommonModule, MatIconModule, MatButtonModule],
     templateUrl: './prayer-card-content.component.html',
     styleUrl: './prayer-card-content.component.css',
     animations: [
@@ -26,4 +27,7 @@ export class PrayerCardContentComponent {
     @Input() localIsAnswered = false;
     @Input() answerDescription?: string;
     @Input() localAnswerDescription = '';
+    @Input() onAnsweredClick?: () => void;
+    @Input() showAnswerForm = false;
+    @Input() isTopic = false;
 }

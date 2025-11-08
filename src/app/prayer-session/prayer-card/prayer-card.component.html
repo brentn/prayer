@@ -6,7 +6,8 @@
     </app-prayer-card-header>
     <app-prayer-card-content [icon]="icon" [title]="title" [topicName]="topicName" [isAnswered]="isAnswered"
         [localIsAnswered]="localIsAnswered()" [answerDescription]="answerDescription"
-        [localAnswerDescription]="localAnswerDescription()">
+        [localAnswerDescription]="localAnswerDescription()" [onAnsweredClick]="onAnsweredClick.bind(this)"
+        [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName">
     </app-prayer-card-content>
     <app-answer-form [showAnswerForm]="showAnswerForm" [answerText]="answerText"
         [onAnswerSubmit]="onAnswerSubmit.bind(this)" [onAnswerCancel]="onAnswerCancel.bind(this)">
