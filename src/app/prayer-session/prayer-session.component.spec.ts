@@ -52,16 +52,19 @@ describe('PrayerSessionComponent', () => {
             prayAnsweredCount: signal(0)
         });
 
-        mockTimerService = jasmine.createSpyObj('TimerService', [
-            'getCountdownSeconds', 'getInitialCountdownSeconds', 'getCountdownStarted', 'resetSessionCounted',
-            'startCountdown', 'startViewTimer', 'getTimeProgressPercent', 'formatRemaining', 'destroy'
-        ], {
-            getCountdownSeconds: signal(60),
-            getInitialCountdownSeconds: signal(60),
-            getCountdownStarted: signal(false),
-            getTimeProgressPercent: () => 50,
-            formatRemaining: () => '30:00'
-        });
+        // Create a simple mock TimerService
+        mockTimerService = {
+            getCountdownSeconds: () => signal(60),
+            getInitialCountdownSeconds: () => signal(60),
+            getCountdownStarted: () => signal(false),
+            resetSessionCounted: jasmine.createSpy('resetSessionCounted'),
+            startCountdown: jasmine.createSpy('startCountdown'),
+            startViewTimer: jasmine.createSpy('startViewTimer'),
+            getTimeProgressPercent: jasmine.createSpy('getTimeProgressPercent').and.returnValue(50),
+            formatRemaining: jasmine.createSpy('formatRemaining').and.returnValue('30:00'),
+            destroy: jasmine.createSpy('destroy'),
+            getSessionPrayerCount: jasmine.createSpy('getSessionPrayerCount').and.returnValue(5)
+        } as any;
 
         mockCarouselService = jasmine.createSpyObj('CarouselService', [
             'getCurrentIndex', 'getIsDragging', 'getDeltaX', 'getContainerWidth', 'getSlideWidth', 'getStepSize',
