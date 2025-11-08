@@ -11,6 +11,14 @@
 </header>
 
 <mat-menu #appMenu="matMenu">
+    <button mat-menu-item (click)="importData()">
+        <mat-icon>upload</mat-icon>
+        <span>Import</span>
+    </button>
+    <button mat-menu-item (click)="exportData()">
+        <mat-icon>download</mat-icon>
+        <span>Export</span>
+    </button>
     <button mat-menu-item routerLink="/settings">
         <mat-icon>settings</mat-icon>
         <span>Settings</span>

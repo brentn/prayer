@@ -4,17 +4,20 @@ import { trigger, transition, style, animate, query, group } from '@angular/anim
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { selectAllLists } from './store/lists/list.selectors';
 import { WakeLockService } from './shared/services/wake-lock.service';
 import { SettingsService } from './shared/services/settings.service';
 import { PrayTabComponent } from './shared/components/pray-tab/pray-tab.component';
+import { ImportExportService, ImportOptions } from './shared/services/import-export';
+import { ImportDialogComponent } from './shared/components/import-dialog/import-dialog';
 import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [RouterOutlet, RouterLink, MatIconModule, MatButtonModule, MatMenuModule, PrayTabComponent],
+    imports: [RouterOutlet, RouterLink, MatIconModule, MatButtonModule, MatMenuModule, MatDialogModule, PrayTabComponent],
     templateUrl: './app.html',
     styleUrl: './app.css',
     animations: [
@@ -46,6 +49,8 @@ export class App implements OnInit {
     // Keep screen awake when permitted by setting
     private wake = inject(WakeLockService);
     private settings = inject(SettingsService);
+    private importExport = inject(ImportExportService);
+    private dialog = inject(MatDialog);
 
     // Track current URL for wake lock logic
     currentUrl = signal<string>('');
@@ -124,6 +129,76 @@ export class App implements OnInit {
         }
         // default: go back to main
         this.router.navigate(['/']);
+    }
+
+    exportData(): void {
+        const url = this.router.url || '';
+        let data;
+        let filename;
+
+        if (url === '/') {
+            // Main page - export all data
+            data = this.importExport.exportAllData();
+            filename = `prayer-data-${new Date().toISOString().split('T')[0]}.json`;
+        } else if (url.startsWith('/list/')) {
+            // List page - export list data
+            const listId = this.currentListId;
+            if (listId !== undefined) {
+                data = this.importExport.exportListData(listId);
+                const list = this.lists().find(l => l.id === listId);
+                filename = `prayer-list-${list?.name || 'unknown'}-${new Date().toISOString().split('T')[0]}.json`;
+            }
+        } else if (url.startsWith('/topic/')) {
+            // Topic page - export topic data
+            const topicId = Number(url.split('/')[2]);
+            if (!isNaN(topicId)) {
+                data = this.importExport.exportTopicData(topicId);
+                filename = `prayer-topic-${topicId}-${new Date().toISOString().split('T')[0]}.json`;
+            }
+        }
+
+        if (data && filename) {
+            this.importExport.downloadData(data, filename);
+        }
+    }
+
+    importData(): void {
+        // Create a hidden file input
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.style.display = 'none';
+
+        input.onchange = (event) => {
+            const file = (event.target as HTMLInputElement).files?.[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target?.result as string);
+                        // Open import dialog with options
+                        const dialogRef = this.dialog.open(ImportDialogComponent, {
+                            width: '400px',
+                            data: {}
+                        });
+
+                        dialogRef.afterClosed().subscribe((options: ImportOptions) => {
+                            if (options) {
+                                this.importExport.importData(data, options);
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Error parsing import file:', error);
+                        // TODO: Show error dialog
+                    }
+                };
+                reader.readAsText(file);
+            }
+        };
+
+        document.body.appendChild(input);
+        input.click();
+        document.body.removeChild(input);
     }
 
     getDepth(outlet: RouterOutlet): any {

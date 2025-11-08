@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Import Data</h2>
+
+<mat-dialog-content>
+    <div class="import-options">
+        <h3>What to import:</h3>
+        <mat-checkbox [(ngModel)]="importOptions.includeRequests">
+            Prayer Requests
+        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="importOptions.includeStats">
+            Prayer Statistics
+        </mat-checkbox>
+
+        <h3>Import mode:</h3>
+        <mat-radio-group [(ngModel)]="importOptions.mergeMode">
+            <mat-radio-button value="merge">Merge with existing data</mat-radio-button>
+            <mat-radio-button value="replace">Replace existing data</mat-radio-button>
+        </mat-radio-group>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onImport()">Import</button>
+</mat-dialog-actions>

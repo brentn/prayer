@@ -123,4 +123,21 @@ export class PrayerStats {
         this.firstSessionDate.set(null);
         this.lastSessionDate.set(null);
     }
+
+    // Set all stats at once (for import/export)
+    setAllStats(stats: {
+        totalTimePrayed?: number;
+        totalRequestsPrayed?: number;
+        totalRequestsAnswered?: number;
+        totalSessions?: number;
+        firstSessionDate?: string | null;
+        lastSessionDate?: string | null;
+    }): void {
+        this.totalTimePrayed.set(stats.totalTimePrayed || 0);
+        this.totalRequestsPrayed.set(stats.totalRequestsPrayed || 0);
+        this.totalRequestsAnswered.set(stats.totalRequestsAnswered || 0);
+        this.totalSessions.set(stats.totalSessions || 0);
+        this.firstSessionDate.set(stats.firstSessionDate || null);
+        this.lastSessionDate.set(stats.lastSessionDate || null);
+    }
 }
