@@ -1,55 +1,57 @@
 .answer-form {
-    margin-top: 16px;
-    overflow: hidden;
+    width: 100%;
+    position: relative;
+    border-radius: 4px;
+    border: 4px inset solid;
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+::ng-deep .mdc-line-ripple,
+::ng-deep .mdc-text-field--outlined .mdc-notched-outline__notch {
+    display: none !important;
 }
 
 .answer-textarea {
     width: 100%;
-}
-
-.answer-textarea ::ng-deep .mat-mdc-form-field-outline {
-    color: rgba(76, 175, 80, 0.5);
-}
-
-.answer-textarea ::ng-deep .mat-mdc-form-field-focus-overlay {
-    background-color: rgba(76, 175, 80, 0.1);
-}
-
-.answer-textarea ::ng-deep .mdc-notched-outline__leading,
-.answer-textarea ::ng-deep .mdc-notched-outline__notch,
-.answer-textarea ::ng-deep .mdc-notched-outline__trailing {
-    border-color: rgba(76, 175, 80, 0.5) !important;
-    border-width: 2px !important;
-}
-
-.answer-textarea ::ng-deep .mdc-notched-outline--notched .mdc-notched-outline__notch {
-    border-top: none;
-}
-
-.cancel-x {
-    position: absolute;
-    top: -5px;
-    right: 8px;
-    background: transparent !important;
-    color: #dc3545 !important;
-    border: none !important;
-    border-radius: 0 !important;
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    z-index: 10;
-    transition: all 0.3s ease;
-    box-shadow: none !important;
-}
-
-.cancel-x:hover {
-    color: #c82333 !important;
-    transform: scale(1.2);
-    box-shadow: none !important;
-}
-
-.answer-form {
-    margin-top: 16px;
-    width: 100%;
     position: relative;
+}
+
+.cancel-button {
+    position: absolute;
+    bottom: -.6rem;
+    left: 0;
+    background: transparent !important;
+    color: #FFD700 !important;
+    border: none !important;
+    text-transform: none !important;
+    font-size: 14px !important;
+    padding: 4px 8px !important;
+    min-width: auto !important;
+    z-index: 10;
+    font-weight: 500;
+}
+
+.cancel-button:hover {
+    background-color: rgba(255, 215, 0, 0.08) !important;
+    color: #FFC107 !important;
+}
+
+.skip-save-button {
+    position: absolute;
+    bottom: -.6rem;
+    right: 0;
+    background: transparent !important;
+    color: #FFD700 !important;
+    border: none !important;
+    text-transform: none !important;
+    font-size: 14px !important;
+    padding: 4px 8px !important;
+    min-width: auto !important;
+    z-index: 10;
+    font-weight: 500;
+}
+
+.skip-save-button:hover {
+    background-color: rgba(255, 215, 0, 0.08) !important;
+    color: #FFC107 !important;
 }

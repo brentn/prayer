@@ -48,4 +48,11 @@ export class AnswerFormComponent {
         this.showAnswerForm.set(false);
         this.answerText.set('');
     }
+
+    onSave() {
+        const trimmed = this.answerText().trim();
+        this.onAnswerSubmit(trimmed);
+        this.showAnswerForm.set(false);
+        this.answerText.set('');
+    }
 }
