@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 export interface TimerConfig {
     timeMinutes: number;
     unlimited: boolean;
+    onExpire?: () => void;
 }
 
 @Injectable({
@@ -56,6 +57,9 @@ export class TimerService {
             if (next <= 0 && this.countdownId) {
                 clearInterval(this.countdownId);
                 this.countdownId = undefined;
+                if (config.onExpire) {
+                    config.onExpire();
+                }
             }
         }, 1000);
     }

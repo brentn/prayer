@@ -554,7 +554,12 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         try {
             this.timerService.startCountdown({
                 timeMinutes: this.timeMinutes,
-                unlimited: this.unlimited
+                unlimited: this.unlimited,
+                onExpire: () => {
+                    // Advance to stats card when timer expires
+                    const statsIndex = this.selectedItems().length + 1;
+                    this.setIndex(statsIndex);
+                }
             });
         } catch (error) {
             console.error('Error starting countdown:', error);
