@@ -146,5 +146,4 @@ export class ListComponent {
     onSectionClick() {
         if (this.editing) this.saveEdit();
     }
-
 }

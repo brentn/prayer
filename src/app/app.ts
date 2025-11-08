@@ -1,5 +1,5 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
-import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
+import { Router, RouterLink, RouterOutlet, NavigationEnd, NavigationStart } from '@angular/router';
 import { trigger, transition, style, animate, query, group } from '@angular/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -79,6 +79,31 @@ export class App implements OnInit {
             filter(event => event instanceof NavigationEnd)
         ).subscribe((event: NavigationEnd) => {
             this.currentUrl.set(event.url);
+        });
+
+        // Handle browser back button navigation
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationStart)
+        ).subscribe((event: NavigationStart) => {
+            if (event.navigationTrigger === 'popstate') {
+                // Browser back/forward button was pressed
+                const currentUrl = this.router.url;
+                if (currentUrl.startsWith('/topic/')) {
+                    const topicId = Number(currentUrl.split('/')[2]);
+                    if (!isNaN(topicId)) {
+                        const list = this.lists().find(l => (l.topicIds || []).includes(topicId));
+                        if (list) {
+                            this.router.navigate(['/list', list.id]);
+                            return;
+                        }
+                    }
+                } else if (currentUrl.startsWith('/list/')) {
+                    // On list page, redirect to main page
+                    this.router.navigate(['/'], { replaceUrl: true });
+                } else if (currentUrl === '/') {
+                    this.router.navigate(['/'], { replaceUrl: true });
+                }
+            }
         });
 
         // Set initial URL
