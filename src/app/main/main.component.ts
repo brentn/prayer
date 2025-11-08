@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -37,5 +37,14 @@ export class MainComponent {
 
     openList(id: number) {
         this.router.navigate(['/list', id]);
+    }
+
+    @HostListener('window:popstate', ['$event'])
+    onPopState(event: PopStateEvent) {
+        // When on main page, exit the app instead of navigating back
+        if (this.router.url === '/') {
+            event.preventDefault();
+            window.close();
+        }
     }
 }
