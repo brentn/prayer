@@ -121,6 +121,10 @@ export class TimerService {
         }
     }
 
+    getSessionPrayerCount(): number {
+        return this.sessionCounted.size;
+    }
+
     destroy(): void {
         if (this.countdownId) {
             clearInterval(this.countdownId);

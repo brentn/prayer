@@ -79,11 +79,24 @@
                         </div>
                     </div>
                 }
+
+                <!-- Stats slide (index = selectedItems.length + 1) -->
+                <div class="slide">
+                    <div class="prayer-card">
+                        <app-stats-card [totalItems]="selectedItems().length" [sessionDuration]="sessionDuration()"
+                            [prayerCount]="finalPrayerCountValue()" [totalTimePrayed]="prayerStats.getTotalTimePrayed()"
+                            [totalRequestsPrayed]="prayerStats.getTotalRequestsPrayed()"
+                            [totalRequestsAnswered]="prayerStats.getTotalRequestsAnswered()"
+                            [totalSessions]="prayerStats.getTotalSessions()"
+                            [sessionsPerWeek]="prayerStats.getSessionsPerWeek()">
+                        </app-stats-card>
+                    </div>
+                </div>
             </div>
         </div>
     }
 
-    <div class="pray-footer" #footer [class.visible]="currentIndex() >= 1">
+    <div class="pray-footer" #footer [class.visible]="currentIndex() >= 1 && currentIndex() <= selectedItems().length">
         @if (currentIndex() >= 1) {
             @if (unlimited) {
                 <div class="progress-section">

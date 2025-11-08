@@ -12,8 +12,10 @@ import { selectAllRequests } from '../store/requests/request.selectors';
 import { selectAllTopics } from '../store/topics/topic.selectors';
 import { selectAllLists } from '../store/lists/list.selectors';
 import { SettingsService } from '../shared/services/settings.service';
+import { PrayerStats } from '../shared/services/prayer-stats';
 import { updateRequest } from '../store/requests/request.actions';
 import { PrayerCardComponent } from './prayer-card/prayer-card.component';
+import { StatsCard } from './stats-card/stats-card';
 import { TimerService } from '../shared/services/timer.service';
 import { CarouselService } from '../shared/services/carousel.service';
 import { PrayerSessionItem } from '../shared/models/prayer-session.interface';
@@ -33,7 +35,7 @@ function shuffleArray<T>(array: T[]): T[] {
 @Component({
     standalone: true,
     selector: 'app-prayer-session',
-    imports: [CommonModule, FormsModule, MatListModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressBarModule, PrayerCardComponent],
+    imports: [CommonModule, FormsModule, MatListModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressBarModule, PrayerCardComponent, StatsCard],
     templateUrl: './prayer-session.component.html',
     styleUrl: './prayer-session.component.css',
     host: { '[class.fullscreen]': 'fullScreen' }
@@ -45,6 +47,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private readonly settings = inject(SettingsService);
     private readonly timerService = inject(TimerService);
     private readonly carouselService = inject(CarouselService);
+    readonly prayerStats = inject(PrayerStats);
     private readonly destroyRef = inject(DestroyRef);
 
     // Effect references for proper cleanup
@@ -138,6 +141,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private lastIds = '';
     private lastShuffle = false;
     private readonly sessionStarted = signal(false);
+    private readonly sessionStartTime = signal<number | null>(null);
 
     // Computed owner maps for better performance - memoized
     private ownerMaps = computed(() => {
@@ -402,6 +406,23 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     // Countdown timer
     countdownSeconds = this.timerService.getCountdownSeconds();
     initialCountdownSeconds = this.timerService.getInitialCountdownSeconds();
+    sessionDuration = computed(() => {
+        const final = this.finalSessionDuration();
+        if (final !== null) return final;
+
+        if (this.unlimited) {
+            const start = this.sessionStartTime();
+            return start ? Math.floor(Date.now() / 1000 - start) : 0;
+        } else {
+            return this.initialCountdownSeconds() - this.countdownSeconds();
+        }
+    });
+    finalPrayerCountValue = computed(() => {
+        const final = this.finalPrayerCount();
+        return final !== null ? final : this.timerService.getSessionPrayerCount();
+    });
+    private finalSessionDuration = signal<number | null>(null);
+    private finalPrayerCount = signal<number | null>(null);
     private sessionCounted = new Set<number>();
 
     constructor() {
@@ -414,6 +435,8 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
         // Reset session state
         this.sessionStarted.set(false);
+        this.finalSessionDuration.set(null);
+        this.finalPrayerCount.set(null);
         this.sessionCounted.clear();
         this.timerService.resetSessionCounted();
     }
@@ -484,7 +507,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     onPointerUp(ev: PointerEvent) {
         try {
-            const maxIndex = this.selectedItems().length;
+            const maxIndex = this.selectedItems().length + 1; // +1 for stats slide
             const newIndex = this.carouselService.onPointerUp(ev, maxIndex);
             this.setIndex(newIndex);
         } catch (error) {
@@ -495,13 +518,14 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     setIndex(idx: number) {
         try {
             const selectedItemsLength = this.selectedItems().length;
-            const clamped = Math.max(0, Math.min(idx, selectedItemsLength)); // length because 0 is settings, items start at 1
+            const clamped = Math.max(0, Math.min(idx, selectedItemsLength + 1)); // +1 for stats slide
 
             this.carouselService.setIndex(clamped);
 
             // Mark session as started when user begins praying
             if (clamped >= 1 && !this.sessionStarted()) {
                 this.sessionStarted.set(true);
+                this.sessionStartTime.set(Date.now() / 1000);
             }
 
             // Start countdown when first request appears (only once per session)
@@ -510,6 +534,17 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             }
 
             this.handleViewTimer();
+
+            // Snapshot session duration when reaching stats slide
+            if (clamped === selectedItemsLength + 1 && this.finalSessionDuration() === null) {
+                this.finalSessionDuration.set(this.sessionDuration());
+                this.finalPrayerCount.set(this.timerService.getSessionPrayerCount());
+
+                // Update cumulative stats
+                this.prayerStats.addSessionTime(this.sessionDuration());
+                this.prayerStats.addSessionRequestsPrayed(this.selectedItems().length);
+                this.prayerStats.addSession();
+            }
         } catch (error) {
             console.error('Error setting index:', error);
         }
@@ -645,6 +680,9 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
                     answerDescription: event.answerDescription
                 }
             }));
+
+            // Update cumulative answered count
+            this.prayerStats.addRequestsAnswered(1);
         } catch (error) {
             console.error('Error updating answered request:', error);
         }

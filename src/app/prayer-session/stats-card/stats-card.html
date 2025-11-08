@@ -1,0 +1,75 @@
+<div class="stats-card">
+    <div class="scrollable-content">
+        <div class="header">
+            <mat-icon class="celebration-icon">celebration</mat-icon>
+            <h3>Session Complete!</h3>
+            @if (milestone) {
+                <div class="milestone">{{ milestone }}</div>
+            }
+        </div>
+
+        <div class="stats-section">
+            <h4><mat-icon>today</mat-icon> This Session</h4>
+            <div class="stat">
+                <span class="label"><mat-icon>favorite</mat-icon> Prayers</span>
+                <span class="value">{{ prayerCount }}</span>
+            </div>
+            <div class="stat">
+                <span class="label"><mat-icon>list</mat-icon> Items Prayed</span>
+                <span class="value">{{ totalItems }}</span>
+            </div>
+            <div class="stat">
+                <span class="label"><mat-icon>schedule</mat-icon> Duration</span>
+                <span class="value">{{ formatDuration(sessionDuration) }}</span>
+            </div>
+            @if (prayerCount > 0) {
+                <div class="stat">
+                    <span class="label"><mat-icon>speed</mat-icon> Avg per Prayer</span>
+                    <span class="value">{{ formatDuration(averageTimePerPrayer) }}</span>
+                </div>
+            }
+        </div>
+
+        <div class="stats-section">
+            <h4><mat-icon>insights</mat-icon> Lifetime Journey</h4>
+            <div class="stat">
+                <span class="label"><mat-icon>schedule</mat-icon> Total Time</span>
+                <span class="value">{{ formatDuration(totalTimePrayed) }}</span>
+            </div>
+            <div class="stat">
+                <span class="label"><mat-icon>list</mat-icon> Requests Prayed</span>
+                <span class="value">{{ totalRequestsPrayed }}</span>
+            </div>
+            <div class="stat">
+                <span class="label"><mat-icon>check_circle</mat-icon> Requests Answered</span>
+                <span class="value">{{ totalRequestsAnswered }}</span>
+            </div>
+            <div class="stat">
+                <span class="label"><mat-icon>calendar_today</mat-icon> Prayer Sessions</span>
+                <span class="value">{{ totalSessions }}</span>
+            </div>
+            @if (totalSessions > 1) {
+                <div class="stat">
+                    <span class="label"><mat-icon>trending_up</mat-icon> Sessions/Week</span>
+                    <span class="value">{{ sessionsPerWeek.toFixed(1) }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label"><mat-icon>timer</mat-icon> Avg Session</span>
+                    <span class="value">{{ formatDuration(averageSessionLength) }}</span>
+                </div>
+            }
+            @if (prayerEfficiency > 0) {
+                <div class="stat">
+                    <span class="label"><mat-icon>bolt</mat-icon> Efficiency</span>
+                    <span class="value">{{ prayerEfficiency }}/hr</span>
+                </div>
+            }
+            @if (totalRequestsPrayed > 0) {
+                <div class="stat">
+                    <span class="label"><mat-icon>percent</mat-icon> Answer Rate</span>
+                    <span class="value">{{ ((totalRequestsAnswered / totalRequestsPrayed) * 100).toFixed(1) }}%</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
