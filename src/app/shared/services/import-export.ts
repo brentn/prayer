@@ -166,20 +166,15 @@ export class ImportExportService {
             const currentLists = this.store.selectSignal(selectAllLists)();
 
             for (const importedTopic of data.topics) {
-                // Find which list contained this topic in the imported data
-                const importedList = data.lists?.find(list => list.topicIds?.includes(importedTopic.id));
-                const newListId = importedList ? idMappings.lists.get(importedList.id) : undefined;
+                // Find all imported lists that contain this topic
+                const importedListsContainingTopic = data.lists?.filter(list => list.topicIds?.includes(importedTopic.id)) || [];
 
-                if (!newListId) continue; // Skip topics whose lists weren't imported
+                // Skip if no lists contain it
+                if (importedListsContainingTopic.length === 0) continue;
 
-                // Find topics that belong to the same list
-                const listTopics = currentTopics.filter(t => {
-                    const topicList = currentLists.find(l => l.topicIds?.includes(t.id));
-                    return topicList?.id === newListId;
-                });
+                const existingTopic = currentTopics.find(t => t.name === importedTopic.name);
 
-                const existingTopic = listTopics.find(t => t.name === importedTopic.name);
-
+                let topicId: number;
                 if (existingTopic) {
                     // Update existing topic
                     if (options.mergeMode === 'replace') {
@@ -189,22 +184,28 @@ export class ImportExportService {
                             changes: { name: importedTopic.name }
                         }));
                     }
-                    // Map old ID to existing ID
-                    idMappings.topics.set(importedTopic.id, existingTopic.id);
+                    topicId = existingTopic.id;
                 } else {
                     // Add new topic with new ID
                     const nextId = currentTopics.length ? Math.max(...currentTopics.map(t => t.id)) + 1 : 1;
                     this.store.dispatch(addTopicWithId({ id: nextId, name: importedTopic.name }));
+                    topicId = nextId;
+                }
 
-                    // Link to list
-                    const targetList = currentLists.find(l => l.id === newListId);
-                    if (targetList) {
-                        const topicIds = Array.from(new Set([...(targetList.topicIds || []), nextId]));
-                        const { updateList } = await import('../../store/lists/list.actions');
-                        this.store.dispatch(updateList({ id: targetList.id, changes: { topicIds } }));
+                // Map old ID to new ID
+                idMappings.topics.set(importedTopic.id, topicId);
+
+                // Add to each corresponding new list
+                for (const importedList of importedListsContainingTopic) {
+                    const newListId = idMappings.lists.get(importedList.id);
+                    if (newListId) {
+                        const targetList = currentLists.find(l => l.id === newListId);
+                        if (targetList) {
+                            const topicIds = Array.from(new Set([...(targetList.topicIds || []), topicId]));
+                            const { updateList } = await import('../../store/lists/list.actions');
+                            this.store.dispatch(updateList({ id: targetList.id, changes: { topicIds } }));
+                        }
                     }
-
-                    idMappings.topics.set(importedTopic.id, nextId);
                 }
             }
         }

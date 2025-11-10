@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,7 +17,7 @@ import { selectAllRequests } from '../../store/requests/request.selectors';
     templateUrl: './list.component.html',
     styleUrl: './list.component.css'
 })
-export class ListComponent {
+export class ListComponent implements OnInit {
     private store = inject(Store);
     private dialog = inject(MatDialog);
     private route = inject(ActivatedRoute);
@@ -27,17 +27,24 @@ export class ListComponent {
     editName = '';
     editExcludeFromAll = false;
 
+    listId = signal<number | undefined>(undefined);
+
     allTopics = this.store.selectSignal(selectAllTopics);
     lists = this.store.selectSignal(selectAllLists);
     requests = this.store.selectSignal(selectAllRequests);
-    listId = Number(this.route.snapshot.paramMap.get('id')) || undefined;
-    currentList = computed(() => this.lists().find(l => l.id === this.listId));
+    currentList = computed(() => this.lists().find(l => l.id === this.listId()));
     topics = computed(() => {
         const l = this.currentList();
         if (!l) return [];
         const set = new Set(l.topicIds);
         return this.allTopics().filter(t => set.has(t.id));
     });
+
+    ngOnInit() {
+        this.route.paramMap.subscribe(params => {
+            this.listId.set(Number(params.get('id')) || undefined);
+        });
+    }
 
     async onAdd() {
         const { AddNameDialogComponent } = await import('../../shared/components/add-name-dialog/add-name-dialog.component');
