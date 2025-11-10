@@ -62,9 +62,7 @@ export class App implements OnInit {
             const url = this.currentUrl();
             const isOnPrayPage = url.startsWith('/pray');
 
-            if (enabled && isOnPrayPage) {
-                this.wake.request();
-            } else {
+            if (!enabled || !isOnPrayPage) {
                 this.wake.release();
             }
         });

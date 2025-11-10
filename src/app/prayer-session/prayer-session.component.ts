@@ -19,6 +19,7 @@ import { StatsCard } from './stats-card/stats-card';
 import { TimerService } from '../shared/services/timer.service';
 import { CarouselService } from '../shared/services/carousel.service';
 import { PrayerSessionItem } from '../shared/models/prayer-session.interface';
+import { WakeLockService } from '../shared/services/wake-lock.service';
 
 const REGISTER_SECONDS = 12; // seconds of viewing a request card to register a prayer
 
@@ -47,6 +48,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private readonly settings = inject(SettingsService);
     private readonly timerService = inject(TimerService);
     private readonly carouselService = inject(CarouselService);
+    private readonly wake = inject(WakeLockService);
     readonly prayerStats = inject(PrayerStats);
     private readonly destroyRef = inject(DestroyRef);
 
@@ -526,6 +528,9 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             if (clamped >= 1 && !this.sessionStarted()) {
                 this.sessionStarted.set(true);
                 this.sessionStartTime.set(Date.now() / 1000);
+                if (this.settings.keepAwake()) {
+                    this.wake.request();
+                }
             }
 
             // Start countdown when first request appears (only once per session)
