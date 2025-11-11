@@ -46,10 +46,28 @@
     border: 1px solid #FFD700;
     border-radius: 4px;
     font-size: 0.8rem;
-    margin-top: 8px;
     transition: all 0.3s ease;
 }
 
 .answer-button:hover {
     background: rgba(255, 215, 0, 0.1);
+}
+
+.button-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 1rem;
+}
+
+.archive-button {
+    background: transparent;
+    color: #FF8C00;
+    border: 1px solid #FF8C00;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.archive-button:hover {
+    background: rgba(255, 140, 0, 0.1);
 }

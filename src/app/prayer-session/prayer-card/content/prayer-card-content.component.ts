@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,4 +30,5 @@ export class PrayerCardContentComponent {
     @Input() onAnsweredClick?: () => void;
     @Input() showAnswerForm = false;
     @Input() isTopic = false;
+    @Output() archive = new EventEmitter<void>();
 }

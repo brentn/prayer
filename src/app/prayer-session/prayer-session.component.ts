@@ -302,7 +302,13 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     items = computed(() => {
         const shuffled = this.shuffledItems();
         const currentRequests = this.requests();
-        return shuffled.map(item => {
+        return shuffled.filter(item => {
+            if (item.kind === 'request') {
+                const current = currentRequests.find(r => r.id === item.id);
+                return current && !current.archived;
+            }
+            return true; // Keep topic items
+        }).map(item => {
             if (item.kind === 'request') {
                 const current = currentRequests.find(r => r.id === item.id);
                 if (current && current.prayerCount !== item.prayerCount) {
@@ -701,22 +707,19 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     }
 
     onRequestArchived(requestId: number) {
-        // Add to archiving items to trigger animation
-        this.archivingItems.update(items => new Set([...items, requestId]));
+        // Archive the request - the items computed will automatically filter it out
+        this.store.dispatch(updateRequest({
+            id: requestId,
+            changes: { archived: true }
+        }));
+    }
 
-        // Wait for animation to complete before updating store
-        setTimeout(() => {
-            this.store.dispatch(updateRequest({
-                id: requestId,
-                changes: { archived: true }
-            }));
-            // Remove from archiving items
-            this.archivingItems.update(items => {
-                const newItems = new Set(items);
-                newItems.delete(requestId);
-                return newItems;
-            });
-        }, 300);
+    onRequestArchiveButton(requestId: number) {
+        // Simply archive the request - the card animation will handle the visual feedback
+        this.store.dispatch(updateRequest({
+            id: requestId,
+            changes: { archived: true }
+        }));
     }
 
     onClose() {

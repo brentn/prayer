@@ -7,7 +7,7 @@
     <app-prayer-card-content [icon]="icon" [title]="title" [topicName]="topicName" [isAnswered]="isAnswered"
         [localIsAnswered]="localIsAnswered()" [answerDescription]="answerDescription"
         [localAnswerDescription]="localAnswerDescription()" [onAnsweredClick]="onAnsweredClick.bind(this)"
-        [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName">
+        [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName" (archive)="archive.emit()">
     </app-prayer-card-content>
     <app-answer-form [showAnswerForm]="showAnswerForm" [answerText]="answerText"
         [onAnswerSubmit]="onAnswerSubmit.bind(this)" [onAnswerCancel]="onAnswerCancel.bind(this)">

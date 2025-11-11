@@ -5,9 +5,14 @@
     }
     <div class="card-title">{{ title }}</div>
     @if (!(isAnswered || localIsAnswered) && !showAnswerForm && !isTopic) {
-        <button mat-button class="answer-button" (click)="onAnsweredClick?.()" title="Mark as Answered">
-            mark as answered
-        </button>
+        <div class="button-row">
+            <button mat-button class="archive-button" (click)="archive.emit()" title="Archive Request">
+                archive
+            </button>
+            <button mat-button class="answer-button" (click)="onAnsweredClick?.()" title="Mark as Answered">
+                mark as answered
+            </button>
+        </div>
     }
     @if ((isAnswered || localIsAnswered) && (answerDescription || localAnswerDescription)) {
         <div class="answer-description-box" [@answerFadeIn]>

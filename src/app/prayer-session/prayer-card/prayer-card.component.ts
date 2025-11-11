@@ -50,6 +50,7 @@ export class PrayerCardComponent implements OnChanges {
     @Input() answerDescription?: string;
 
     @Output() answered = new EventEmitter<{ answerDescription: string }>();
+    @Output() archive = new EventEmitter<void>();
 
     showAnswerForm = signal(false);
     answerText = signal('');
