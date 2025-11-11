@@ -65,24 +65,6 @@ export class ListComponent implements OnInit {
         });
     }
 
-    async onRename() {
-        const list = this.currentList();
-        if (!list) return;
-        const { AddNameDialogComponent } = await import('../../shared/components/add-name-dialog/add-name-dialog.component');
-        const ref = this.dialog.open(AddNameDialogComponent, {
-            data: { title: 'Rename List', label: 'List name', placeholder: 'e.g., Family' }
-        });
-        // Pre-fill current name
-        ref.afterOpened().subscribe(() => {
-            ref.componentInstance?.value?.setValue(list.name);
-        });
-        ref.afterClosed().subscribe(async value => {
-            if (!value) return;
-            const { updateList } = await import('../../store/lists/list.actions');
-            this.store.dispatch(updateList({ id: list.id, changes: { name: value } }));
-        });
-    }
-
     async onDelete() {
         const list = this.currentList();
         if (!list) return;

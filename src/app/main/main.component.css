@@ -5,26 +5,6 @@ section {
     overflow-y: auto;
 }
 
-.section-title {
-    margin: 0 0 0.5rem 2rem;
-    color: var(--md-sys-color-on-surface, #4e342e);
-}
-
-.fab {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 100;
-    /* Lighter brown FAB (extended + regular) */
-    --mdc-extended-fab-container-color: var(--md-sys-color-primary-container);
-    --mdc-fab-container-color: var(--md-sys-color-primary-container);
-    --mdc-extended-fab-label-text-color: var(--md-sys-color-on-primary);
-    --mdc-fab-foreground-color: var(--md-sys-color-on-primary);
-    --mat-fab-foreground-color: var(--md-sys-color-on-primary);
-    background-color: var(--md-sys-color-primary-container) !important;
-    color: var(--md-sys-color-on-primary) !important;
-}
-
 /* pray button moved to app-pray-tab component */
 
 /* Full-width add button removed; replaced by add-card in the list grid */
@@ -62,27 +42,6 @@ section {
     touch-action: pan-y;
     position: relative;
     z-index: 1;
-}
-
-.swipe-wrap {
-    position: relative;
-}
-
-.reveal {
-    position: absolute;
-    inset: 0 0 0 auto;
-    /* right-aligned */
-    width: 96px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0 12px 12px 0;
-    pointer-events: none;
-}
-
-.reveal.delete {
-    color: #d32f2f;
-    background-color: #d32f2f22;
 }
 
 .card:focus,

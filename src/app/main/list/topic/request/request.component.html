@@ -74,14 +74,12 @@
         @if (request.priority && request.priority > 1) {
             <div class="priority-dot-static" [ngClass]="'priority-' + request.priority"></div>
         }
-        <div class="request-header">
-        </div>
         <div class="request-text">{{ request.description }}</div>
         <div class="request-date">{{ request.createdDate | date:'short' }}</div>
 
         @if (requestState === 'archived') {
             <div class="archived-actions">
-                <button mat-stroked-button (click)="onUnarchiveRequest(request.id)" color="accent">
+                <button mat-stroked-button (click)="onUnarchive()" color="accent">
                     <mat-icon>unarchive</mat-icon>
                     Unarchive
                 </button>

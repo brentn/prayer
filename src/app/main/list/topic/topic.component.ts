@@ -4,13 +4,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { Store } from '@ngrx/store';
 import { selectAllRequests } from '../../../store/requests/request.selectors';
 import { addRequestWithId, removeRequest, updateRequest } from '../../../store/requests/request.actions';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ViewChild, ElementRef } from '@angular/core';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { selectAllTopics } from '../../../store/topics/topic.selectors';
 import { selectAllLists } from '../../../store/lists/list.selectors';
 import { ChangeDetectorRef } from '@angular/core';
@@ -177,6 +175,13 @@ export class TopicComponent {
         this.editingExisting = true;
     }
 
+    private resetEditingState() {
+        this.editingRequestId = null;
+        this.editingRequestText = '';
+        this.editingRequestPriority.set(1);
+        this.editingExisting = false;
+    }
+
     async saveInline(event: { id: number, text: string, priority: number }, requestState: 'open' | 'answered' | 'archived') {
         const text = (event.text || '').trim();
         if (!text) return;
@@ -190,10 +195,7 @@ export class TopicComponent {
         }
 
         this.store.dispatch(updateRequest({ id: event.id, changes }));
-        this.editingRequestId = null;
-        this.editingRequestText = '';
-        this.editingRequestPriority.set(1);
-        this.editingExisting = false;
+        this.resetEditingState();
     }
 
     async cancelInline() {
@@ -204,20 +206,14 @@ export class TopicComponent {
         if (!req || !req.description?.trim()) {
             await this.onRemove(id);
         }
-        this.editingRequestId = null;
-        this.editingRequestText = '';
-        this.editingRequestPriority.set(1);
-        this.editingExisting = false;
+        this.resetEditingState();
     }
 
     async onInlineDelete() {
         const id = this.editingRequestId;
         if (id == null) return;
         await this.onRemove(id);
-        this.editingRequestId = null;
-        this.editingRequestText = '';
-        this.editingRequestPriority.set(1);
-        this.editingExisting = false;
+        this.resetEditingState();
     }
 
     private scrollToBottomSoon() {
@@ -244,10 +240,7 @@ export class TopicComponent {
         // The editingRequestText contains the answer description, which we can ignore
         const changes: any = { answeredDate: null, priority: this.editingRequestPriority() };
         this.store.dispatch(updateRequest({ id, changes }));
-        this.editingRequestId = null;
-        this.editingRequestText = '';
-        this.editingRequestPriority.set(1);
-        this.editingExisting = false;
+        this.resetEditingState();
         // Move to Requests tab after marking unanswered
         this.activeTabIndex = 0;
     }
@@ -255,10 +248,7 @@ export class TopicComponent {
     async onArchiveRequest(id: number) {
         this.store.dispatch(updateRequest({ id, changes: { archived: true } }));
         // Exit edit mode when archiving
-        this.editingRequestId = null;
-        this.editingRequestText = '';
-        this.editingRequestPriority.set(1);
-        this.editingExisting = false;
+        this.resetEditingState();
         // Switch to Archived tab
         this.activeTabIndex = 2;
     }

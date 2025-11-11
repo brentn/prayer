@@ -1,17 +1,16 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectAllLists } from '../store/lists/list.selectors';
-import { addList, removeList } from '../store/lists/list.actions';
+import { addList } from '../store/lists/list.actions';
 
 @Component({
     standalone: true,
-    imports: [CommonModule, MatListModule, MatIconModule, MatButtonModule, MatDialogModule],
+    imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
     templateUrl: './main.component.html',
     styleUrl: './main.component.css'
 })
@@ -31,9 +30,6 @@ export class MainComponent {
             if (value) this.store.dispatch(addList({ name: value }));
         });
     }
-
-    // Deletion is no longer via swipe on main page
-    onRemove(id: number) { }
 
     openList(id: number) {
         this.router.navigate(['/list', id]);

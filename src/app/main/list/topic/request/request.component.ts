@@ -65,10 +65,6 @@ export class RequestComponent {
         this.unarchive.emit(this.request.id);
     }
 
-    onUnarchiveRequest(id: number) {
-        this.unarchive.emit(id);
-    }
-
     onCyclePriority() {
         this.cyclePriority.emit();
     }
