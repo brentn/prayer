@@ -1,4 +1,5 @@
 .request-card {
+    position: relative;
     border-radius: 12px;
     padding: 12px 14px;
     background: var(--md-sys-color-primary);
@@ -33,6 +34,99 @@
 
 .priority-dot.priority-5 {
     background: #9c27b0;
+}
+
+.priority-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.priority-badge.priority-1 {
+    background-color: #666;
+    color: white;
+}
+
+.priority-badge.priority-2 {
+    background-color: #ffeb3b;
+    color: black;
+}
+
+.priority-badge.priority-3 {
+    background-color: #ff9800;
+    color: white;
+}
+
+.priority-badge.priority-4 {
+    background-color: #f44336;
+    color: white;
+}
+
+.priority-badge.priority-5 {
+    background-color: #9c27b0;
+    color: white;
+}
+
+.priority-badge:active {
+    animation: priority-pulse 0.3s ease;
+}
+
+.priority-badge:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.priority-dot-static {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.priority-dot-static.priority-2 {
+    background: #ffeb3b;
+}
+
+.priority-dot-static.priority-3 {
+    background: #ff9800;
+}
+
+.priority-dot-static.priority-4 {
+    background: #f44336;
+}
+
+.priority-dot-static.priority-5 {
+    background: #9c27b0;
+}
+
+@keyframes priority-pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .request-text {

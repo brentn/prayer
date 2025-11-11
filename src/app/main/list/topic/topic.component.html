@@ -44,8 +44,8 @@
                     <app-request [request]="req" [isEditing]="editingRequestId === req.id"
                         [editingText]="editingRequestText" [editingPriority]="editingRequestPriority"
                         [requestState]="'answered'" (edit)="onEditRequest($event)" (save)="saveInline($event)"
-                        (cancel)="cancelInline()" (archive)="onArchiveRequest($event)"
-                        (cyclePriority)="cyclePriority()">
+                        (cancel)="cancelInline()" (markUnanswered)="markUnansweredInline($event)"
+                        (archive)="onArchiveRequest($event)" (cyclePriority)="cyclePriority()">
                     </app-request>
                 }
             </div>

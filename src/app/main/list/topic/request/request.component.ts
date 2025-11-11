@@ -2,11 +2,12 @@ import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 import { RequestEntity } from '../../../../store/requests/request.reducer';
 
 @Component({
     standalone: true,
-    imports: [CommonModule, MatIconModule, MatButtonModule],
+    imports: [CommonModule, MatIconModule, MatButtonModule, MatMenuModule],
     selector: 'app-request',
     templateUrl: './request.component.html',
     styleUrl: './request.component.css'
@@ -23,6 +24,7 @@ export class RequestComponent {
     @Output() cancel = new EventEmitter();
     @Output() deleteRequest = new EventEmitter<number>();
     @Output() markAnswered = new EventEmitter<number>();
+    @Output() markUnanswered = new EventEmitter<number>();
     @Output() archive = new EventEmitter<number>();
     @Output() unarchive = new EventEmitter<number>();
     @Output() cyclePriority = new EventEmitter();
@@ -49,6 +51,10 @@ export class RequestComponent {
 
     onMarkAnswered() {
         this.markAnswered.emit(this.request.id);
+    }
+
+    onMarkUnanswered() {
+        this.markUnanswered.emit(this.request.id);
     }
 
     onArchive() {

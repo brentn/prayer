@@ -221,6 +221,19 @@ export class TopicComponent {
         this.activeTabIndex = 1;
     }
 
+    async markUnansweredInline(id: number) {
+        const desc = (this.editingRequestText || '').trim();
+        if (!desc) return;
+        const changes: any = { description: desc, answeredDate: null, priority: this.editingRequestPriority() };
+        this.store.dispatch(updateRequest({ id, changes }));
+        this.editingRequestId = null;
+        this.editingRequestText = '';
+        this.editingRequestPriority.set(1);
+        this.editingExisting = false;
+        // Move to Requests tab after marking unanswered
+        this.activeTabIndex = 0;
+    }
+
     async onArchiveRequest(id: number) {
         this.store.dispatch(updateRequest({ id, changes: { archived: true } }));
         // Switch to Archived tab
