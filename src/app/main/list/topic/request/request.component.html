@@ -8,9 +8,26 @@
         } @else if (editingPriority() > 1) {
             <div class="priority-dot-static" [ngClass]="'priority-' + editingPriority()"></div>
         }
-        <textarea class="edit-textarea" rows="3" [value]="editingText" (input)="editingText = $any($event.target).value"
-            [placeholder]="requestState === 'open' ? 'Type your request...' : 'Update your request...'"
-            autofocus></textarea>
+
+        @if (requestState === 'open') {
+            <textarea class="edit-textarea" rows="3" [value]="editingText"
+                (input)="editingText = $any($event.target).value" placeholder="Type your request..."
+                autofocus></textarea>
+        } @else if (requestState === 'answered') {
+            <!-- Show the original request as read-only -->
+            <div class="request-text read-only">{{ request.description }}</div>
+            <div class="request-date">{{ request.createdDate | date:'short' }}</div>
+
+            <!-- Answer description textarea -->
+            <div class="answer-section">
+                <label class="answer-label">Answer (optional):</label>
+                <textarea class="edit-textarea answer-textarea" rows="2" [value]="editingText"
+                    (input)="editingText = $any($event.target).value" placeholder="Add an answer or note..."
+                    autofocus></textarea>
+            </div>
+        }
+        <!-- Archived requests don't show editing UI -->
+
         <div class="inline-actions">
             <div class="left">
                 <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="More options">
@@ -27,11 +44,11 @@
                             <span>Archive</span>
                         </button>
                     } @else if (requestState === 'answered') {
-                        <button mat-menu-item (click)="onMarkUnanswered()" [disabled]="!editingText.trim()">
+                        <button mat-menu-item (click)="onMarkUnanswered()">
                             <mat-icon>undo</mat-icon>
                             <span>Mark as Unanswered</span>
                         </button>
-                        <button mat-menu-item (click)="onArchive()" [disabled]="!editingText.trim()">
+                        <button mat-menu-item (click)="onArchive()">
                             <mat-icon>archive</mat-icon>
                             <span>Archive</span>
                         </button>
@@ -52,20 +69,23 @@
         </div>
     </div>
 } @else {
-    <div class="request-card" (click)="onEdit()">
+    <div class="request-card" [class.archived]="requestState === 'archived'"
+        (click)="requestState !== 'archived' ? onEdit() : null">
         @if (request.priority && request.priority > 1) {
-            @if (requestState === 'open') {
-                <div class="priority-dot-static" [ngClass]="'priority-' + request.priority"></div>
-            } @else {
-                <div class="priority-dot-static" [ngClass]="'priority-' + request.priority"></div>
-            }
+            <div class="priority-dot-static" [ngClass]="'priority-' + request.priority"></div>
         }
         <div class="request-header">
-            @if (request.priority && request.priority > 1) {
-                <div class="priority-dot" [class]="'priority-' + request.priority"></div>
-            }
         </div>
         <div class="request-text">{{ request.description }}</div>
         <div class="request-date">{{ request.createdDate | date:'short' }}</div>
+
+        @if (requestState === 'archived') {
+            <div class="archived-actions">
+                <button mat-stroked-button (click)="onUnarchiveRequest(request.id)" color="accent">
+                    <mat-icon>unarchive</mat-icon>
+                    Unarchive
+                </button>
+            </div>
+        }
     </div>
 }

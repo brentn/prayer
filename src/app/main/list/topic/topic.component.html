@@ -30,7 +30,7 @@
                 @for (req of openRequests(); track req.id) {
                     <app-request [request]="req" [isEditing]="editingRequestId === req.id"
                         [editingText]="editingRequestText" [editingPriority]="editingRequestPriority"
-                        [requestState]="'open'" (edit)="onEditRequest($event)" (save)="saveInline($event)"
+                        [requestState]="'open'" (edit)="onEditRequest($event)" (save)="saveInline($event, 'open')"
                         (cancel)="cancelInline()" (deleteRequest)="onInlineDelete()"
                         (markAnswered)="markAnsweredInline($event)" (archive)="onArchiveRequest($event)"
                         (cyclePriority)="cyclePriority()">
@@ -43,9 +43,10 @@
                 @for (req of answeredRequests(); track req.id) {
                     <app-request [request]="req" [isEditing]="editingRequestId === req.id"
                         [editingText]="editingRequestText" [editingPriority]="editingRequestPriority"
-                        [requestState]="'answered'" (edit)="onEditRequest($event)" (save)="saveInline($event)"
-                        (cancel)="cancelInline()" (markUnanswered)="markUnansweredInline($event)"
-                        (archive)="onArchiveRequest($event)" (cyclePriority)="cyclePriority()">
+                        [requestState]="'answered'" (edit)="onEditRequest($event)"
+                        (save)="saveInline($event, 'answered')" (cancel)="cancelInline()"
+                        (markUnanswered)="markUnansweredInline($event)" (archive)="onArchiveRequest($event)"
+                        (cyclePriority)="cyclePriority()">
                     </app-request>
                 }
             </div>
@@ -55,9 +56,9 @@
                 @for (req of archivedRequests(); track req.id) {
                     <app-request [request]="req" [isEditing]="editingRequestId === req.id"
                         [editingText]="editingRequestText" [editingPriority]="editingRequestPriority"
-                        [requestState]="'archived'" (edit)="onEditRequest($event)" (save)="saveInline($event)"
-                        (cancel)="cancelInline()" (unarchive)="onUnarchiveRequest($event)"
-                        (cyclePriority)="cyclePriority()">
+                        [requestState]="'archived'" (edit)="onEditRequest($event)"
+                        (save)="saveInline($event, 'archived')" (cancel)="cancelInline()"
+                        (unarchive)="onUnarchiveRequest($event)" (cyclePriority)="cyclePriority()">
                     </app-request>
                 }
             </div>

@@ -1,10 +1,28 @@
 .request-card {
-    position: relative;
     border-radius: 12px;
     padding: 12px 14px;
     background: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
     box-shadow: 0 1px 4px rgba(62, 39, 35, .2);
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.request-card.archived {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.archived-actions {
+    margin-top: 8px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.archived-actions button {
+    padding: 2px 12px;
+    font-size: 0.85rem;
+    min-height: 28px;
 }
 
 .request-header {
@@ -26,6 +44,14 @@
 
 .priority-dot.priority-3 {
     background: #ff9800;
+}
+
+.priority-dot.priority-4 {
+    background: #f44336;
+}
+
+.priority-dot.priority-5 {
+    background: #9c27b0;
 }
 
 .priority-dot.priority-4 {
@@ -133,6 +159,31 @@
     white-space: pre-wrap;
     line-height: 1.4;
     font-size: 0.95rem;
+}
+
+.request-text.read-only {
+    white-space: pre-wrap;
+    line-height: 1.4;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.answer-section {
+    margin: 12px 0;
+}
+
+.answer-label {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.answer-textarea {
+    margin-top: 4px;
 }
 
 .request-date {

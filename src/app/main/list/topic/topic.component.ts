@@ -160,16 +160,35 @@ export class TopicComponent {
         const req = this.allRequests().find(r => r.id === id);
         if (!req) return;
         if (this.editingRequestId === id) return; // already editing inline
+
+        // Don't allow archived requests to enter edit mode
+        if (req.archived) return;
+
         this.editingRequestId = id;
-        this.editingRequestText = req.description;
+
+        // For answered requests, edit the answer description
+        if (req.answeredDate && !req.archived) {
+            this.editingRequestText = req.answerDescription || '';
+        } else {
+            this.editingRequestText = req.description;
+        }
+
         this.editingRequestPriority.set(req.priority || 1);
         this.editingExisting = true;
     }
 
-    async saveInline(event: { id: number, text: string, priority: number }) {
-        const desc = (event.text || '').trim();
-        if (!desc) return;
-        const changes: any = { description: desc, priority: event.priority };
+    async saveInline(event: { id: number, text: string, priority: number }, requestState: 'open' | 'answered' | 'archived') {
+        const text = (event.text || '').trim();
+        if (!text) return;
+
+        const changes: any = {};
+        if (requestState === 'answered') {
+            changes.answerDescription = text;
+        } else {
+            changes.description = text;
+            changes.priority = event.priority;
+        }
+
         this.store.dispatch(updateRequest({ id: event.id, changes }));
         this.editingRequestId = null;
         this.editingRequestText = '';
@@ -213,18 +232,17 @@ export class TopicComponent {
         if (!desc) return;
         const changes: any = { description: desc, answeredDate: new Date().toISOString(), priority: this.editingRequestPriority() };
         this.store.dispatch(updateRequest({ id, changes }));
-        this.editingRequestId = null;
+        // Clear editing text for answer description input
         this.editingRequestText = '';
-        this.editingRequestPriority.set(1);
-        this.editingExisting = false;
+        // Keep edit mode open so user can add answer description
         // Move to Answers tab after marking answered
         this.activeTabIndex = 1;
     }
 
     async markUnansweredInline(id: number) {
-        const desc = (this.editingRequestText || '').trim();
-        if (!desc) return;
-        const changes: any = { description: desc, answeredDate: null, priority: this.editingRequestPriority() };
+        // For answered requests, we want to clear the answer and reset to open state
+        // The editingRequestText contains the answer description, which we can ignore
+        const changes: any = { answeredDate: null, priority: this.editingRequestPriority() };
         this.store.dispatch(updateRequest({ id, changes }));
         this.editingRequestId = null;
         this.editingRequestText = '';
@@ -236,6 +254,11 @@ export class TopicComponent {
 
     async onArchiveRequest(id: number) {
         this.store.dispatch(updateRequest({ id, changes: { archived: true } }));
+        // Exit edit mode when archiving
+        this.editingRequestId = null;
+        this.editingRequestText = '';
+        this.editingRequestPriority.set(1);
+        this.editingExisting = false;
         // Switch to Archived tab
         this.activeTabIndex = 2;
     }
