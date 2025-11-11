@@ -44,7 +44,7 @@ export class PrayerSessionService {
     private requests = this.store.selectSignal(selectAllRequests);
 
     // Computed values
-    private answeredRequests = computed(() => this.requests().filter((r: RequestEntity) => r.answeredDate));
+    private answeredRequests = computed(() => this.requests().filter((r: RequestEntity) => r.answeredDate && !r.archived));
 
     private effectiveListId = computed(() => this.listIdSignal());
 
@@ -197,7 +197,7 @@ export class PrayerSessionService {
             if (requestIdSet.has(r.id)) return true;
             const belongs = scopedTopics.some((t: Topic) => (t.requestIds || []).includes(r.id));
             if (belongs) requestIdSet.add(r.id);
-            return belongs && !r.answeredDate;
+            return belongs && !r.answeredDate && !r.archived;
         });
     }
 

@@ -195,7 +195,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             createdDate: request.createdDate,
             priority: Number(request.priority) || 1,
             prayerCount: Number(request.prayerCount) || 0,
-            isAnswered: Boolean(request.answeredDate),
+            isAnswered: Boolean(request.answeredDate && !request.archived),
             answeredDate: request.answeredDate,
             answerDescription: request.answerDescription
         };
@@ -247,7 +247,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             }
             const topicSet = new Set(scopedTopicIds ?? allTopics.map(t => t.id));
             const scopedTopics = allTopics.filter(t => topicSet.has(t.id));
-            const scopedRequests = allRequests.filter(r => scopedTopics.some(t => (t.requestIds || []).includes(r.id)) && !r.answeredDate && r.archived !== true);
+            const scopedRequests = allRequests.filter(r => scopedTopics.some(t => (t.requestIds || []).includes(r.id)) && !r.answeredDate && !r.archived);
             const emptyTopics = scopedTopics.filter(t => (t.requestIds || []).length === 0);
             const ids = [...scopedRequests.map(r => r.id), ...emptyTopics.map(t => t.id)].sort().join(',');
 
