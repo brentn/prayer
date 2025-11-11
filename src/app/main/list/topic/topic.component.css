@@ -200,6 +200,10 @@ section {
     color: var(--md-sys-color-on-primary) !important;
 }
 
+:host ::ng-deep .tabs .mat-mdc-tab {
+    padding: 0;
+}
+
 :host ::ng-deep .tabs .mat-mdc-tab .mdc-tab__text-label {
     color: var(--md-sys-color-on-primary) !important;
     opacity: 0.85;

@@ -72,6 +72,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     // Combined list of items to pray for: requests, plus topics with no requests
     baseItems = computed(() => {
+        const archivingItems = this.archivingItems(); // Ensure reactivity
         const lid = this.effectiveListId();
         const allTopics = this.topics();
         const allRequests = this.requests();
@@ -109,7 +110,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             if (requestIdSet.has(r.id)) return true;
             const belongs = scopedTopics.some(t => (t.requestIds || []).includes(r.id));
             if (belongs) requestIdSet.add(r.id);
-            return belongs && !r.answeredDate;
+            return belongs && !r.answeredDate && (r.archived !== true || archivingItems.has(r.id));
         });
 
         // Topics with no requests within scope
@@ -144,6 +145,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private lastShuffle = false;
     private readonly sessionStarted = signal(false);
     private readonly sessionStartTime = signal<number | null>(null);
+    readonly archivingItems = signal<Set<number>>(new Set());
 
     // Computed owner maps for better performance - memoized
     private ownerMaps = computed(() => {
@@ -245,7 +247,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             }
             const topicSet = new Set(scopedTopicIds ?? allTopics.map(t => t.id));
             const scopedTopics = allTopics.filter(t => topicSet.has(t.id));
-            const scopedRequests = allRequests.filter(r => scopedTopics.some(t => (t.requestIds || []).includes(r.id)) && !r.answeredDate);
+            const scopedRequests = allRequests.filter(r => scopedTopics.some(t => (t.requestIds || []).includes(r.id)) && !r.answeredDate && r.archived !== true);
             const emptyTopics = scopedTopics.filter(t => (t.requestIds || []).length === 0);
             const ids = [...scopedRequests.map(r => r.id), ...emptyTopics.map(t => t.id)].sort().join(',');
 
@@ -696,6 +698,25 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         } catch (error) {
             console.error('Error updating answered request:', error);
         }
+    }
+
+    onRequestArchived(requestId: number) {
+        // Add to archiving items to trigger animation
+        this.archivingItems.update(items => new Set([...items, requestId]));
+
+        // Wait for animation to complete before updating store
+        setTimeout(() => {
+            this.store.dispatch(updateRequest({
+                id: requestId,
+                changes: { archived: true }
+            }));
+            // Remove from archiving items
+            this.archivingItems.update(items => {
+                const newItems = new Set(items);
+                newItems.delete(requestId);
+                return newItems;
+            });
+        }, 300);
     }
 
     onClose() {

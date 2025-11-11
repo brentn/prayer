@@ -43,6 +43,10 @@
                                             [disabled]="!editingRequestText.trim()">
                                             <mat-icon class="answered">check</mat-icon>
                                         </button>
+                                        <button mat-icon-button color="accent" (click)="onArchiveRequest(req.id)"
+                                            [disabled]="!editingRequestText.trim()">
+                                            <mat-icon class="archive">archive</mat-icon>
+                                        </button>
                                     }
                                     <button mat-button class="priority-btn"
                                         [ngClass]="'priority-' + editingRequestPriority()" (click)="cyclePriority()"
@@ -87,6 +91,53 @@
                                         [ngClass]="'priority-' + editingRequestPriority()" (click)="cyclePriority()"
                                         [disabled]="!editingRequestText.trim()">
                                         {{ editingRequestPriority() }}
+                                    </button>
+                                    <button mat-icon-button color="accent" (click)="onArchiveRequest(req.id)"
+                                        [disabled]="!editingRequestText.trim()">
+                                        <mat-icon class="archive">archive</mat-icon>
+                                    </button>
+                                </div>
+                                <div class="right">
+                                    <button mat-button (click)="cancelInline()">Cancel</button>
+                                    <button mat-flat-button color="primary" [disabled]="!editingRequestText.trim()"
+                                        (click)="saveInline(req.id)">
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="request-card" (click)="onEditRequest(req.id)">
+                            <div class="request-header">
+                                @if (req.priority && req.priority > 1) {
+                                    <div class="priority-dot" [class]="'priority-' + req.priority"></div>
+                                }
+                            </div>
+                            <div class="request-text">{{ req.description }}</div>
+                            <div class="request-date">{{ req.createdDate | date:'short' }}</div>
+                        </div>
+                    }
+                }
+            </div>
+        </mat-tab>
+        <mat-tab label="Archived">
+            <div class="requests">
+                @for (req of archivedRequests(); track req.id) {
+                    @if (editingRequestId === req.id) {
+                        <div class="request-card editing">
+                            <textarea class="edit-textarea" rows="3" [value]="editingRequestText"
+                                (input)="editingRequestText = $any($event.target).value"
+                                placeholder="Update your request..." autofocus></textarea>
+                            <div class="inline-actions">
+                                <div class="left">
+                                    <button mat-button class="priority-btn"
+                                        [ngClass]="'priority-' + editingRequestPriority()" (click)="cyclePriority()"
+                                        [disabled]="!editingRequestText.trim()">
+                                        {{ editingRequestPriority() }}
+                                    </button>
+                                    <button mat-icon-button color="accent" (click)="onUnarchiveRequest(req.id)"
+                                        [disabled]="!editingRequestText.trim()">
+                                        <mat-icon class="unarchive">unarchive</mat-icon>
                                     </button>
                                 </div>
                                 <div class="right">

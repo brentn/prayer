@@ -10,6 +10,7 @@ export interface RequestEntity {
     createdDate: string; // ISO string for storage simplicity
     answeredDate?: string | null;
     answerDescription?: string;
+    archived?: boolean;
     prayerCount: number;
     priority: number; // 1 (low) to 5 (high)
 }

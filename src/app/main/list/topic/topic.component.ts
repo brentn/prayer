@@ -51,8 +51,9 @@ export class TopicComponent {
         return this.allRequests().filter(r => set.has(r.id));
     });
 
-    openRequests = computed(() => this.requests().filter(r => !r.answeredDate));
-    answeredRequests = computed(() => this.requests().filter(r => !!r.answeredDate));
+    openRequests = computed(() => this.requests().filter(r => !r.answeredDate && !r.archived));
+    answeredRequests = computed(() => this.requests().filter(r => !!r.answeredDate && !r.archived));
+    archivedRequests = computed(() => this.requests().filter(r => r.archived));
 
     back() {
         const l = this.currentList();
@@ -217,6 +218,19 @@ export class TopicComponent {
         this.editingExisting = false;
         // Move to Answers tab after marking answered
         this.activeTabIndex = 1;
+    }
+
+    async onArchiveRequest(id: number) {
+        this.store.dispatch(updateRequest({ id, changes: { archived: true } }));
+        // Switch to Archived tab
+        this.activeTabIndex = 2;
+    }
+
+    async onUnarchiveRequest(id: number) {
+        const req = this.allRequests().find(r => r.id === id);
+        this.store.dispatch(updateRequest({ id, changes: { archived: false } }));
+        // Switch to appropriate tab based on whether request is answered
+        this.activeTabIndex = req?.answeredDate ? 1 : 0;
     }
 
     cyclePriority() {
