@@ -147,7 +147,13 @@ export class ListComponent implements OnInit {
 
     getRequestCount(topicId: number): number {
         const topic = this.allTopics().find(t => t.id === topicId);
-        return topic?.requestIds?.length || 0;
+        if (!topic?.requestIds?.length) return 0;
+
+        return this.requests().filter(r =>
+            topic.requestIds!.includes(r.id) &&
+            !r.archived &&
+            !r.answeredDate
+        ).length;
     }
 
     onSectionClick() {
