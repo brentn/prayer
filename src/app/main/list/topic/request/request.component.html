@@ -1,0 +1,50 @@
+@if (isEditing) {
+    <div class="request-card editing">
+        <textarea class="edit-textarea" rows="3" [value]="editingText" (input)="editingText = $any($event.target).value"
+            [placeholder]="requestState === 'open' ? 'Type your request...' : 'Update your request...'"
+            autofocus></textarea>
+        <div class="inline-actions">
+            <div class="left">
+                @if (requestState === 'open') {
+                    <button mat-icon-button color="warn" (click)="onDelete()">
+                        <mat-icon class="trash">delete</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" (click)="onMarkAnswered()" [disabled]="!editingText.trim()">
+                        <mat-icon class="answered">check</mat-icon>
+                    </button>
+                    <button mat-icon-button color="accent" (click)="onArchive()" [disabled]="!editingText.trim()">
+                        <mat-icon class="archive">archive</mat-icon>
+                    </button>
+                } @else if (requestState === 'answered') {
+                    <button mat-icon-button color="accent" (click)="onArchive()" [disabled]="!editingText.trim()">
+                        <mat-icon class="archive">archive</mat-icon>
+                    </button>
+                } @else if (requestState === 'archived') {
+                    <button mat-icon-button color="accent" (click)="onUnarchive()" [disabled]="!editingText.trim()">
+                        <mat-icon class="unarchive">unarchive</mat-icon>
+                    </button>
+                }
+                <button mat-button class="priority-btn" [ngClass]="'priority-' + editingPriority()"
+                    (click)="onCyclePriority()" [disabled]="!editingText.trim()">
+                    {{ editingPriority() }}
+                </button>
+            </div>
+            <div class="right">
+                <button mat-button (click)="onCancel()">Cancel</button>
+                <button mat-flat-button color="primary" [disabled]="!editingText.trim()" (click)="onSave()">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+} @else {
+    <div class="request-card" (click)="onEdit()">
+        <div class="request-header">
+            @if (request.priority && request.priority > 1) {
+                <div class="priority-dot" [class]="'priority-' + request.priority"></div>
+            }
+        </div>
+        <div class="request-text">{{ request.description }}</div>
+        <div class="request-date">{{ request.createdDate | date:'short' }}</div>
+    </div>
+}

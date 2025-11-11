@@ -28,138 +28,37 @@
         <mat-tab label="Requests">
             <div class="requests" #requestsContainer>
                 @for (req of openRequests(); track req.id) {
-                    @if (editingRequestId === req.id) {
-                        <div class="request-card editing">
-                            <textarea class="edit-textarea" rows="3" [value]="editingRequestText"
-                                (input)="editingRequestText = $any($event.target).value"
-                                placeholder="Type your request..." autofocus></textarea>
-                            <div class="inline-actions">
-                                <div class="left">
-                                    @if (editingExisting) {
-                                        <button mat-icon-button color="warn" (click)="onInlineDelete()">
-                                            <mat-icon class="trash">delete</mat-icon>
-                                        </button>
-                                        <button mat-icon-button color="primary" (click)="markAnsweredInline(req.id)"
-                                            [disabled]="!editingRequestText.trim()">
-                                            <mat-icon class="answered">check</mat-icon>
-                                        </button>
-                                        <button mat-icon-button color="accent" (click)="onArchiveRequest(req.id)"
-                                            [disabled]="!editingRequestText.trim()">
-                                            <mat-icon class="archive">archive</mat-icon>
-                                        </button>
-                                    }
-                                    <button mat-button class="priority-btn"
-                                        [ngClass]="'priority-' + editingRequestPriority()" (click)="cyclePriority()"
-                                        [disabled]="!editingRequestText.trim()">
-                                        {{ editingRequestPriority() }}
-                                    </button>
-                                </div>
-                                <div class="right">
-                                    <button mat-button (click)="cancelInline()">Cancel</button>
-                                    <button mat-flat-button color="primary" [disabled]="!editingRequestText.trim()"
-                                        (click)="saveInline(req.id)">
-                                        Save
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    } @else {
-                        <div class="request-card" (click)="onEditRequest(req.id)">
-                            <div class="request-header">
-                                @if (req.priority && req.priority > 1) {
-                                    <div class="priority-dot" [class]="'priority-' + req.priority"></div>
-                                }
-                            </div>
-                            <div class="request-text">{{ req.description }}</div>
-                            <div class="request-date">{{ req.createdDate | date:'short' }}</div>
-                        </div>
-                    }
+                    <app-request [request]="req" [isEditing]="editingRequestId === req.id"
+                        [editingText]="editingRequestText" [editingPriority]="editingRequestPriority"
+                        [requestState]="'open'" (edit)="onEditRequest($event)" (save)="saveInline($event)"
+                        (cancel)="cancelInline()" (deleteRequest)="onInlineDelete()"
+                        (markAnswered)="markAnsweredInline($event)" (archive)="onArchiveRequest($event)"
+                        (cyclePriority)="cyclePriority()">
+                    </app-request>
                 }
             </div>
         </mat-tab>
         <mat-tab label="Answers">
             <div class="requests">
                 @for (req of answeredRequests(); track req.id) {
-                    @if (editingRequestId === req.id) {
-                        <div class="request-card editing">
-                            <textarea class="edit-textarea" rows="3" [value]="editingRequestText"
-                                (input)="editingRequestText = $any($event.target).value"
-                                placeholder="Update your request..." autofocus></textarea>
-                            <div class="inline-actions">
-                                <div class="left">
-                                    <button mat-button class="priority-btn"
-                                        [ngClass]="'priority-' + editingRequestPriority()" (click)="cyclePriority()"
-                                        [disabled]="!editingRequestText.trim()">
-                                        {{ editingRequestPriority() }}
-                                    </button>
-                                    <button mat-icon-button color="accent" (click)="onArchiveRequest(req.id)"
-                                        [disabled]="!editingRequestText.trim()">
-                                        <mat-icon class="archive">archive</mat-icon>
-                                    </button>
-                                </div>
-                                <div class="right">
-                                    <button mat-button (click)="cancelInline()">Cancel</button>
-                                    <button mat-flat-button color="primary" [disabled]="!editingRequestText.trim()"
-                                        (click)="saveInline(req.id)">
-                                        Save
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    } @else {
-                        <div class="request-card" (click)="onEditRequest(req.id)">
-                            <div class="request-header">
-                                @if (req.priority && req.priority > 1) {
-                                    <div class="priority-dot" [class]="'priority-' + req.priority"></div>
-                                }
-                            </div>
-                            <div class="request-text">{{ req.description }}</div>
-                            <div class="request-date">{{ req.createdDate | date:'short' }}</div>
-                        </div>
-                    }
+                    <app-request [request]="req" [isEditing]="editingRequestId === req.id"
+                        [editingText]="editingRequestText" [editingPriority]="editingRequestPriority"
+                        [requestState]="'answered'" (edit)="onEditRequest($event)" (save)="saveInline($event)"
+                        (cancel)="cancelInline()" (archive)="onArchiveRequest($event)"
+                        (cyclePriority)="cyclePriority()">
+                    </app-request>
                 }
             </div>
         </mat-tab>
         <mat-tab label="Archived">
             <div class="requests">
                 @for (req of archivedRequests(); track req.id) {
-                    @if (editingRequestId === req.id) {
-                        <div class="request-card editing">
-                            <textarea class="edit-textarea" rows="3" [value]="editingRequestText"
-                                (input)="editingRequestText = $any($event.target).value"
-                                placeholder="Update your request..." autofocus></textarea>
-                            <div class="inline-actions">
-                                <div class="left">
-                                    <button mat-button class="priority-btn"
-                                        [ngClass]="'priority-' + editingRequestPriority()" (click)="cyclePriority()"
-                                        [disabled]="!editingRequestText.trim()">
-                                        {{ editingRequestPriority() }}
-                                    </button>
-                                    <button mat-icon-button color="accent" (click)="onUnarchiveRequest(req.id)"
-                                        [disabled]="!editingRequestText.trim()">
-                                        <mat-icon class="unarchive">unarchive</mat-icon>
-                                    </button>
-                                </div>
-                                <div class="right">
-                                    <button mat-button (click)="cancelInline()">Cancel</button>
-                                    <button mat-flat-button color="primary" [disabled]="!editingRequestText.trim()"
-                                        (click)="saveInline(req.id)">
-                                        Save
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    } @else {
-                        <div class="request-card" (click)="onEditRequest(req.id)">
-                            <div class="request-header">
-                                @if (req.priority && req.priority > 1) {
-                                    <div class="priority-dot" [class]="'priority-' + req.priority"></div>
-                                }
-                            </div>
-                            <div class="request-text">{{ req.description }}</div>
-                            <div class="request-date">{{ req.createdDate | date:'short' }}</div>
-                        </div>
-                    }
+                    <app-request [request]="req" [isEditing]="editingRequestId === req.id"
+                        [editingText]="editingRequestText" [editingPriority]="editingRequestPriority"
+                        [requestState]="'archived'" (edit)="onEditRequest($event)" (save)="saveInline($event)"
+                        (cancel)="cancelInline()" (unarchive)="onUnarchiveRequest($event)"
+                        (cyclePriority)="cyclePriority()">
+                    </app-request>
                 }
             </div>
         </mat-tab>

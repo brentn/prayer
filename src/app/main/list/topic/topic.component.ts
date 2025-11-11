@@ -14,10 +14,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { selectAllTopics } from '../../../store/topics/topic.selectors';
 import { selectAllLists } from '../../../store/lists/list.selectors';
 import { ChangeDetectorRef } from '@angular/core';
+import { RequestComponent } from './request/request.component';
 
 @Component({
     standalone: true,
-    imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatTabsModule],
+    imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatTabsModule, RequestComponent],
     templateUrl: './topic.component.html',
     styleUrl: './topic.component.css'
 })
@@ -165,11 +166,11 @@ export class TopicComponent {
         this.editingExisting = true;
     }
 
-    async saveInline(id: number) {
-        const desc = (this.editingRequestText || '').trim();
+    async saveInline(event: { id: number, text: string, priority: number }) {
+        const desc = (event.text || '').trim();
         if (!desc) return;
-        const changes: any = { description: desc, priority: this.editingRequestPriority() };
-        this.store.dispatch(updateRequest({ id, changes }));
+        const changes: any = { description: desc, priority: event.priority };
+        this.store.dispatch(updateRequest({ id: event.id, changes }));
         this.editingRequestId = null;
         this.editingRequestText = '';
         this.editingRequestPriority.set(1);
