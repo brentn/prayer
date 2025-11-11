@@ -40,15 +40,6 @@ export class StatsCard {
         return Math.round((this.totalRequestsPrayed / this.totalTimePrayed) * 60); // requests per hour
     }
 
-    get milestone(): string {
-        if (this.totalSessions >= 100) return "Century of Prayer!";
-        if (this.totalSessions >= 50) return "Golden Prayer!";
-        if (this.totalSessions >= 25) return "Silver Prayer!";
-        if (this.totalSessions >= 10) return "Bronze Prayer!";
-        if (this.totalSessions >= 1) return "First Prayer!";
-        return "";
-    }
-
     formatDuration(seconds: number): string {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
