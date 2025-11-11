@@ -28,6 +28,9 @@ export const reducer = createReducer(
         const id = nextId(state);
         return adapter.addOne({ id, name, topicIds: [] }, state);
     }),
+    on(ListActions.addListWithId, (state, { id, name, topicIds = [], excludeFromAll = false }) => {
+        return adapter.addOne({ id, name, topicIds, excludeFromAll }, state);
+    }),
     on(ListActions.updateList, (state, { id, changes }) => adapter.updateOne({ id, changes }, state)),
     on(ListActions.removeList, (state, { id }) => adapter.removeOne(id, state)),
     on(ListActions.clearLists, state => adapter.removeAll(state)),

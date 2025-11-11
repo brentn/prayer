@@ -17,3 +17,16 @@ mat-radio-group {
     flex-direction: column;
     gap: 8px;
 }
+
+/* Ensure buttons are visible */
+mat-dialog-actions button {
+    color: #1565c0 !important;
+    border-color: #1565c0 !important;
+    background-color: transparent !important;
+}
+
+mat-dialog-actions button[color="primary"] {
+    background-color: #1565c0 !important;
+    color: white !important;
+    border-color: #1565c0 !important;
+}

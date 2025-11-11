@@ -107,6 +107,92 @@ export class ImportExportService {
     }
 
     async importData(data: ExportData, options: ImportOptions): Promise<void> {
+        // Handle replace mode - simple replacement with original IDs
+        if (options.mergeMode === 'replace') {
+            await this.importReplaceMode(data, options);
+            return;
+        }
+
+        // Handle merge mode - existing logic
+        await this.importMergeMode(data, options);
+    }
+
+    private async importReplaceMode(data: ExportData, options: ImportOptions): Promise<void> {
+        // Clear all existing data
+        const { clearLists } = await import('../../store/lists/list.actions');
+        const { clearTopics } = await import('../../store/topics/topic.actions');
+        const { clearRequests } = await import('../../store/requests/request.actions');
+
+        this.store.dispatch(clearLists());
+        this.store.dispatch(clearTopics());
+        this.store.dispatch(clearRequests());
+        this.prayerStats.resetStats();
+
+        // Import lists with original IDs
+        if (data.lists && data.lists.length > 0) {
+            const { addListWithId } = await import('../../store/lists/list.actions');
+            for (const list of data.lists) {
+                this.store.dispatch(addListWithId({
+                    id: list.id,
+                    name: list.name,
+                    topicIds: list.topicIds || [],
+                    excludeFromAll: list.excludeFromAll || false
+                }));
+            }
+        }
+
+        // Import topics with original IDs
+        if (data.topics && data.topics.length > 0) {
+            const { addTopicWithId, updateTopic } = await import('../../store/topics/topic.actions');
+            for (const topic of data.topics) {
+                this.store.dispatch(addTopicWithId({
+                    id: topic.id,
+                    name: topic.name
+                }));
+                // Update with requestIds if they exist
+                if (topic.requestIds && topic.requestIds.length > 0) {
+                    this.store.dispatch(updateTopic({
+                        id: topic.id,
+                        changes: { requestIds: topic.requestIds }
+                    }));
+                }
+            }
+        }
+
+        // Import requests with original IDs
+        if (data.requests && data.requests.length > 0) {
+            const { addRequestWithId, updateRequest } = await import('../../store/requests/request.actions');
+            for (const request of data.requests) {
+                this.store.dispatch(addRequestWithId({
+                    id: request.id,
+                    description: request.description || request.text || ''
+                }));
+
+                // Update with additional properties
+                const changes: any = {};
+                if (request.answeredDate !== undefined) changes.answeredDate = request.answeredDate;
+                if (request.answerDescription !== undefined) changes.answerDescription = request.answerDescription;
+                if (request.prayerCount !== undefined) changes.prayerCount = request.prayerCount || 0;
+                if (request.priority !== undefined) changes.priority = request.priority || 1;
+                if (request.archived !== undefined) changes.archived = request.archived || false;
+                if (request.createdDate !== undefined) changes.createdDate = request.createdDate;
+
+                if (Object.keys(changes).length > 0) {
+                    this.store.dispatch(updateRequest({
+                        id: request.id,
+                        changes
+                    }));
+                }
+            }
+        }
+
+        // Import stats if option is enabled
+        if (options.includeStats && data.stats) {
+            this.prayerStats.setAllStats(data.stats);
+        }
+    }
+
+    private async importMergeMode(data: ExportData, options: ImportOptions): Promise<void> {
         const idMappings = {
             lists: new Map<number, number>(), // oldId -> newId
             topics: new Map<number, number>(), // oldId -> newId
@@ -123,15 +209,13 @@ export class ImportExportService {
 
                 if (existingList) {
                     // Update existing list
-                    if (options.mergeMode === 'replace') {
-                        this.store.dispatch(updateList({
-                            id: existingList.id,
-                            changes: {
-                                excludeFromAll: importedList.excludeFromAll
-                                // Note: topicIds will be rebuilt later
-                            }
-                        }));
-                    }
+                    this.store.dispatch(updateList({
+                        id: existingList.id,
+                        changes: {
+                            excludeFromAll: importedList.excludeFromAll
+                            // Note: topicIds will be rebuilt later
+                        }
+                    }));
                     // Map old ID to existing ID
                     idMappings.lists.set(importedList.id, existingList.id);
                 } else {
@@ -159,31 +243,23 @@ export class ImportExportService {
             }
         }
 
-        // Import topics - match by name and list relationship, generate new IDs
+        // Import topics - import all topics from the data, generate new IDs
         if (data.topics && data.topics.length > 0) {
             const { addTopicWithId, updateTopic } = await import('../../store/topics/topic.actions');
             const currentTopics = this.store.selectSignal(selectAllTopics)();
             const currentLists = this.store.selectSignal(selectAllLists)();
 
             for (const importedTopic of data.topics) {
-                // Find all imported lists that contain this topic
-                const importedListsContainingTopic = data.lists?.filter(list => list.topicIds?.includes(importedTopic.id)) || [];
-
-                // Skip if no lists contain it
-                if (importedListsContainingTopic.length === 0) continue;
-
                 const existingTopic = currentTopics.find(t => t.name === importedTopic.name);
 
                 let topicId: number;
                 if (existingTopic) {
                     // Update existing topic
-                    if (options.mergeMode === 'replace') {
-                        // Note: requestIds will be rebuilt later
-                        this.store.dispatch(updateTopic({
-                            id: existingTopic.id,
-                            changes: { name: importedTopic.name }
-                        }));
-                    }
+                    // Note: requestIds will be rebuilt later
+                    this.store.dispatch(updateTopic({
+                        id: existingTopic.id,
+                        changes: { name: importedTopic.name }
+                    }));
                     topicId = existingTopic.id;
                 } else {
                     // Add new topic with new ID
@@ -194,16 +270,24 @@ export class ImportExportService {
 
                 // Map old ID to new ID
                 idMappings.topics.set(importedTopic.id, topicId);
+            }
 
-                // Add to each corresponding new list
-                for (const importedList of importedListsContainingTopic) {
+            // Now associate topics with lists based on the imported list's topicIds
+            if (data.lists && data.lists.length > 0) {
+                for (const importedList of data.lists) {
                     const newListId = idMappings.lists.get(importedList.id);
-                    if (newListId) {
+                    if (newListId && importedList.topicIds) {
                         const targetList = currentLists.find(l => l.id === newListId);
                         if (targetList) {
-                            const topicIds = Array.from(new Set([...(targetList.topicIds || []), topicId]));
-                            const { updateList } = await import('../../store/lists/list.actions');
-                            this.store.dispatch(updateList({ id: targetList.id, changes: { topicIds } }));
+                            // Map old topic IDs to new topic IDs for this list
+                            const newTopicIds = importedList.topicIds
+                                .map((oldTopicId: number) => idMappings.topics.get(oldTopicId))
+                                .filter((id: number | undefined) => id !== undefined) as number[];
+
+                            if (newTopicIds.length > 0) {
+                                const { updateList } = await import('../../store/lists/list.actions');
+                                this.store.dispatch(updateList({ id: targetList.id, changes: { topicIds: newTopicIds } }));
+                            }
                         }
                     }
                 }
@@ -235,18 +319,16 @@ export class ImportExportService {
 
                 if (existingRequest) {
                     // Update existing request
-                    if (options.mergeMode === 'replace') {
-                        this.store.dispatch(updateRequest({
-                            id: existingRequest.id,
-                            changes: {
-                                description: importedRequest.description || importedRequest.text || '',
-                                answeredDate: importedRequest.answeredDate,
-                                answerDescription: importedRequest.answerDescription,
-                                prayerCount: importedRequest.prayerCount,
-                                priority: importedRequest.priority
-                            }
-                        }));
-                    }
+                    this.store.dispatch(updateRequest({
+                        id: existingRequest.id,
+                        changes: {
+                            description: importedRequest.description || importedRequest.text || '',
+                            answeredDate: importedRequest.answeredDate,
+                            answerDescription: importedRequest.answerDescription,
+                            prayerCount: importedRequest.prayerCount,
+                            priority: importedRequest.priority
+                        }
+                    }));
                     // Map old ID to existing ID
                     idMappings.requests.set(importedRequest.id, existingRequest.id);
                 } else {
@@ -285,35 +367,30 @@ export class ImportExportService {
 
         // Import stats if option is enabled
         if (options.includeStats && data.stats) {
-            if (options.mergeMode === 'replace') {
-                // Replace all stats
-                this.prayerStats.setAllStats(data.stats);
-            } else {
-                // Merge stats (keep higher values)
-                const currentStats = {
-                    totalTimePrayed: this.prayerStats.getTotalTimePrayed(),
-                    totalRequestsPrayed: this.prayerStats.getTotalRequestsPrayed(),
-                    totalRequestsAnswered: this.prayerStats.getTotalRequestsAnswered(),
-                    totalSessions: this.prayerStats.getTotalSessions(),
-                    firstSessionDate: this.prayerStats.getFirstSessionDate(),
-                    lastSessionDate: this.prayerStats.getLastSessionDate(),
-                };
+            // Merge stats (keep higher values)
+            const currentStats = {
+                totalTimePrayed: this.prayerStats.getTotalTimePrayed(),
+                totalRequestsPrayed: this.prayerStats.getTotalRequestsPrayed(),
+                totalRequestsAnswered: this.prayerStats.getTotalRequestsAnswered(),
+                totalSessions: this.prayerStats.getTotalSessions(),
+                firstSessionDate: this.prayerStats.getFirstSessionDate(),
+                lastSessionDate: this.prayerStats.getLastSessionDate(),
+            };
 
-                const mergedStats = {
-                    totalTimePrayed: Math.max(currentStats.totalTimePrayed, data.stats.totalTimePrayed || 0),
-                    totalRequestsPrayed: Math.max(currentStats.totalRequestsPrayed, data.stats.totalRequestsPrayed || 0),
-                    totalRequestsAnswered: Math.max(currentStats.totalRequestsAnswered, data.stats.totalRequestsAnswered || 0),
-                    totalSessions: Math.max(currentStats.totalSessions, data.stats.totalSessions || 0),
-                    firstSessionDate: currentStats.firstSessionDate && data.stats.firstSessionDate
-                        ? new Date(Math.min(new Date(currentStats.firstSessionDate).getTime(), new Date(data.stats.firstSessionDate).getTime())).toISOString()
-                        : currentStats.firstSessionDate || data.stats.firstSessionDate,
-                    lastSessionDate: currentStats.lastSessionDate && data.stats.lastSessionDate
-                        ? new Date(Math.max(new Date(currentStats.lastSessionDate).getTime(), new Date(data.stats.lastSessionDate).getTime())).toISOString()
-                        : currentStats.lastSessionDate || data.stats.lastSessionDate,
-                };
+            const mergedStats = {
+                totalTimePrayed: Math.max(currentStats.totalTimePrayed, data.stats.totalTimePrayed || 0),
+                totalRequestsPrayed: Math.max(currentStats.totalRequestsPrayed, data.stats.totalRequestsPrayed || 0),
+                totalRequestsAnswered: Math.max(currentStats.totalRequestsAnswered, data.stats.totalRequestsAnswered || 0),
+                totalSessions: Math.max(currentStats.totalSessions, data.stats.totalSessions || 0),
+                firstSessionDate: currentStats.firstSessionDate && data.stats.firstSessionDate
+                    ? new Date(Math.min(new Date(currentStats.firstSessionDate).getTime(), new Date(data.stats.firstSessionDate).getTime())).toISOString()
+                    : currentStats.firstSessionDate || data.stats.firstSessionDate,
+                lastSessionDate: currentStats.lastSessionDate && data.stats.lastSessionDate
+                    ? new Date(Math.max(new Date(currentStats.lastSessionDate).getTime(), new Date(data.stats.lastSessionDate).getTime())).toISOString()
+                    : currentStats.lastSessionDate || data.stats.lastSessionDate,
+            };
 
-                this.prayerStats.setAllStats(mergedStats);
-            }
+            this.prayerStats.setAllStats(mergedStats);
         }
     }
 }
