@@ -15,6 +15,7 @@ export interface ConfirmDialogData {
     standalone: true,
     imports: [CommonModule, MatDialogModule, MatButtonModule],
     templateUrl: './confirm-dialog.component.html',
+    styleUrl: './confirm-dialog.component.css',
 })
 export class ConfirmDialogComponent {
     constructor(

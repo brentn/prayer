@@ -1,3 +1,11 @@
+.delete-option {
+    color: #f44336 !important;
+}
+
+.delete-option mat-icon {
+    color: #f44336 !important;
+}
+
 .request-card {
     border-radius: 12px;
     padding: 12px 14px;

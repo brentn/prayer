@@ -1,15 +1,15 @@
 <section (click)="onSectionClick()">
     <div class="section-bar" (click)="$event.stopPropagation()">
         <div class="title-stack" (click)="startEdit()">
+            @if (currentList(); as l) {
+                <div class="list-name">{{ l.name }}</div>
+            }
             @if (!editing) {
                 <h3 class="section-title">{{ (currentTopic()?.name) || 'Topic' }}</h3>
             } @else {
                 <input class="edit-input" type="text" [value]="editName" (click)="$event.stopPropagation()"
                     (input)="editName = $any($event.target).value" (keydown.enter)="saveEdit()"
                     (keydown.escape)="cancelEdit()" autofocus />
-            }
-            @if (currentList(); as l) {
-                <div class="section-subtitle">from list: {{ l.name }}</div>
             }
         </div>
         @if (editing) {

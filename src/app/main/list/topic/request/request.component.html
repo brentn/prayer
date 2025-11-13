@@ -43,6 +43,10 @@
                             <mat-icon>archive</mat-icon>
                             <span>Archive</span>
                         </button>
+                        <button mat-menu-item (click)="onDelete()" class="delete-option">
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
+                        </button>
                     } @else if (requestState === 'answered') {
                         <button mat-menu-item (click)="onMarkUnanswered()">
                             <mat-icon>undo</mat-icon>

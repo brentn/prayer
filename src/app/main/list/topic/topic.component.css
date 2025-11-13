@@ -6,7 +6,7 @@ section {
 }
 
 .section-title {
-    margin: 0 0 0.5rem 0;
+    margin: 0;
     color: var(--md-sys-color-on-surface, #4e342e);
 }
 
@@ -32,8 +32,11 @@ section {
     margin-bottom: .5rem;
 }
 
-.section-subtitle {
+.list-name {
+    text-align: center;
     font-size: 12px;
+    font-style: italic;
+    margin-bottom: 0.2rem;
     color: rgba(255, 255, 255, 0.7);
     margin-top: -4px;
 }
