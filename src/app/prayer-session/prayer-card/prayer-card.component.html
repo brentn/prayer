@@ -4,10 +4,11 @@
         [answeredSummary]="answeredSummary()" [answeredDateText]="answeredDateText()"
         [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName" [onAnsweredClick]="onAnsweredClick.bind(this)">
     </app-prayer-card-header>
-    <app-prayer-card-content [icon]="icon" [title]="title" [topicName]="topicName" [isAnswered]="isAnswered"
-        [localIsAnswered]="localIsAnswered()" [answerDescription]="answerDescription"
+    <app-prayer-card-content [icon]="icon" [title]="localTitleEdited() ? localTitle() : title" [topicName]="topicName"
+        [isAnswered]="isAnswered" [localIsAnswered]="localIsAnswered()" [answerDescription]="answerDescription"
         [localAnswerDescription]="localAnswerDescription()" [onAnsweredClick]="onAnsweredClick.bind(this)"
-        [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName" (archive)="archive.emit()">
+        [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName" (archive)="archive.emit()"
+        (editTitle)="onTitleEdited($event)">
     </app-prayer-card-content>
     <app-answer-form [showAnswerForm]="showAnswerForm" [answerText]="answerText"
         [onAnswerSubmit]="onAnswerSubmit.bind(this)" [onAnswerCancel]="onAnswerCancel.bind(this)">

@@ -1,9 +1,9 @@
 
 Todo:
-    ☐ allow editing requests from prayer session
     ☐ Add requests from prayer session
     ☐ Answers Button / Page
     ☐ include empty topics flag
+    ✔ allow editing requests from prayer session @done(25-11-12 20:59)
     ✔ Archive requests @done(25-11-10 16:58)
     ✔ Bug: topics sometimes get added to multiple lists @done(25-11-10)
     ✔ remap back button @done(25-11-08 10:58)

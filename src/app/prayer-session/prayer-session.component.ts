@@ -298,7 +298,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         });
     }
 
-    // Final items with updated prayerCount
+    // Final items with updated data from current requests
     items = computed(() => {
         const shuffled = this.shuffledItems();
         const currentRequests = this.requests();
@@ -311,8 +311,17 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         }).map(item => {
             if (item.kind === 'request') {
                 const current = currentRequests.find(r => r.id === item.id);
-                if (current && current.prayerCount !== item.prayerCount) {
-                    return { ...item, prayerCount: current.prayerCount };
+                if (current) {
+                    // Update all request properties that might have changed
+                    return {
+                        ...item,
+                        description: current.description,
+                        prayerCount: current.prayerCount,
+                        priority: current.priority || 1,
+                        isAnswered: Boolean(current.answeredDate && !current.archived),
+                        answeredDate: current.answeredDate || undefined,
+                        answerDescription: current.answerDescription
+                    };
                 }
             }
             return item;
@@ -703,6 +712,19 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             this.prayerStats.addRequestsAnswered(1);
         } catch (error) {
             console.error('Error updating answered request:', error);
+        }
+    }
+
+    onTitleEdited(requestId: number, newTitle: string) {
+        try {
+            this.store.dispatch(updateRequest({
+                id: requestId,
+                changes: {
+                    description: newTitle
+                }
+            }));
+        } catch (error) {
+            console.error('Error updating request title:', error);
         }
     }
 

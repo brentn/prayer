@@ -51,11 +51,14 @@ export class PrayerCardComponent implements OnChanges {
 
     @Output() answered = new EventEmitter<{ answerDescription: string }>();
     @Output() archive = new EventEmitter<void>();
+    @Output() titleEdited = new EventEmitter<string>();
 
     showAnswerForm = signal(false);
     answerText = signal('');
     localIsAnswered = signal(false);
     localAnswerDescription = signal('');
+    localTitle = signal('');
+    localTitleEdited = signal(false);
 
     answeredSummary = computed(() => this.dateUtils.formatAnsweredSummary(this.prayerCount, this.createdDate, this.answeredDate));
     answeredDateText = computed(() => this.dateUtils.formatAnsweredDateText(this.isAnswered, this.answeredDate));
@@ -66,9 +69,15 @@ export class PrayerCardComponent implements OnChanges {
             this.localIsAnswered.set(false);
             this.localAnswerDescription.set('');
         }
-        if (changes['isAnswered'] && changes['isAnswered'].currentValue) {
-            this.localIsAnswered.set(false);
-            this.localAnswerDescription.set('');
+        // When the authoritative title is updated from props, clear local title state
+        if (changes['title'] && changes['title'].currentValue) {
+            this.localTitleEdited.set(false);
+            this.localTitle.set('');
+        }
+        // When the authoritative title is updated from props, clear local title state
+        if (changes['title'] && changes['title'].currentValue) {
+            this.localTitleEdited.set(false);
+            this.localTitle.set('');
         }
     }
 
@@ -87,5 +96,13 @@ export class PrayerCardComponent implements OnChanges {
     onAnswerCancel() {
         this.showAnswerForm.set(false);
         this.answerText.set('');
+    }
+
+    onTitleEdited(newTitle: string) {
+        // Update local state immediately for responsive UI
+        this.localTitle.set(newTitle);
+        this.localTitleEdited.set(true);
+        // Emit to parent for store persistence
+        this.titleEdited.emit(newTitle);
     }
 }

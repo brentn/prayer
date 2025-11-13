@@ -72,7 +72,8 @@
                                     [isAnswered]="item.isAnswered || false" [answeredDate]="item.answeredDate"
                                     [answerDescription]="item.answerDescription"
                                     (answered)="onRequestAnswered(item.id, $event)"
-                                    (archive)="onRequestArchiveButton(item.id)">
+                                    (archive)="onRequestArchiveButton(item.id)"
+                                    (titleEdited)="onTitleEdited(item.id, $event)">
                                 </app-prayer-card>
                             } @else {
                                 <app-prayer-card icon="label" [title]="item.name"
