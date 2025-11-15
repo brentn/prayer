@@ -18,6 +18,7 @@ export class CarouselService {
     private slideWidth = signal(0);
     private stepSize = signal(0);
     private viewportHeight = signal(0);
+    private animationFrameId: number | null = null;
 
     // DOM references
     private carousel?: ElementRef<HTMLDivElement>;
@@ -105,12 +106,28 @@ export class CarouselService {
 
     onPointerMove(ev: PointerEvent): void {
         if (!this.isDragging) return;
-        const dx = ev.clientX - this.startX;
-        this.deltaX.set(dx);
+
+        // Cancel any pending animation frame
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+
+        // Schedule the deltaX update for the next animation frame
+        this.animationFrameId = requestAnimationFrame(() => {
+            const dx = ev.clientX - this.startX;
+            this.deltaX.set(dx);
+            this.animationFrameId = null;
+        });
     }
 
     onPointerUp(ev: PointerEvent, maxIndex: number): number {
         if (!this.isDragging) return this.currentIndex();
+
+        // Cancel any pending animation frame
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
 
         this.isDragging = false;
         const dx = this.deltaX();
@@ -161,6 +178,10 @@ export class CarouselService {
     destroy(): void {
         if (this.measureRef) {
             window.removeEventListener('resize', this.measureRef);
+        }
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
         }
     }
 }

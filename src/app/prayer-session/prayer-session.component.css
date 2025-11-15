@@ -71,13 +71,17 @@ section {
     display: flex;
     flex-direction: row;
     will-change: transform;
-    transition: transform 280ms ease;
+    transition: transform 120ms ease-out;
     gap: var(--gap, 12px);
     height: calc(100% - 4rem);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
 .carousel-track.dragging {
     transition: none;
+    will-change: transform;
 }
 
 .slide {
