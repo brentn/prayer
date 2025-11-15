@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, computed, inject, ViewChild, ElementRef, OnDestroy, AfterViewInit, effect, signal, EffectRef, DestroyRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, computed, inject, ViewChild, ElementRef, OnDestroy, AfterViewInit, effect, signal, EffectRef, DestroyRef, Injector, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -48,6 +48,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private readonly settings = inject(SettingsService);
     private readonly timerService = inject(TimerService);
     private readonly carouselService = inject(CarouselService);
+    private readonly injector = inject(Injector);
     private readonly wake = inject(WakeLockService);
     readonly prayerStats = inject(PrayerStats);
     private readonly destroyRef = inject(DestroyRef);
@@ -480,17 +481,19 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     }
 
     private initializeMeasureEffect() {
-        this.measureEffectRef = effect(() => {
-            const itemCount = this.selectedItems().length;
-            const footerVisible = this.currentIndex() >= 1;
-            // Use a debounced timeout to avoid excessive re-initialization
-            if (this.scrollDebounceId) {
-                clearTimeout(this.scrollDebounceId);
-            }
+        this.measureEffectRef = runInInjectionContext(this.injector, () => {
+            return effect(() => {
+                const itemCount = this.selectedItems().length;
+                const footerVisible = this.currentIndex() >= 1;
+                // Use a debounced timeout to avoid excessive re-initialization
+                if (this.scrollDebounceId) {
+                    clearTimeout(this.scrollDebounceId);
+                }
 
-            this.scrollDebounceId = setTimeout(() => {
-                this.initializeCarousel();
-            }, 50); // Small delay to batch updates
+                this.scrollDebounceId = setTimeout(() => {
+                    this.initializeCarousel();
+                }, 50); // Small delay to batch updates
+            });
         });
     }
 
