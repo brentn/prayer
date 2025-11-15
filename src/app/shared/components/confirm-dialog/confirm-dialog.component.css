@@ -34,10 +34,11 @@
 
 /* Confirm button styling */
 .mat-mdc-unelevated-button {
-    background-color: #1976d2 !important;
+    background-color: var(--app-accent-color) !important;
     color: white !important;
 }
 
 .mat-mdc-unelevated-button:hover {
-    background-color: #1565c0 !important;
+    background-color: #7a9f7a !important;
+    /* slightly darker sage green */
 }

@@ -1,4 +1,4 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, input, OnInit, OnChanges, ChangeDetectionStrategy, Signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     imports: [CommonModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule, TextFieldModule],
     templateUrl: './answer-form.component.html',
     styleUrl: './answer-form.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('slideInOut', [
             state('in', style({ height: '*', opacity: 1, transform: 'translateY(0)' })),
@@ -28,31 +29,34 @@ import { TextFieldModule } from '@angular/cdk/text-field';
         ])
     ]
 })
-export class AnswerFormComponent {
-    @Input() showAnswerForm = signal(false);
-    @Input() answerText = signal('');
-    @Input() onAnswerSubmit!: (text: string) => void;
-    @Input() onAnswerCancel!: () => void;
+export class AnswerFormComponent implements OnInit, OnChanges {
+    showAnswerForm = input.required<WritableSignal<boolean>>();
+    answerText = input.required<WritableSignal<string>>();
+    dialogOpen = input.required<boolean>();
+    onAnswerSubmit = input.required<(text: string) => void>();
+    onAnswerCancel = input.required<() => void>();
+    @Output() openAnswerDialog = new EventEmitter<void>();
 
-    onSubmit() {
-        if (this.answerText().trim()) {
-            const trimmed = this.answerText().trim();
-            this.onAnswerSubmit(trimmed);
-            this.showAnswerForm.set(false);
-            this.answerText.set('');
+    ngOnInit() {
+        // When the form should be shown and dialog is not open, emit event to open dialog
+        if (this.showAnswerForm()() && !this.dialogOpen()) {
+            this.openAnswerDialog.emit();
+        }
+    }
+
+    ngOnChanges() {
+        // When showAnswerForm becomes true and dialog is not open, emit event to open dialog
+        if (this.showAnswerForm()() && !this.dialogOpen()) {
+            this.openAnswerDialog.emit();
         }
     }
 
     onCancel() {
-        this.onAnswerCancel();
-        this.showAnswerForm.set(false);
-        this.answerText.set('');
+        this.onAnswerCancel()();
     }
 
     onSave() {
-        const trimmed = this.answerText().trim();
-        this.onAnswerSubmit(trimmed);
-        this.showAnswerForm.set(false);
-        this.answerText.set('');
+        const trimmed = this.answerText()().trim();
+        this.onAnswerSubmit()(trimmed);
     }
 }

@@ -10,27 +10,32 @@ $theme: mat.define-theme((color: (theme-type: dark,
 @include mat.all-component-themes($theme);
 
 :root {
+    /* App brown shades */
+    --app-brown-dark: #23140f;
+    --app-brown-medium: #6d4c41;
+    --app-accent-color: #9caf88;
+
     /* Very dark brown app background and near-white text */
-    --md-sys-color-surface: #23140f;
+    --md-sys-color-surface: var(--app-brown-dark);
     /* app background */
     --md-sys-color-on-surface: #f7f3ef;
     /* default text */
     /* Primary used for cards and primary buttons (regular/lighter brown) */
-    --md-sys-color-primary: #6d4c41;
+    --md-sys-color-primary: var(--app-brown-medium);
     /* regular brown */
     --md-sys-color-on-primary: #fffaf6;
     /* nearly white text */
 
     /* Slightly lighter brown container for chips/badges if needed */
-    --md-sys-color-primary-container: #8d6e63;
-    --md-sys-color-on-primary-container: #1f130e;
+    --md-sys-color-primary-container: var(--app-accent-color);
+    --md-sys-color-on-primary-container: var(--app-brown-dark);
 
     /* Optional tertiary */
-    --md-sys-color-tertiary: #a98274;
-    --md-sys-color-on-tertiary: #1b120f;
+    --md-sys-color-tertiary: var(--app-brown-medium);
+    --md-sys-color-on-tertiary: var(--app-brown-dark);
 
     /* App-specific: a darker primary for headers/bars (between surface and primary) */
-    --app-color-primary-darker: #5b4037;
+    --app-color-primary-darker: var(--app-brown-dark);
 }
 
 html,

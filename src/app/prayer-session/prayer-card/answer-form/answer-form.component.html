@@ -1,12 +1,11 @@
-@if (showAnswerForm()) {
-    <div class="answer-form" [@slideInOut]>
-        <mat-form-field class="answer-textarea">
-            <textarea matInput [(ngModel)]="answerText" rows="4" placeholder="Describe the answer..."
-                cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="6"></textarea>
-            <button mat-button class="cancel-button" (click)="onCancel()">Cancel</button>
-            <button mat-button class="skip-save-button" (click)="onSave()">
-                {{ answerText().trim() ? 'Save' : 'Skip' }}
-            </button>
-        </mat-form-field>
-    </div>
+@if (showAnswerForm()() && !dialogOpen()) {
+    <mat-form-field class="answer-textarea">
+        <textarea matInput [ngModel]="answerText()()" (ngModelChange)="answerText().set($event)" rows="4"
+            placeholder="Describe the answer..." cdkTextareaAutosize cdkAutosizeMinRows="3"
+            cdkAutosizeMaxRows="6"></textarea>
+        <button mat-button class="cancel-button" (click)="onCancel()">Cancel</button>
+        <button mat-button class="skip-save-button" (click)="onSave()">
+            {{ answerText()().trim() ? 'Save' : 'Skip' }}
+        </button>
+    </mat-form-field>
 }

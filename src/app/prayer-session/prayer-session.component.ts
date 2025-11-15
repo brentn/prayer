@@ -368,6 +368,13 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     selectedItems = signal<PrayerSessionItem[]>([]);
 
+    // Answer dialog
+    showAnswerDialog = signal(false);
+    answerDialogText = signal('');
+    answerDialogTitle = signal('');
+    onAnswerSave: ((text: string) => void) | null = null;
+    onAnswerCancel: (() => void) | null = null;
+
     private computeSelectedItems(): PrayerSessionItem[] {
         try {
             const all = this.items();
@@ -490,6 +497,29 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         this.initializeCarousel();
         this.initializeMeasureEffect();
         this.isInitialized.set(true);
+    }
+
+    // Answer dialog methods
+    openAnswerDialog(data: { text: string, title: string, onSave: (text: string) => void, onCancel: () => void }) {
+        this.answerDialogText.set(data.text);
+        this.answerDialogTitle.set(data.title);
+        this.onAnswerSave = data.onSave;
+        this.onAnswerCancel = data.onCancel;
+        this.showAnswerDialog.set(true);
+    }
+
+    closeAnswerDialog() {
+        this.showAnswerDialog.set(false);
+        this.answerDialogText.set('');
+        this.onAnswerSave = null;
+        this.onAnswerCancel = null;
+    }
+
+    onSaveAnswer() {
+        if (this.onAnswerSave) {
+            this.onAnswerSave(this.answerDialogText().trim());
+        }
+        this.closeAnswerDialog();
     }
 
     private initializeCarousel() {

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, signal, computed, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, signal, computed, ChangeDetectionStrategy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -38,6 +38,7 @@ import { DateUtilsService } from '../../shared/services/date-utils.service';
 })
 export class PrayerCardComponent implements OnChanges {
     private dateUtils = inject(DateUtilsService);
+    private cdr = inject(ChangeDetectorRef);
 
     @Input() icon: string = 'favorite';
     @Input() title: string = '';
@@ -63,7 +64,9 @@ export class PrayerCardComponent implements OnChanges {
     localTitleEdited = signal(false);
     showDialog = signal(false);
     newRequestText = signal('');
-
+    showAnswerDialog = signal(false);
+    answerDialogText = signal('');
+    answerDialogOpen = signal(false);
     answeredSummary = computed(() => this.dateUtils.formatAnsweredSummary(this.prayerCount, this.createdDate, this.answeredDate));
     answeredDateText = computed(() => this.dateUtils.formatAnsweredDateText(this.isAnswered, this.answeredDate));
 
@@ -126,5 +129,26 @@ export class PrayerCardComponent implements OnChanges {
             this.addNewRequest.emit({ topicName: topic, description: desc });
             this.closeDialog();
         }
+    }
+
+    openAnswerDialog() {
+        this.answerDialogText.set(this.answerText());
+        this.showAnswerDialog.set(true);
+        this.answerDialogOpen.set(true);
+        this.cdr.markForCheck();
+    }
+
+    closeAnswerDialog() {
+        this.showAnswerDialog.set(false);
+        this.answerDialogText.set('');
+        this.answerDialogOpen.set(false);
+        this.showAnswerForm.set(false);
+        this.cdr.markForCheck();
+    }
+
+    onSaveAnswer() {
+        const answer = this.answerDialogText().trim();
+        this.onAnswerSubmit(answer || '');
+        this.closeAnswerDialog();
     }
 }

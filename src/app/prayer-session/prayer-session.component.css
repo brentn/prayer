@@ -15,7 +15,6 @@ section {
     padding: 10px 12px;
     margin: 4px 0 12px;
     background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 14px;
     backdrop-filter: blur(8px);
 }
@@ -31,7 +30,7 @@ section {
 
 .close {
     justify-self: start;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--app-accent-color);
 }
 
 .right-spacer {
@@ -102,6 +101,7 @@ section {
     display: flex;
     flex-direction: column;
     height: 100%;
+    border: 2px solid var(--app-accent-color);
 }
 
 .settings-slide .prayer-card .hint {
@@ -117,11 +117,37 @@ section {
 
 /* Improve slider visibility on dark background */
 .settings-slide mat-slider {
-    --mdc-slider-active-track-color: rgba(255, 255, 255, 0.95);
-    --mdc-slider-inactive-track-color: rgba(255, 255, 255, 0.32);
-    --mdc-slider-handle-color: rgba(255, 193, 7, 0.95);
-    --mdc-slider-focus-handle-color: rgba(255, 193, 7, 0.95);
-    --mdc-slider-hover-handle-color: rgba(255, 193, 7, 0.95);
+    --mdc-slider-active-track-color: rgba(255, 255, 255, 0.95) !important;
+    --mdc-slider-inactive-track-color: rgba(255, 255, 255, 0.32) !important;
+    --mdc-slider-handle-color: #9caf88 !important;
+    --mdc-slider-focus-handle-color: #9caf88 !important;
+    --mdc-slider-hover-handle-color: #9caf88 !important;
+}
+
+/* Force slider thumb color */
+.settings-slide ::ng-deep .mdc-slider__thumb {
+    background-color: transparent !important;
+}
+
+.settings-slide ::ng-deep .mdc-slider__thumb-knob {
+    background-color: transparent !important;
+    border-color: #9caf88 !important;
+}
+
+.settings-slide ::ng-deep .mdc-slider__thumb::before {
+    background-color: transparent !important;
+}
+
+.settings-slide ::ng-deep .mdc-slider__thumb::after {
+    background-color: transparent !important;
+}
+
+.settings-slide ::ng-deep .mdc-slider__thumb-knob::before {
+    background-color: transparent !important;
+}
+
+.settings-slide ::ng-deep .mdc-slider__thumb-knob::after {
+    background-color: transparent !important;
 }
 
 /* In carousel, make cards full width so adjacent borders peek correctly */

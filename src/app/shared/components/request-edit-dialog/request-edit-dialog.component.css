@@ -71,6 +71,18 @@ mat-slide-toggle {
     margin-top: 4px;
 }
 
+[mat-dialog-actions] button[mat-flat-button] {
+    /* Lighter brown filled button */
+    background-color: var(--app-accent-color) !important;
+    color: white !important;
+    --mdc-filled-button-container-color: var(--app-accent-color);
+    --mdc-filled-button-label-text-color: white;
+}
+
+[mat-dialog-actions] button[mat-flat-button]:hover {
+    background-color: #7a9f7a !important;
+}
+
 .mat-mdc-dialog-actions.actions {
     display: flex;
     align-items: center;

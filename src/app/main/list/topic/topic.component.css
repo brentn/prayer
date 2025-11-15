@@ -16,7 +16,7 @@ section {
     align-items: center;
     position: relative;
     /* Darker brown than primary, lighter than surface */
-    background-color: var(--app-color-primary-darker) !important;
+    background-color: var(--app-brown-medium) !important;
     gap: 12px;
     padding: 1rem;
     padding-bottom: 0;
@@ -147,7 +147,7 @@ section {
 
 /* Use deep selectors so styles penetrate Angular view encapsulation for Material internals */
 :host ::ng-deep .tabs .mat-mdc-tab-header {
-    background-color: var(--app-color-primary-darker) !important;
+    background-color: var(--app-brown-medium) !important;
     color: var(--md-sys-color-on-primary) !important;
 }
 

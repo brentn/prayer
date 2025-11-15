@@ -10,8 +10,9 @@
         [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName" (archive)="archive.emit()"
         (editTitle)="onTitleEdited($event)">
     </app-prayer-card-content>
-    <app-answer-form [showAnswerForm]="showAnswerForm" [answerText]="answerText"
-        [onAnswerSubmit]="onAnswerSubmit.bind(this)" [onAnswerCancel]="onAnswerCancel.bind(this)">
+    <app-answer-form [showAnswerForm]="showAnswerForm" [answerText]="answerText" [dialogOpen]="answerDialogOpen()"
+        [onAnswerSubmit]="onAnswerSubmit.bind(this)" [onAnswerCancel]="onAnswerCancel.bind(this)"
+        (openAnswerDialog)="openAnswerDialog()">
     </app-answer-form>
     @if (listName || (!isAnswered && !localIsAnswered())) {
         <div class="card-footer">
@@ -34,10 +35,25 @@
                     style="width: 100%;"></textarea>
                 <div class="dialog-actions">
                     <button mat-button style="color: grey;" (click)="closeDialog()">Cancel</button>
-                    <button mat-flat-button style="background-color: #1976d2; color: white;"
+                    <button mat-flat-button style="background-color: var(--app-accent-color); color: white;"
                         (click)="onSave()">Save</button>
                 </div>
             </div>
         </div>
     }
+    <div [style.display]="showAnswerDialog() ? 'block' : 'none'" class="dialog-overlay" (click)="closeAnswerDialog()">
+        <div class="dialog-content" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h2>Add Answer</h2>
+            </div>
+            <p>Request: {{ title }}</p>
+            <textarea [(ngModel)]="answerDialogText" placeholder="Describe the answer..." rows="4"
+                style="width: 100%;"></textarea>
+            <div class="dialog-actions">
+                <button mat-button style="color: grey;" (click)="closeAnswerDialog()">Cancel</button>
+                <button mat-flat-button style="background-color: var(--app-accent-color); color: white;"
+                    (click)="onSaveAnswer()">{{ answerDialogText().trim() ? 'Save' : 'Skip' }}</button>
+            </div>
+        </div>
+    </div>
 </div>

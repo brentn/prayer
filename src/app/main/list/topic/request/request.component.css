@@ -6,6 +6,17 @@
     color: #f44336 !important;
 }
 
+.save-button {
+    background-color: var(--app-accent-color) !important;
+    color: white !important;
+    --mdc-filled-button-container-color: var(--app-accent-color);
+    --mdc-filled-button-label-text-color: white;
+}
+
+.save-button:hover {
+    background-color: #7a9f7a !important;
+}
+
 .request-card {
     border-radius: 12px;
     padding: 12px 14px;
