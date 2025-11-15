@@ -14,5 +14,13 @@
             <span matListItemTitle>Shuffle prayer requests</span>
             <mat-checkbox [checked]="shuffleRequests()" (change)="toggleShuffleRequests($event)"></mat-checkbox>
         </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+            <span matListItemTitle>Data Cleanup</span>
+            <button mat-stroked-button color="accent" (click)="cleanupData()">
+                <mat-icon>cleaning_services</mat-icon>
+                Cleanup
+            </button>
+        </mat-list-item>
     </mat-nav-list>
 </section>

@@ -21,15 +21,23 @@
     margin-left: 8px;
 }
 
+/* Cancel button styling */
 .mat-mdc-button {
-    color: #666;
+    background-color: #f5f5f5 !important;
+    color: #333 !important;
+    border: 1px solid #ddd !important;
 }
 
+.mat-mdc-button:hover {
+    background-color: #e0e0e0 !important;
+}
+
+/* Confirm button styling */
 .mat-mdc-unelevated-button {
-    background-color: #1976d2;
-    color: white;
+    background-color: #1976d2 !important;
+    color: white !important;
 }
 
 .mat-mdc-unelevated-button:hover {
-    background-color: #1565c0;
+    background-color: #1565c0 !important;
 }
