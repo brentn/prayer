@@ -26,6 +26,10 @@
                     (click)="setTheme('light')">
                     Ice Blue
                 </button>
+                <button mat-raised-button class="minty-theme-btn" [class.selected]="theme() === 'minty'"
+                    (click)="setTheme('minty')">
+                    Minty Fresh
+                </button>
             </div>
         </mat-list-item>
         <mat-divider></mat-divider>

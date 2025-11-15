@@ -158,3 +158,24 @@ mat-checkbox ::ng-deep .mdc-checkbox__background::before {
     color: #1976d2 !important;
     box-shadow: 0 2px 4px rgba(129, 212, 250, 0.4) !important;
 }
+
+/* Minty Fresh theme button */
+.minty-theme-btn {
+    background-color: #ffffff !important;
+    color: #4caf50 !important;
+    border: 2px solid #81c784 !important;
+}
+
+.minty-theme-btn:hover {
+    background-color: #f1f8e9 !important;
+    border-color: #4caf50 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(129, 212, 250, 0.3) !important;
+}
+
+.minty-theme-btn.selected {
+    background-color: #e8f5e8 !important;
+    border-color: #4caf50 !important;
+    color: #2e7d32 !important;
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.4) !important;
+}

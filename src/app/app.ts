@@ -72,12 +72,18 @@ export class App implements OnInit {
         // React to theme changes
         effect(() => {
             const theme = this.settings.theme();
+            // Remove all theme classes first
+            this.renderer.removeClass(document.body, 'dark-theme');
+            this.renderer.removeClass(document.body, 'light-theme');
+            this.renderer.removeClass(document.body, 'minty-theme');
+
+            // Add the current theme class
             if (theme === 'light') {
                 this.renderer.addClass(document.body, 'light-theme');
-                this.renderer.removeClass(document.body, 'dark-theme');
+            } else if (theme === 'minty') {
+                this.renderer.addClass(document.body, 'minty-theme');
             } else {
                 this.renderer.addClass(document.body, 'dark-theme');
-                this.renderer.removeClass(document.body, 'light-theme');
             }
         });
     }

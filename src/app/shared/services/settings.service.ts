@@ -5,7 +5,7 @@ const KEY = 'app.settings';
 export interface AppSettings {
     keepAwake: boolean;
     shuffleRequests: boolean;
-    theme: 'dark' | 'light';
+    theme: 'dark' | 'light' | 'minty';
     praySelectCount: number; // last used number of items in pray session
     prayTimeValue: number;   // last used time value (1..121, 121 = unlimited)
     prayAnsweredCount: number; // number of answered requests to prepend
@@ -27,7 +27,7 @@ export class SettingsService {
 
     keepAwake = signal<boolean>(this._settings().keepAwake);
     shuffleRequests = signal<boolean>(this._settings().shuffleRequests);
-    theme = signal<'dark' | 'light'>(this._settings().theme);
+    theme = signal<'dark' | 'light' | 'minty'>(this._settings().theme);
     praySelectCount = signal<number>(this._settings().praySelectCount);
     prayTimeValue = signal<number>(this._settings().prayTimeValue);
     prayAnsweredCount = signal<number>(this._settings().prayAnsweredCount);
@@ -42,7 +42,7 @@ export class SettingsService {
         this.save();
     }
 
-    setTheme(value: 'dark' | 'light') {
+    setTheme(value: 'dark' | 'light' | 'minty') {
         this.theme.set(value);
         this.save();
     }

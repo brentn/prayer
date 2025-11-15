@@ -11,12 +11,22 @@ $lightTheme: mat.define-theme((color: (theme-type: light,
             ),
         ));
 
+$mintyTheme: mat.define-theme((color: (theme-type: light,
+                use-system-variables: true,
+            ),
+        ));
+
 @include mat.core();
 @include mat.all-component-themes($darkTheme);
 
 // Apply light theme when body has light-theme class
 .light-theme {
     @include mat.all-component-themes($lightTheme);
+}
+
+// Apply minty theme when body has minty-theme class
+.minty-theme {
+    @include mat.all-component-themes($mintyTheme);
 }
 
 :root {
@@ -131,6 +141,68 @@ $lightTheme: mat.define-theme((color: (theme-type: light,
     --slider-active-track: rgba(66, 165, 245, 0.9);
     --slider-inactive-track: rgba(66, 165, 245, 0.4);
     --slider-handle: #1976d2;
+}
+
+.minty-theme {
+    /* Minty fresh vibrant theme */
+    --app-brown-dark: #e8f5e8;
+    /* Very light mint */
+    --app-brown-medium: #4caf50;
+    /* Vibrant mint green */
+    --app-accent-color: #66bb6a;
+    /* Lighter mint */
+
+    /* Light surface with mint accents */
+    --md-sys-color-surface: #f1f8e9;
+    /* Very light mint background */
+    --md-sys-color-on-surface: #1b5e20;
+    /* Dark green text */
+
+    /* Primary for cards and buttons */
+    --md-sys-color-primary: var(--app-brown-medium);
+    --md-sys-color-on-primary: #ffffff;
+    /* White text */
+
+    /* Primary container */
+    --md-sys-color-primary-container: var(--app-accent-color);
+    --md-sys-color-on-primary-container: #ffffff;
+
+    /* Tertiary */
+    --md-sys-color-tertiary: var(--app-brown-medium);
+    --md-sys-color-on-tertiary: #1b5e20;
+
+    /* App-specific */
+    --app-color-primary-darker: var(--app-brown-medium);
+
+    /* Prayer session specific colors for minty theme */
+    --prayer-bg-gradient-start: #f1f8e9;
+    /* Very light mint */
+    --prayer-bg-gradient-middle: #dcedc8;
+    /* Light mint */
+    --prayer-bg-gradient-end: #c5e1a5;
+    /* Medium light mint */
+    --prayer-text-primary: rgba(27, 94, 32, 0.95);
+    /* Dark green text */
+    --prayer-text-secondary: rgba(27, 94, 32, 0.85);
+    --prayer-text-muted: rgba(27, 94, 32, 0.75);
+    --prayer-card-bg: rgba(255, 255, 255, 0.95);
+    /* White cards with slight transparency */
+    --prayer-card-border: rgba(76, 175, 80, 0.3);
+    /* Mint border */
+    --prayer-card-shadow: rgba(76, 175, 80, 0.2);
+    /* Mint shadow */
+    --prayer-overlay-bg: rgba(255, 255, 255, 0.85);
+    --prayer-overlay-border: rgba(76, 175, 80, 0.25);
+    --prayer-footer-bg: rgba(255, 255, 255, 0.95);
+    --prayer-footer-border: rgba(76, 175, 80, 0.3);
+    --prayer-session-list-bg: rgba(255, 255, 255, 0.8);
+    --prayer-session-list-border: rgba(76, 175, 80, 0.3);
+    --prayer-session-list-separator: rgba(76, 175, 80, 0.2);
+
+    /* Slider colors for minty theme */
+    --slider-active-track: rgba(76, 175, 80, 0.9);
+    --slider-inactive-track: rgba(76, 175, 80, 0.4);
+    --slider-handle: #2e7d32;
 }
 
 html,
