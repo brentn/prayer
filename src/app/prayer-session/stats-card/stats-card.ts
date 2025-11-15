@@ -36,9 +36,10 @@ export class StatsCard {
         return Math.round(this.sessionsPerWeek * 7);
     }
 
-    get prayerEfficiency(): number {
+    get prayerRate(): number {
         if (this.totalTimePrayed === 0) return 0;
-        return Math.round((this.totalRequestsPrayed / this.totalTimePrayed) * 60); // requests per hour
+        let hours = this.totalTimePrayed / 3600;
+        return Math.round(this.totalRequestsPrayed / hours); // requests per hour
     }
 
     formatDuration(seconds: number): string {

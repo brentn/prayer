@@ -8,7 +8,7 @@
         <div class="stats-section">
             <h4><mat-icon>today</mat-icon> This Session</h4>
             <div class="stat">
-                <span class="label"><mat-icon>favorite</mat-icon> Items Prayed For</span>
+                <span class="label"><mat-icon>favorite</mat-icon> Requests Prayed For</span>
                 <span class="value">{{ prayerCount }} / {{totalItems}}</span>
             </div>
             <div class="stat">
@@ -17,7 +17,7 @@
             </div>
             @if (prayerCount > 0) {
                 <div class="stat">
-                    <span class="label"><mat-icon>speed</mat-icon> Avg per Prayer</span>
+                    <span class="label"><mat-icon>speed</mat-icon> Avg time per Prayer</span>
                     <span class="value">{{ formatDuration(averageTimePerPrayer) }}</span>
                 </div>
             }
@@ -30,15 +30,19 @@
                 <span class="value">{{ formatDuration(totalTimePrayed) }}</span>
             </div>
             <div class="stat">
-                <span class="label"><mat-icon>list</mat-icon> Items Prayed For</span>
+                <span class="label"><mat-icon>list</mat-icon> Total Prayers</span>
                 <span class="value">{{ totalRequestsPrayed }}</span>
             </div>
             <div class="stat">
-                <span class="label"><mat-icon>check_circle</mat-icon> Requests Answered</span>
+                <span class="label"><mat-icon>check</mat-icon> Total Completed Prayers</span>
+                <span class="value">{{ totalRequestsCompleted }}</span>
+            </div>
+            <div class="stat">
+                <span class="label"><mat-icon>check_circle</mat-icon> Total Answers</span>
                 <span class="value">{{ totalRequestsAnswered }}</span>
             </div>
             <div class="stat">
-                <span class="label"><mat-icon>calendar_today</mat-icon> Prayer Sessions</span>
+                <span class="label"><mat-icon>calendar_today</mat-icon> Number of Sessions</span>
                 <span class="value">{{ totalSessions }}</span>
             </div>
             @if (totalSessions > 1) {
@@ -47,24 +51,20 @@
                     <span class="value">{{ sessionsPerWeek.toFixed(1) }}</span>
                 </div>
                 <div class="stat">
-                    <span class="label"><mat-icon>timer</mat-icon> Avg Session</span>
+                    <span class="label"><mat-icon>timer</mat-icon> Avg Session Length</span>
                     <span class="value">{{ formatDuration(averageSessionLength) }}</span>
                 </div>
             }
-            @if (prayerEfficiency > 0) {
+            @if (prayerRate > 0) {
                 <div class="stat">
-                    <span class="label"><mat-icon>bolt</mat-icon> Prayer Rate</span>
-                    <span class="value">{{ prayerEfficiency }}/hr</span>
+                    <span class="label"><mat-icon>bolt</mat-icon> Avg Speed</span>
+                    <span class="value">{{ prayerRate }} req/hr</span>
                 </div>
             }
-            @if (totalRequestsPrayed > 0) {
-                <div class="stat">
-                    <span class="label"><mat-icon>percent</mat-icon> Completed Prayers</span>
-                    <span class="value">{{ ((totalRequestsCompleted / totalRequestsPrayed) * 100).toFixed(1) }}%</span>
-                </div>
+            @if ((totalRequestsCompleted+totalRequestsAnswered); as completedRequests;) {
                 <div class="stat">
                     <span class="label"><mat-icon>percent</mat-icon> Notable Answers</span>
-                    <span class="value">{{ ((totalRequestsAnswered / totalRequestsPrayed) * 100).toFixed(1) }}%</span>
+                    <span class="value">{{ ((totalRequestsAnswered / completedRequests) * 100).toFixed(1) }}%</span>
                 </div>
             }
         </div>
