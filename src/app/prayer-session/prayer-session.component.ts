@@ -438,12 +438,10 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private initializeSelectedItemsEffect() {
         effect(() => {
             this.selectCount();
-            if (this.isInitialized()) return;
             this.selectedItems.set(this.computeSelectedItems());
         });
         effect(() => {
             this.answeredValue();
-            if (this.isInitialized()) return;
             this.selectedItems.set(this.computeSelectedItems());
         });
         effect(() => {
