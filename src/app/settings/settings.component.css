@@ -108,74 +108,25 @@ mat-checkbox ::ng-deep .mdc-checkbox__background::before {
     /* Light accent background on hover */
 }
 
+h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--app-text-color);
+}
+
 .theme-buttons {
     display: flex;
     gap: 8px;
+    margin-bottom: 1rem;
 }
 
 .theme-buttons button {
-    flex: 1;
     min-width: 0;
     transition: all 0.3s ease;
 }
 
-/* Dark Chocolate theme button */
-.dark-theme-btn {
-    background-color: #6d4c41 !important;
-    color: #f7f3ef !important;
-    border: 2px solid #5d4037 !important;
-}
-
-.dark-theme-btn:hover {
-    background-color: #5d4037 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(109, 76, 65, 0.3) !important;
-}
-
-.dark-theme-btn.selected {
-    background-color: #4e342e !important;
-    border-color: #3e2723 !important;
-    box-shadow: 0 2px 4px rgba(78, 52, 46, 0.4) !important;
-}
-
-/* Ice Blue theme button */
-.light-theme-btn {
-    background-color: #ffffff !important;
-    color: #42a5f5 !important;
-    border: 2px solid #81d4fa !important;
-}
-
-.light-theme-btn:hover {
-    background-color: #f5f5f5 !important;
-    border-color: #42a5f5 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(129, 212, 250, 0.3) !important;
-}
-
-.light-theme-btn.selected {
-    background-color: #e3f2fd !important;
-    border-color: #42a5f5 !important;
-    color: #1976d2 !important;
-    box-shadow: 0 2px 4px rgba(129, 212, 250, 0.4) !important;
-}
-
-/* Minty Fresh theme button */
-.minty-theme-btn {
-    background-color: #ffffff !important;
-    color: #4caf50 !important;
-    border: 2px solid #81c784 !important;
-}
-
-.minty-theme-btn:hover {
-    background-color: #f1f8e9 !important;
-    border-color: #4caf50 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(129, 212, 250, 0.3) !important;
-}
-
-.minty-theme-btn.selected {
-    background-color: #e8f5e8 !important;
-    border-color: #4caf50 !important;
-    color: #2e7d32 !important;
-    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.4) !important;
+/* Selected theme button styling */
+.theme-buttons button.selected {
+    background-color: var(--app-accent-color) !important;
+    color: white !important;
+    border-color: var(--app-accent-color) !important;
 }

@@ -40,7 +40,7 @@ export class SettingsComponent {
     toggleShuffleRequests(ev: any) { this.settings.setShuffleRequests(!!ev.checked); }
 
     theme() { return this.settings.theme(); }
-    setTheme(value: 'dark' | 'light' | 'minty') { this.settings.setTheme(value); }
+    setTheme(value: 'dark' | 'light' | 'minty' | 'cozy') { this.settings.setTheme(value); }
 
     close() { this.router.navigate(['/']); }
 

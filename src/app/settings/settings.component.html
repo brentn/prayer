@@ -15,23 +15,23 @@
             <mat-checkbox [checked]="shuffleRequests()" (change)="toggleShuffleRequests($event)"></mat-checkbox>
         </mat-list-item>
         <mat-divider></mat-divider>
-        <span matListItemTitle>Theme</span>
-        <mat-list-item>
-            <div class="theme-buttons">
-                <button mat-raised-button class="dark-theme-btn" [class.selected]="theme() === 'dark'"
-                    (click)="setTheme('dark')">
-                    Dark Chocolate
-                </button>
-                <button mat-raised-button class="light-theme-btn" [class.selected]="theme() === 'light'"
-                    (click)="setTheme('light')">
-                    Ice Blue
-                </button>
-                <button mat-raised-button class="minty-theme-btn" [class.selected]="theme() === 'minty'"
-                    (click)="setTheme('minty')">
-                    Minty Fresh
-                </button>
-            </div>
-        </mat-list-item>
+        <h3>Themes</h3>
+        <div class="theme-buttons">
+            <button mat-stroked-button color="accent" [class.selected]="theme() === 'dark'" (click)="setTheme('dark')">
+                Dark Chocolate
+            </button>
+            <button mat-stroked-button color="accent" [class.selected]="theme() === 'cozy'" (click)="setTheme('cozy')">
+                Awake
+            </button>
+            <button mat-stroked-button color="accent" [class.selected]="theme() === 'light'"
+                (click)="setTheme('light')">
+                Ice Blue
+            </button>
+            <button mat-stroked-button color="accent" [class.selected]="theme() === 'minty'"
+                (click)="setTheme('minty')">
+                Minty Fresh
+            </button>
+        </div>
         <mat-divider></mat-divider>
         <mat-list-item>
             <span matListItemTitle>Data Cleanup</span>

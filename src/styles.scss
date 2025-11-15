@@ -16,6 +16,11 @@ $mintyTheme: mat.define-theme((color: (theme-type: light,
             ),
         ));
 
+$cozyTheme: mat.define-theme((color: (theme-type: dark,
+                use-system-variables: true,
+            ),
+        ));
+
 @include mat.core();
 @include mat.all-component-themes($darkTheme);
 
@@ -27,6 +32,11 @@ $mintyTheme: mat.define-theme((color: (theme-type: light,
 // Apply minty theme when body has minty-theme class
 .minty-theme {
     @include mat.all-component-themes($mintyTheme);
+}
+
+// Apply cozy theme when body has cozy-theme class
+.cozy-theme {
+    @include mat.all-component-themes($cozyTheme);
 }
 
 :root {
@@ -203,6 +213,68 @@ $mintyTheme: mat.define-theme((color: (theme-type: light,
     --slider-active-track: rgba(76, 175, 80, 0.9);
     --slider-inactive-track: rgba(76, 175, 80, 0.4);
     --slider-handle: #2e7d32;
+}
+
+.cozy-theme {
+    /* Cozy warm dark theme */
+    --app-brown-dark: #1a1a1a;
+    /* Very dark gray/black */
+    --app-brown-medium: #9c27b0;
+    /* Purple */
+    --app-accent-color: #e91e63;
+    /* Pink */
+
+    /* Very dark surface with purple/pink accents */
+    --md-sys-color-surface: #121212;
+    /* Near black */
+    --md-sys-color-on-surface: #f8f8f8;
+    /* Very light gray text */
+
+    /* Primary for cards and buttons */
+    --md-sys-color-primary: var(--app-brown-medium);
+    --md-sys-color-on-primary: #ffffff;
+    /* White text */
+
+    /* Primary container */
+    --md-sys-color-primary-container: var(--app-accent-color);
+    --md-sys-color-on-primary-container: #ffffff;
+
+    /* Tertiary */
+    --md-sys-color-tertiary: var(--app-brown-medium);
+    --md-sys-color-on-tertiary: #f8f8f8;
+
+    /* App-specific */
+    --app-color-primary-darker: var(--app-brown-dark);
+
+    /* Prayer session specific colors for cozy theme */
+    --prayer-bg-gradient-start: #1a1a1a;
+    /* Very dark gray/black */
+    --prayer-bg-gradient-middle: #2d2d2d;
+    /* Dark gray */
+    --prayer-bg-gradient-end: #1e1e1e;
+    /* Slightly lighter dark */
+    --prayer-text-primary: rgba(248, 248, 248, 0.95);
+    /* Very light gray text */
+    --prayer-text-secondary: rgba(248, 248, 248, 0.85);
+    --prayer-text-muted: rgba(248, 248, 248, 0.75);
+    --prayer-card-bg: rgba(255, 255, 255, 0.05);
+    /* Very subtle white overlay */
+    --prayer-card-border: rgba(156, 39, 176, 0.3);
+    /* Purple border */
+    --prayer-card-shadow: rgba(156, 39, 176, 0.2);
+    /* Purple shadow */
+    --prayer-overlay-bg: rgba(0, 0, 0, 0.3);
+    --prayer-overlay-border: rgba(156, 39, 176, 0.25);
+    --prayer-footer-bg: rgba(18, 18, 18, 0.9);
+    --prayer-footer-border: rgba(156, 39, 176, 0.3);
+    --prayer-session-list-bg: rgba(0, 0, 0, 0.25);
+    --prayer-session-list-border: rgba(156, 39, 176, 0.3);
+    --prayer-session-list-separator: rgba(156, 39, 176, 0.2);
+
+    /* Slider colors for cozy theme */
+    --slider-active-track: rgba(156, 39, 176, 0.9);
+    --slider-inactive-track: rgba(156, 39, 176, 0.4);
+    --slider-handle: #7b1fa2;
 }
 
 html,

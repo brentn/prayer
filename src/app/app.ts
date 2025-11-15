@@ -76,12 +76,15 @@ export class App implements OnInit {
             this.renderer.removeClass(document.body, 'dark-theme');
             this.renderer.removeClass(document.body, 'light-theme');
             this.renderer.removeClass(document.body, 'minty-theme');
+            this.renderer.removeClass(document.body, 'cozy-theme');
 
             // Add the current theme class
             if (theme === 'light') {
                 this.renderer.addClass(document.body, 'light-theme');
             } else if (theme === 'minty') {
                 this.renderer.addClass(document.body, 'minty-theme');
+            } else if (theme === 'cozy') {
+                this.renderer.addClass(document.body, 'cozy-theme');
             } else {
                 this.renderer.addClass(document.body, 'dark-theme');
             }
