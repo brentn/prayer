@@ -171,6 +171,21 @@ export class TopicComponent {
         // Don't allow archived requests to enter edit mode
         if (req.archived) return;
 
+        // If we're currently editing a new request, handle it first
+        if (this.editingRequestId !== null && !this.editingExisting) {
+            if (this.editingRequestText.trim()) {
+                // Save the new request if it has content
+                await this.saveInline({
+                    id: this.editingRequestId,
+                    text: this.editingRequestText,
+                    priority: this.editingRequestPriority()
+                }, 'open');
+            } else {
+                // Cancel the blank new request
+                await this.cancelInline();
+            }
+        }
+
         this.editingRequestId = id;
 
         // For answered requests, edit the answer description

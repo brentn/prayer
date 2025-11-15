@@ -11,7 +11,7 @@
 
         @if (requestState === 'open') {
             <textarea class="edit-textarea" rows="3" [value]="editingText"
-                (input)="editingText = $any($event.target).value" placeholder="Type your request..."
+                (input)="onTextInput($any($event.target).value)" placeholder="Type your request..."
                 autofocus></textarea>
         } @else if (requestState === 'answered') {
             <!-- Show the original request as read-only -->
@@ -22,7 +22,7 @@
             <div class="answer-section">
                 <label class="answer-label">Answer (optional):</label>
                 <textarea class="edit-textarea answer-textarea" rows="2" [value]="editingText"
-                    (input)="editingText = $any($event.target).value" placeholder="Add an answer or note..."
+                    (input)="onTextInput($any($event.target).value)" placeholder="Add an answer or note..."
                     autofocus></textarea>
             </div>
         }
@@ -66,7 +66,7 @@
             </div>
             <div class="right">
                 <button mat-button (click)="onCancel()">Cancel</button>
-                <button mat-flat-button color="primary" [disabled]="!editingText.trim()" (click)="onSave()">
+                <button mat-flat-button color="primary" (click)="onSave()">
                     Save
                 </button>
             </div>

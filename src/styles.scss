@@ -52,6 +52,8 @@ body {
 .mat-mdc-menu-panel.mdc-menu-surface {
     background-color: var(--md-sys-color-primary) !important;
     color: var(--md-sys-color-on-primary) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(62, 39, 35, 0.4) !important;
 }
 
 .mat-mdc-menu-item .mat-mdc-menu-item-text,

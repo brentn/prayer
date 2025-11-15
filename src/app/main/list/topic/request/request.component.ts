@@ -24,6 +24,7 @@ export class RequestComponent {
     @Output() edit = new EventEmitter<number>();
     @Output() save = new EventEmitter<{ id: number, text: string, priority: number }>();
     @Output() cancel = new EventEmitter();
+    @Output() textChange = new EventEmitter<string>();
     @Output() deleteRequest = new EventEmitter<number>();
     @Output() markAnswered = new EventEmitter<number>();
     @Output() markUnanswered = new EventEmitter<number>();
@@ -36,11 +37,15 @@ export class RequestComponent {
     }
 
     onSave() {
-        this.save.emit({
-            id: this.request.id,
-            text: this.editingText,
-            priority: this.editingPriority()
-        });
+        if (this.editingText.trim()) {
+            this.save.emit({
+                id: this.request.id,
+                text: this.editingText,
+                priority: this.editingPriority()
+            });
+        } else {
+            this.onCancel();
+        }
     }
 
     onCancel() {
@@ -82,5 +87,9 @@ export class RequestComponent {
 
     onCyclePriority() {
         this.cyclePriority.emit();
+    }
+
+    onTextInput(value: string) {
+        this.textChange.emit(value);
     }
 }

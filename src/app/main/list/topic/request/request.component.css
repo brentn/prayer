@@ -11,6 +11,7 @@
     padding: 12px 14px;
     background: var(--md-sys-color-primary);
     color: var(--md-sys-color-on-primary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 1px 4px rgba(62, 39, 35, .2);
     margin-bottom: 8px;
     position: relative;
@@ -184,16 +185,16 @@
 }
 
 .request-card.editing {
-    background: var(--md-sys-color-primary-container);
-    color: rgba(255, 255, 255, .85);
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
     padding: 10px;
 }
 
 .edit-textarea {
     width: 100%;
     box-sizing: border-box;
-    background: rgba(0, 0, 0, 0.1);
-    color: rgba(255, 255, 255, .85);
+    background: white;
+    color: #333;
     border: 1px solid rgba(0, 0, 0, 0.25);
     border-radius: 8px;
     padding: 8px 10px;
@@ -201,7 +202,7 @@
 }
 
 .edit-textarea::placeholder {
-    color: #333;
+    color: #BBB;
 }
 
 .inline-actions {
@@ -264,4 +265,68 @@
 .priority-btn.priority-5 {
     background-color: #9c27b0 !important;
     color: white !important;
+}
+
+.dialog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.dialog-content {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 300px;
+    width: 90%;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dialog-header {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    padding: 10px;
+    margin: -20px -20px 10px -20px;
+    border-radius: 8px 8px 0 0;
+}
+
+.dialog-header h2 {
+    margin: 0;
+    font-weight: normal;
+    font-size: 1.2rem;
+}
+
+.dialog-content p {
+    color: var(--md-sys-color-on-primary);
+    margin: 10px 0;
+    font-size: 0.9rem;
+}
+
+.dialog-content textarea {
+    margin: 10px 0;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    font-family: inherit;
+    background: white;
+    color: #333;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
 }

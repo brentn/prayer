@@ -33,7 +33,7 @@
                         [requestState]="'open'" (edit)="onEditRequest($event)" (save)="saveInline($event, 'open')"
                         (cancel)="cancelInline()" (deleteRequest)="onInlineDelete()"
                         (markAnswered)="markAnsweredInline($event)" (archive)="onArchiveRequest($event)"
-                        (cyclePriority)="cyclePriority()">
+                        (textChange)="editingRequestText = $event" (cyclePriority)="cyclePriority()">
                     </app-request>
                 }
             </div>
@@ -46,7 +46,7 @@
                         [requestState]="'answered'" (edit)="onEditRequest($event)"
                         (save)="saveInline($event, 'answered')" (cancel)="cancelInline()"
                         (markUnanswered)="markUnansweredInline($event)" (archive)="onArchiveRequest($event)"
-                        (cyclePriority)="cyclePriority()">
+                        (textChange)="editingRequestText = $event" (cyclePriority)="cyclePriority()">
                     </app-request>
                 }
             </div>
@@ -58,7 +58,8 @@
                         [editingText]="editingRequestText" [editingPriority]="editingRequestPriority"
                         [requestState]="'archived'" (edit)="onEditRequest($event)"
                         (save)="saveInline($event, 'archived')" (cancel)="cancelInline()"
-                        (unarchive)="onUnarchiveRequest($event)" (cyclePriority)="cyclePriority()">
+                        (unarchive)="onUnarchiveRequest($event)" (textChange)="editingRequestText = $event"
+                        (cyclePriority)="cyclePriority()">
                     </app-request>
                 }
             </div>
