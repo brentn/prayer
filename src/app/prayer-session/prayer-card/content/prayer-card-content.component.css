@@ -16,13 +16,13 @@
 
 .card-topic {
     font-size: .8rem;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--prayer-text-muted);
 }
 
 .card-title {
     text-align: center;
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.96);
+    color: var(--prayer-text-primary);
     display: flex;
     align-items: center;
     width: 100%;
@@ -45,7 +45,7 @@
 }
 
 .title-text.clickable:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--prayer-overlay-bg);
     opacity: 0.8;
 }
 

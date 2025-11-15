@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, Renderer2, ElementRef } from '@angular/core';
 import { Router, RouterLink, RouterOutlet, NavigationEnd, NavigationStart } from '@angular/router';
 import { trigger, transition, style, animate, query, group } from '@angular/animations';
 import { MatIconModule } from '@angular/material/icon';
@@ -51,6 +51,8 @@ export class App implements OnInit {
     private settings = inject(SettingsService);
     private importExport = inject(ImportExportService);
     private dialog = inject(MatDialog);
+    private renderer = inject(Renderer2);
+    private elementRef = inject(ElementRef);
 
     // Track current URL for wake lock logic
     currentUrl = signal<string>('');
@@ -64,6 +66,18 @@ export class App implements OnInit {
 
             if (!enabled || !isOnPrayPage) {
                 this.wake.release();
+            }
+        });
+
+        // React to theme changes
+        effect(() => {
+            const theme = this.settings.theme();
+            if (theme === 'light') {
+                this.renderer.addClass(document.body, 'light-theme');
+                this.renderer.removeClass(document.body, 'dark-theme');
+            } else {
+                this.renderer.addClass(document.body, 'dark-theme');
+                this.renderer.removeClass(document.body, 'light-theme');
             }
         });
     }

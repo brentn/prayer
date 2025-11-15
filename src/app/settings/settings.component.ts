@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { SettingsService } from '../shared/services/settings.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -36,6 +38,9 @@ export class SettingsComponent {
 
     shuffleRequests() { return this.settings.shuffleRequests(); }
     toggleShuffleRequests(ev: any) { this.settings.setShuffleRequests(!!ev.checked); }
+
+    theme() { return this.settings.theme(); }
+    setTheme(value: 'dark' | 'light') { this.settings.setTheme(value); }
 
     close() { this.router.navigate(['/']); }
 

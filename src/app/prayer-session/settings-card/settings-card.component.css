@@ -18,13 +18,13 @@
 
 .control .label {
     font-size: .9rem;
-    color: rgba(255, 245, 235, 0.85);
+    color: var(--prayer-text-secondary);
     flex: 1;
 }
 
 .control .value {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.96);
+    color: var(--prayer-text-primary);
     text-align: right;
     flex-shrink: 0;
 }
@@ -33,13 +33,23 @@
     width: 100%;
 }
 
-/* Improve slider visibility on dark background */
+/* Improve slider visibility on theme-aware background */
 mat-slider {
-    --mdc-slider-active-track-color: rgba(255, 255, 255, 0.95);
-    --mdc-slider-inactive-track-color: rgba(255, 255, 255, 0.32);
-    --mdc-slider-handle-color: rgba(255, 193, 7, 0.95);
-    --mdc-slider-focus-handle-color: rgba(255, 193, 7, 0.95);
-    --mdc-slider-hover-handle-color: rgba(255, 193, 7, 0.95);
+    --mdc-slider-active-track-color: var(--slider-active-track);
+    --mdc-slider-inactive-track-color: var(--slider-inactive-track);
+    --mdc-slider-handle-color: var(--slider-handle);
+    --mdc-slider-focus-handle-color: var(--slider-handle);
+    --mdc-slider-hover-handle-color: var(--slider-handle);
+}
+
+/* Force slider thumb color */
+::ng-deep .mdc-slider__thumb {
+    background-color: transparent !important;
+}
+
+::ng-deep .mdc-slider__thumb-knob {
+    background-color: transparent !important;
+    border-color: var(--slider-handle) !important;
 }
 
 .hint {

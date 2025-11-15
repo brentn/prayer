@@ -40,8 +40,8 @@
 }
 
 .prayer-count-badge {
-    background: rgba(255, 193, 7, 0.9);
-    color: black;
+    background: var(--app-accent-color);
+    color: var(--md-sys-color-on-primary);
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 0.8rem;
@@ -50,7 +50,7 @@
 
 .since-text {
     font-style: italic;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--prayer-text-muted);
     font-size: 0.8rem;
 }
 
@@ -63,11 +63,11 @@
 }
 
 .answered-summary {
-    color: #8B4513;
+    color: var(--prayer-text-primary);
     font-weight: 500;
 }
 
 .answered-date {
-    color: #A0522D;
+    color: var(--prayer-text-secondary);
     font-style: italic;
 }

@@ -6,7 +6,7 @@
 
 .progress-section .progress-label {
     font-size: .9rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--prayer-text-secondary);
     white-space: nowrap;
     width: 60px;
     flex-shrink: 0;

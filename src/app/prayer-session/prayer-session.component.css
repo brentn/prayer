@@ -3,8 +3,8 @@ section {
     height: calc(100vh - 6rem);
     margin: 0;
     padding: 12px 12px 24px;
-    /* Dark brown gradient */
-    background: linear-gradient(180deg, #3b2a24 0%, #2f221d 55%, #251b17 100%);
+    /* Theme-aware gradient */
+    background: linear-gradient(180deg, var(--prayer-bg-gradient-start) 0%, var(--prayer-bg-gradient-middle) 55%, var(--prayer-bg-gradient-end) 100%);
 }
 
 .section-bar {
@@ -25,7 +25,7 @@ section {
     font-weight: 600;
     font-size: 1.28rem;
     letter-spacing: 0.04em;
-    color: rgba(255, 245, 235, 0.95);
+    color: var(--prayer-text-primary);
 }
 
 .close {
@@ -42,11 +42,11 @@ section {
     max-width: 880px;
     margin: 0 auto;
     padding: 10px 8px;
-    /* Soft dark-brown surface */
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.04));
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    /* Theme-aware card styling */
+    background: linear-gradient(180deg, var(--prayer-card-bg), rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--prayer-card-border);
     border-radius: 16px;
-    box-shadow: 0 14px 36px rgba(26, 17, 14, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    box-shadow: 0 14px 36px var(--prayer-card-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 .list {
@@ -115,13 +115,13 @@ section {
     touch-action: none;
 }
 
-/* Improve slider visibility on dark background */
+/* Improve slider visibility on theme-aware background */
 .settings-slide mat-slider {
-    --mdc-slider-active-track-color: rgba(255, 255, 255, 0.95) !important;
-    --mdc-slider-inactive-track-color: rgba(255, 255, 255, 0.32) !important;
-    --mdc-slider-handle-color: #9caf88 !important;
-    --mdc-slider-focus-handle-color: #9caf88 !important;
-    --mdc-slider-hover-handle-color: #9caf88 !important;
+    --mdc-slider-active-track-color: var(--slider-active-track) !important;
+    --mdc-slider-inactive-track-color: var(--slider-inactive-track) !important;
+    --mdc-slider-handle-color: var(--slider-handle) !important;
+    --mdc-slider-focus-handle-color: var(--slider-handle) !important;
+    --mdc-slider-hover-handle-color: var(--slider-handle) !important;
 }
 
 /* Force slider thumb color */
@@ -131,7 +131,7 @@ section {
 
 .settings-slide ::ng-deep .mdc-slider__thumb-knob {
     background-color: transparent !important;
-    border-color: #9caf88 !important;
+    border-color: var(--slider-handle) !important;
 }
 
 .settings-slide ::ng-deep .mdc-slider__thumb::before {
@@ -173,13 +173,13 @@ section {
 
 .control .label {
     font-size: .9rem;
-    color: rgba(255, 245, 235, 0.85);
+    color: var(--prayer-text-secondary);
     flex: 1;
 }
 
 .control .value {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.96);
+    color: var(--prayer-text-primary);
     text-align: right;
     flex-shrink: 0;
 }
@@ -202,8 +202,8 @@ section {
     min-height: 48vh;
     border-radius: 12px;
     padding: 18px 12px;
-    background: rgba(0, 0, 0, 0.22);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--prayer-overlay-bg);
+    border: 1px solid var(--prayer-overlay-border);
 }
 
 .card-icon {
@@ -216,20 +216,20 @@ section {
 .card-title {
     text-align: center;
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.96);
+    color: var(--prayer-text-primary);
 }
 
 .card-sub {
     font-size: .9rem;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--prayer-text-muted);
 }
 
 /* Temporary session list on first card */
 .session-list {
     margin-bottom: 12px;
     padding: 8px 10px;
-    background: rgba(0, 0, 0, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--prayer-session-list-bg);
+    border: 1px solid var(--prayer-session-list-border);
     border-radius: 12px;
 }
 
@@ -242,7 +242,7 @@ section {
 }
 
 .list-row+.list-row {
-    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    border-top: 1px dashed var(--prayer-session-list-separator);
 }
 
 .list-icon {
@@ -250,12 +250,12 @@ section {
 }
 
 .list-title {
-    color: rgba(255, 255, 255, 0.96);
+    color: var(--prayer-text-primary);
 }
 
 .list-sub {
     font-size: .85rem;
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--prayer-text-muted);
 }
 
 /* Fixed footer */
@@ -269,8 +269,8 @@ section {
     gap: 5px;
     /* Reduced gap between progress bars */
     padding: 12px 18px 18px;
-    background: rgba(20, 15, 12, 0.85);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--prayer-footer-bg);
+    border-top: 1px solid var(--prayer-footer-border);
     border-radius: 16px 16px 0 0;
     transform: translateY(100%);
     opacity: 0;
@@ -292,7 +292,7 @@ section {
 
 .progress-section .progress-label {
     font-size: .9rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--prayer-text-secondary);
     white-space: nowrap;
     width: 60px;
     /* Fixed width to ensure equal progress bar lengths */

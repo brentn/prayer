@@ -5,6 +5,7 @@ const KEY = 'app.settings';
 export interface AppSettings {
     keepAwake: boolean;
     shuffleRequests: boolean;
+    theme: 'dark' | 'light';
     praySelectCount: number; // last used number of items in pray session
     prayTimeValue: number;   // last used time value (1..121, 121 = unlimited)
     prayAnsweredCount: number; // number of answered requests to prepend
@@ -13,6 +14,7 @@ export interface AppSettings {
 const defaultSettings: AppSettings = {
     keepAwake: false,
     shuffleRequests: true,
+    theme: 'dark',
     praySelectCount: 0,
     prayTimeValue: 60,
     prayAnsweredCount: 0,
@@ -25,6 +27,7 @@ export class SettingsService {
 
     keepAwake = signal<boolean>(this._settings().keepAwake);
     shuffleRequests = signal<boolean>(this._settings().shuffleRequests);
+    theme = signal<'dark' | 'light'>(this._settings().theme);
     praySelectCount = signal<number>(this._settings().praySelectCount);
     prayTimeValue = signal<number>(this._settings().prayTimeValue);
     prayAnsweredCount = signal<number>(this._settings().prayAnsweredCount);
@@ -36,6 +39,11 @@ export class SettingsService {
 
     setShuffleRequests(value: boolean) {
         this.shuffleRequests.set(value);
+        this.save();
+    }
+
+    setTheme(value: 'dark' | 'light') {
+        this.theme.set(value);
         this.save();
     }
 
@@ -58,6 +66,7 @@ export class SettingsService {
         const s: AppSettings = {
             keepAwake: this.keepAwake(),
             shuffleRequests: this.shuffleRequests(),
+            theme: this.theme(),
             praySelectCount: this.praySelectCount(),
             prayTimeValue: this.prayTimeValue(),
             prayAnsweredCount: this.prayAnsweredCount(),

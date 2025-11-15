@@ -3,7 +3,7 @@
     flex-direction: column;
     min-height: 48vh;
     border-radius: 16px;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(20, 20, 30, 0.35));
+    background: linear-gradient(135deg, var(--prayer-overlay-bg), rgba(20, 20, 30, 0.35));
     border: 2px solid var(--app-accent-color);
     height: 100%;
     position: relative;

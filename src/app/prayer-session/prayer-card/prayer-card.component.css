@@ -7,8 +7,8 @@
     min-height: 48vh;
     border-radius: 12px;
     padding: 18px 12px;
-    background: rgba(0, 0, 0, 0.22);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--prayer-overlay-bg);
+    border: 1px solid var(--prayer-overlay-border);
     height: calc(100% - 2.5rem);
     position: relative;
 }
@@ -86,7 +86,7 @@
     position: relative;
     text-align: center;
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--prayer-text-muted);
 }
 
 .new-request-button {
