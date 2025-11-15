@@ -1,7 +1,7 @@
 .settings {
     padding: 1rem;
     background: #ffffff;
-    color: var(--md-sys-color-on-primary-container, #3e2723);
+    color: #333333;
     min-height: calc(100vh - 3rem);
 }
 
@@ -14,7 +14,7 @@
 
 h2 {
     margin: 0;
-    color: var(--md-sys-color-on-primary-container, #3e2723);
+    color: #333333;
 }
 
 mat-nav-list {
@@ -27,8 +27,14 @@ mat-divider {
 
 mat-list-item {
     background: #ffffff;
+    color: #333333;
     padding: .25rem .5rem;
     margin-bottom: 1rem;
+}
+
+/* Ensure list item text is visible */
+mat-list-item span {
+    color: #333333 !important;
 }
 
 /* Penetrate Material's view encapsulation to make the MDC content span flex */
@@ -42,4 +48,19 @@ mat-list-item {
 ::ng-deep .mdc-list-item__primary-text {
     flex: 1 !important;
     margin-bottom: unset !important;
+    color: #333333 !important;
+}
+
+/* Style the snackbar for proper visibility */
+::ng-deep .mat-mdc-snack-bar-container {
+    background-color: #323232 !important;
+    color: #ffffff !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-label {
+    color: #ffffff !important;
+}
+
+::ng-deep .mat-mdc-button {
+    color: #4fc3f7 !important;
 }
