@@ -8,12 +8,8 @@
         <div class="stats-section">
             <h4><mat-icon>today</mat-icon> This Session</h4>
             <div class="stat">
-                <span class="label"><mat-icon>favorite</mat-icon> Prayers</span>
-                <span class="value">{{ prayerCount }}</span>
-            </div>
-            <div class="stat">
-                <span class="label"><mat-icon>list</mat-icon> Items Prayed</span>
-                <span class="value">{{ totalItems }}</span>
+                <span class="label"><mat-icon>favorite</mat-icon> Items Prayed For</span>
+                <span class="value">{{ prayerCount }} / {{totalItems}}</span>
             </div>
             <div class="stat">
                 <span class="label"><mat-icon>schedule</mat-icon> Duration</span>
@@ -34,7 +30,7 @@
                 <span class="value">{{ formatDuration(totalTimePrayed) }}</span>
             </div>
             <div class="stat">
-                <span class="label"><mat-icon>list</mat-icon> Requests Prayed</span>
+                <span class="label"><mat-icon>list</mat-icon> Items Prayed For</span>
                 <span class="value">{{ totalRequestsPrayed }}</span>
             </div>
             <div class="stat">
@@ -57,13 +53,17 @@
             }
             @if (prayerEfficiency > 0) {
                 <div class="stat">
-                    <span class="label"><mat-icon>bolt</mat-icon> Efficiency</span>
+                    <span class="label"><mat-icon>bolt</mat-icon> Prayer Rate</span>
                     <span class="value">{{ prayerEfficiency }}/hr</span>
                 </div>
             }
             @if (totalRequestsPrayed > 0) {
                 <div class="stat">
-                    <span class="label"><mat-icon>percent</mat-icon> Answer Rate</span>
+                    <span class="label"><mat-icon>percent</mat-icon> Completed Prayers</span>
+                    <span class="value">{{ ((totalRequestsCompleted / totalRequestsPrayed) * 100).toFixed(1) }}%</span>
+                </div>
+                <div class="stat">
+                    <span class="label"><mat-icon>percent</mat-icon> Notable Answers</span>
                     <span class="value">{{ ((totalRequestsAnswered / totalRequestsPrayed) * 100).toFixed(1) }}%</span>
                 </div>
             }

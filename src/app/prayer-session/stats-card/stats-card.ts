@@ -16,6 +16,7 @@ export class StatsCard {
     @Input() totalTimePrayed = 0;
     @Input() totalRequestsPrayed = 0;
     @Input() totalRequestsAnswered = 0;
+    @Input() totalRequestsCompleted = 0;
     @Input() totalSessions = 0;
     @Input() sessionsPerWeek = 0;
 

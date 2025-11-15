@@ -66,6 +66,8 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     requests = this.store.selectSignal(selectAllRequests);
 
     answeredRequests = computed(() => this.requests().filter(r => r.answeredDate && !r.archived));
+    archivedRequests = computed(() => this.requests().filter(r => r.archived));
+    totalRequestsCompleted = computed(() => this.answeredRequests().length + this.archivedRequests().length);
 
     listIdFromRoute = computed(() => Number(this.route.snapshot.paramMap.get('listId')) || undefined);
     effectiveListId = computed(() => this.listId ?? this.listIdFromRoute());

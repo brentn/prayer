@@ -51,7 +51,7 @@
                 }
             </div>
         </mat-tab>
-        <mat-tab label="Archived">
+        <mat-tab label="Completed">
             <div class="requests">
                 @for (req of archivedRequests(); track req.id) {
                     <app-request [request]="req" [isEditing]="editingRequestId === req.id"

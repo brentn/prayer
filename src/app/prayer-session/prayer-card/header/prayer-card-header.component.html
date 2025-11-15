@@ -11,11 +11,8 @@
                 <div class="answered-date">{{ answeredDateText }}</div>
             </div>
         } @else {
-            @if (prayerCount !== undefined) {
-                <span class="prayer-count-badge">{{ prayerCount }}</span>
-            }
             @if (createdDate) {
-                <span class="since-text">since {{ createdDate | date }}</span>
+                <span class="since-text">praying since {{ createdDate | date }}</span>
             }
         }
     </div>
