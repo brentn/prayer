@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, signal, computed, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -11,7 +12,7 @@ import { DateUtilsService } from '../../shared/services/date-utils.service';
 @Component({
     standalone: true,
     selector: 'app-prayer-card',
-    imports: [CommonModule, MatIconModule, MatButtonModule, PrayerCardHeaderComponent, PrayerCardContentComponent, AnswerFormComponent],
+    imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, PrayerCardHeaderComponent, PrayerCardContentComponent, AnswerFormComponent],
     templateUrl: './prayer-card.component.html',
     styleUrl: './prayer-card.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,6 +53,7 @@ export class PrayerCardComponent implements OnChanges {
     @Output() answered = new EventEmitter<{ answerDescription: string }>();
     @Output() archive = new EventEmitter<void>();
     @Output() titleEdited = new EventEmitter<string>();
+    @Output() addNewRequest = new EventEmitter<{ topicName: string; description: string }>();
 
     showAnswerForm = signal(false);
     answerText = signal('');
@@ -59,6 +61,8 @@ export class PrayerCardComponent implements OnChanges {
     localAnswerDescription = signal('');
     localTitle = signal('');
     localTitleEdited = signal(false);
+    showDialog = signal(false);
+    newRequestText = signal('');
 
     answeredSummary = computed(() => this.dateUtils.formatAnsweredSummary(this.prayerCount, this.createdDate, this.answeredDate));
     answeredDateText = computed(() => this.dateUtils.formatAnsweredDateText(this.isAnswered, this.answeredDate));
@@ -104,5 +108,23 @@ export class PrayerCardComponent implements OnChanges {
         this.localTitleEdited.set(true);
         // Emit to parent for store persistence
         this.titleEdited.emit(newTitle);
+    }
+
+    onNewRequest() {
+        this.showDialog.set(true);
+    }
+
+    closeDialog() {
+        this.showDialog.set(false);
+        this.newRequestText.set('');
+    }
+
+    onSave() {
+        const desc = this.newRequestText().trim();
+        if (desc) {
+            const topic = this.topicName || this.title;
+            this.addNewRequest.emit({ topicName: topic, description: desc });
+            this.closeDialog();
+        }
     }
 }

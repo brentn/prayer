@@ -73,11 +73,12 @@
                                     [answerDescription]="item.answerDescription"
                                     (answered)="onRequestAnswered(item.id, $event)"
                                     (archive)="onRequestArchiveButton(item.id)"
-                                    (titleEdited)="onTitleEdited(item.id, $event)">
+                                    (titleEdited)="onTitleEdited(item.id, $event)"
+                                    (addNewRequest)="onAddNewRequest($event, $index)">
                                 </app-prayer-card>
                             } @else {
-                                <app-prayer-card icon="label" [title]="item.name"
-                                    [listName]="'from ' + item.listName"></app-prayer-card>
+                                <app-prayer-card icon="label" [title]="item.name" [listName]="'from ' + item.listName"
+                                    (addNewRequest)="onAddNewRequest($event, $index)"></app-prayer-card>
                             }
                         </div>
                     </div>

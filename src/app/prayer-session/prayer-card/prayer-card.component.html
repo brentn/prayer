@@ -13,9 +13,31 @@
     <app-answer-form [showAnswerForm]="showAnswerForm" [answerText]="answerText"
         [onAnswerSubmit]="onAnswerSubmit.bind(this)" [onAnswerCancel]="onAnswerCancel.bind(this)">
     </app-answer-form>
-    @if (listName) {
+    @if (listName || (!isAnswered && !localIsAnswered())) {
         <div class="card-footer">
-            {{ listName}}
+            <span *ngIf="listName">{{ listName}}</span>
+            <div *ngIf="!isAnswered && !localIsAnswered()" class="new-request-button">
+                <button mat-icon-button (click)="onNewRequest()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+    }
+    @if (showDialog()) {
+        <div class="dialog-overlay" (click)="closeDialog()">
+            <div class="dialog-content" (click)="$event.stopPropagation()">
+                <div class="dialog-header">
+                    <h2>New Prayer Request</h2>
+                </div>
+                <p>Topic: {{ topicName || title }}</p>
+                <textarea [(ngModel)]="newRequestText" placeholder="Enter your prayer request..." rows="4"
+                    style="width: 100%;"></textarea>
+                <div class="dialog-actions">
+                    <button mat-button style="color: grey;" (click)="closeDialog()">Cancel</button>
+                    <button mat-flat-button style="background-color: #1976d2; color: white;"
+                        (click)="onSave()">Save</button>
+                </div>
+            </div>
         </div>
     }
 </div>

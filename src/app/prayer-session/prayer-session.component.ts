@@ -13,7 +13,8 @@ import { selectAllTopics } from '../store/topics/topic.selectors';
 import { selectAllLists } from '../store/lists/list.selectors';
 import { SettingsService } from '../shared/services/settings.service';
 import { PrayerStats } from '../shared/services/prayer-stats';
-import { updateRequest } from '../store/requests/request.actions';
+import { updateRequest, addRequestWithId } from '../store/requests/request.actions';
+import { updateTopic } from '../store/topics/topic.actions';
 import { PrayerCardComponent } from './prayer-card/prayer-card.component';
 import { StatsCard } from './stats-card/stats-card';
 import { TimerService } from '../shared/services/timer.service';
@@ -365,7 +366,9 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     get answeredValueModel(): number { return this.answeredValue(); }
     set answeredValueModel(v: number) { this.onAnsweredChange(v); }
 
-    selectedItems = computed(() => {
+    selectedItems = signal<PrayerSessionItem[]>([]);
+
+    private computeSelectedItems(): PrayerSessionItem[] {
         try {
             const all = this.items();
             const count = this.selectCount();
@@ -408,7 +411,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             console.error('Error computing selected items:', error);
             return [];
         }
-    });
+    }
 
     // Keep selection count in sync with items length without overriding user choice unnecessarily
     private initializeSyncEffect() {
@@ -422,6 +425,24 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             if (cur < 1 || cur > max) {
                 this.selectCount.set(max);
             }
+        });
+    }
+
+    private initializeSelectedItemsEffect() {
+        effect(() => {
+            this.selectCount();
+            if (this.isInitialized()) return;
+            this.selectedItems.set(this.computeSelectedItems());
+        });
+        effect(() => {
+            this.answeredValue();
+            if (this.isInitialized()) return;
+            this.selectedItems.set(this.computeSelectedItems());
+        });
+        effect(() => {
+            this.items();
+            if (this.isInitialized()) return;
+            this.selectedItems.set(this.computeSelectedItems());
         });
     }
 
@@ -446,11 +467,13 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private finalSessionDuration = signal<number | null>(null);
     private finalPrayerCount = signal<number | null>(null);
     private sessionCounted = new Set<number>();
+    private isInitialized = signal(false);
 
     constructor() {
         // Initialize effects with proper cleanup
         this.initializeUpdateShuffledEffect();
         this.initializeSyncEffect();
+        this.initializeSelectedItemsEffect();
 
         // Reset carousel to start card for new prayer session
         this.carouselService.setIndex(0);
@@ -466,6 +489,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     ngAfterViewInit(): void {
         this.initializeCarousel();
         this.initializeMeasureEffect();
+        this.isInitialized.set(true);
     }
 
     private initializeCarousel() {
@@ -747,6 +771,42 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             id: requestId,
             changes: { archived: true }
         }));
+    }
+
+    onAddNewRequest(event: { topicName: string; description: string }, index: number) {
+        const topicName = event.topicName;
+        const description = event.description;
+        // Find the topic
+        const topic = this.topics().find(t => t.name === topicName);
+        if (topic) {
+            // Determine next request id
+            const nextId = this.requests().length ? Math.max(...this.requests().map(r => r.id)) + 1 : 1;
+            // Add the request
+            this.store.dispatch(addRequestWithId({ id: nextId, description }));
+            // Update the topic's requestIds
+            const requestIds = Array.from(new Set([...(topic.requestIds || []), nextId]));
+            this.store.dispatch(updateTopic({ id: topic.id, changes: { requestIds } }));
+
+            // Create the new item
+            const ownerList = this.lists().find(l => (l.topicIds || []).includes(topic.id));
+            const newItem: PrayerSessionItem = {
+                kind: 'request',
+                id: nextId,
+                description,
+                topicName: topic.name,
+                listName: ownerList?.name,
+                createdDate: new Date().toISOString(),
+                priority: 1,
+                prayerCount: 0
+            };
+
+            // Insert into selectedItems at the index after the clicked card
+            this.selectedItems.update(items => [
+                ...items.slice(0, index + 1),
+                newItem,
+                ...items.slice(index + 1)
+            ]);
+        }
     }
 
     onClose() {
