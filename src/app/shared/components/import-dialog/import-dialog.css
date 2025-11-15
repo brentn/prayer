@@ -20,13 +20,13 @@ mat-radio-group {
 
 /* Ensure buttons are visible */
 mat-dialog-actions button {
-    color: #1565c0 !important;
-    border-color: #1565c0 !important;
+    color: var(--app-accent-color) !important;
+    border-color: var(--app-accent-color) !important;
     background-color: transparent !important;
 }
 
 mat-dialog-actions button[color="primary"] {
-    background-color: #1565c0 !important;
+    background-color: var(--app-accent-color) !important;
     color: white !important;
-    border-color: #1565c0 !important;
+    border-color: var(--app-accent-color) !important;
 }

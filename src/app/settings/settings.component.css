@@ -64,3 +64,46 @@ mat-list-item span {
 ::ng-deep .mat-mdc-button {
     color: #4fc3f7 !important;
 }
+
+/* Style buttons and checkboxes with accent color */
+button[color="accent"] {
+    background-color: var(--app-accent-color) !important;
+    color: white !important;
+    border-color: var(--app-accent-color) !important;
+}
+
+button[color="accent"]:hover {
+    background-color: #8aa85d !important;
+    /* Slightly darker accent */
+}
+
+/* Style checkboxes with accent color */
+mat-checkbox {
+    --mdc-checkbox-selected-checkmark-color: white;
+    --mdc-checkbox-selected-hover-checkmark-color: white;
+    --mdc-checkbox-selected-focus-checkmark-color: white;
+    --mdc-checkbox-selected-pressed-checkmark-color: white;
+}
+
+mat-checkbox ::ng-deep .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background {
+    background-color: var(--app-accent-color) !important;
+    border-color: var(--app-accent-color) !important;
+}
+
+mat-checkbox ::ng-deep .mdc-checkbox__native-control:enabled:not(:checked)~.mdc-checkbox__background {
+    border-color: var(--app-accent-color) !important;
+}
+
+mat-checkbox ::ng-deep .mdc-checkbox__background::before {
+    background-color: var(--app-accent-color) !important;
+}
+
+/* Style the close button with accent color */
+.close-btn {
+    color: var(--app-accent-color) !important;
+}
+
+.close-btn:hover {
+    background-color: rgba(154, 184, 109, 0.1) !important;
+    /* Light accent background on hover */
+}
