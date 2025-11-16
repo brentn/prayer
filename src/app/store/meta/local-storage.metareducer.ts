@@ -1,6 +1,6 @@
 import { ActionReducer, INIT, MetaReducer } from '@ngrx/store';
 import { RootState } from '../index';
-import { initialListsState } from '../lists/list.reducer';
+import { initialListsState, adapter as listsAdapter } from '../lists/list.reducer';
 import { initialTopicsState } from '../topics/topic.reducer';
 import { initialRequestsState } from '../requests/request.reducer';
 
@@ -9,7 +9,15 @@ const STORAGE_KEY = 'prayer_app_state_v1';
 export function loadInitialState(): Partial<RootState> | undefined {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return undefined;
+        if (!raw) {
+            // Initialize with default list if localStorage is empty
+            const listsState = listsAdapter.addOne({ id: 1, name: 'My Family', topicIds: [] }, initialListsState);
+            return {
+                lists: listsState,
+                topics: initialTopicsState,
+                requests: initialRequestsState,
+            };
+        }
         const parsed = JSON.parse(raw);
         // Minimal validation
         if (typeof parsed !== 'object') return undefined;
