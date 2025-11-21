@@ -621,7 +621,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
                 // Update cumulative stats
                 this.prayerStats.addSessionTime(this.sessionDuration());
-                this.prayerStats.addSessionRequestsPrayed(this.selectedItems().length);
+                this.prayerStats.addSessionRequestsPrayed(this.timerService.getSessionPrayerCount());
                 this.prayerStats.addSession();
             }
         } catch (error) {
