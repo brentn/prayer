@@ -2,14 +2,24 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { signal } from '@angular/core';
 
 import { AnswerFormComponent } from './answer-form.component';
 
 describe('AnswerFormComponent', () => {
     let component: AnswerFormComponent;
     let fixture: ComponentFixture<AnswerFormComponent>;
+    let showAnswerFormSignal: any;
+    let answerTextSignal: any;
+    let onAnswerSubmitSpy: jasmine.Spy;
+    let onAnswerCancelSpy: jasmine.Spy;
 
     beforeEach(async () => {
+        showAnswerFormSignal = signal(false);
+        answerTextSignal = signal('');
+        onAnswerSubmitSpy = jasmine.createSpy('onAnswerSubmit');
+        onAnswerCancelSpy = jasmine.createSpy('onAnswerCancel');
+
         await TestBed.configureTestingModule({
             imports: [AnswerFormComponent, FormsModule],
             providers: [provideNoopAnimations()]
@@ -18,8 +28,14 @@ describe('AnswerFormComponent', () => {
 
         fixture = TestBed.createComponent(AnswerFormComponent);
         component = fixture.componentInstance;
-        component.onAnswerSubmit = jasmine.createSpy('onAnswerSubmit');
-        component.onAnswerCancel = jasmine.createSpy('onAnswerCancel');
+
+        fixture.componentRef.setInput('showAnswerForm', showAnswerFormSignal);
+        fixture.componentRef.setInput('answerText', answerTextSignal);
+        fixture.componentRef.setInput('dialogOpen', false);
+        fixture.componentRef.setInput('onAnswerSubmit', onAnswerSubmitSpy);
+        fixture.componentRef.setInput('onAnswerCancel', onAnswerCancelSpy);
+
+        fixture.detectChanges();
     });
 
     it('should create', () => {
@@ -28,14 +44,14 @@ describe('AnswerFormComponent', () => {
 
     describe('form visibility', () => {
         it('should show form when showAnswerForm is true', () => {
-            component.showAnswerForm.set(true);
+            showAnswerFormSignal.set(true);
             fixture.detectChanges();
             const form = fixture.debugElement.query(By.css('.answer-form'));
             expect(form).toBeTruthy();
         });
 
         it('should hide form when showAnswerForm is false', () => {
-            component.showAnswerForm.set(false);
+            showAnswerFormSignal.set(false);
             fixture.detectChanges();
             const form = fixture.debugElement.query(By.css('.answer-form'));
             expect(form).toBeFalsy();
@@ -44,40 +60,32 @@ describe('AnswerFormComponent', () => {
 
     describe('form submission', () => {
         beforeEach(() => {
-            component.showAnswerForm.set(true);
-            component.onAnswerSubmit = jasmine.createSpy('onAnswerSubmit');
-            component.onAnswerCancel = jasmine.createSpy('onAnswerCancel');
+            showAnswerFormSignal.set(true);
             fixture.detectChanges();
         });
 
         it('should submit valid answer', () => {
-            component.answerText.set('This is my answer');
-            component.onSubmit();
-            expect(component.onAnswerSubmit).toHaveBeenCalledWith('This is my answer');
-            expect(component.showAnswerForm()).toBe(false);
-            expect(component.answerText()).toBe('');
+            answerTextSignal.set('This is my answer');
+            component.onSave();
+            expect(onAnswerSubmitSpy).toHaveBeenCalledWith('This is my answer');
         });
 
         it('should not submit empty answer', () => {
-            component.answerText.set('   ');
-            component.onSubmit();
-            expect(component.onAnswerSubmit).not.toHaveBeenCalled();
-            expect(component.showAnswerForm()).toBe(true);
+            answerTextSignal.set('   ');
+            component.onSave();
+            expect(onAnswerSubmitSpy).not.toHaveBeenCalled();
         });
 
         it('should cancel form', () => {
-            component.answerText.set('Some text');
+            answerTextSignal.set('Some text');
             component.onCancel();
-            expect(component.onAnswerCancel).toHaveBeenCalled();
-            expect(component.showAnswerForm()).toBe(false);
-            expect(component.answerText()).toBe('');
+            expect(onAnswerCancelSpy).toHaveBeenCalled();
         });
     });
 
     describe('form interaction', () => {
         beforeEach(() => {
-            component.showAnswerForm.set(true);
-            component.onAnswerSubmit = jasmine.createSpy('onAnswerSubmit');
+            showAnswerFormSignal.set(true);
             fixture.detectChanges();
         });
 

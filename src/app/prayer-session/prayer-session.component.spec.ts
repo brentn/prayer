@@ -44,7 +44,7 @@ describe('PrayerSessionComponent', () => {
 
     beforeEach(async () => {
         mockSettingsService = jasmine.createSpyObj('SettingsService', [
-            'shuffleRequests', 'praySelectCount', 'setPraySelectCount', 'prayTimeValue', 'setPrayTimeValue', 'prayAnsweredCount', 'setPrayAnsweredCount'
+            'shuffleRequests', 'praySelectCount', 'setPraySelectCount', 'prayTimeValue', 'setPrayTimeValue', 'prayAnsweredCount', 'setPrayAnsweredCount', 'keepAwake'
         ], {
             shuffleRequests: signal(false),
             praySelectCount: signal(5),

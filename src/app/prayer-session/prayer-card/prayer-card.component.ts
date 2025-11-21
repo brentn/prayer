@@ -81,11 +81,6 @@ export class PrayerCardComponent implements OnChanges {
             this.localTitleEdited.set(false);
             this.localTitle.set('');
         }
-        // When the authoritative title is updated from props, clear local title state
-        if (changes['title'] && changes['title'].currentValue) {
-            this.localTitleEdited.set(false);
-            this.localTitle.set('');
-        }
     }
 
     onAnsweredClick() {

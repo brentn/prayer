@@ -57,6 +57,8 @@ export class AnswerFormComponent implements OnInit, OnChanges {
 
     onSave() {
         const trimmed = this.answerText()().trim();
-        this.onAnswerSubmit()(trimmed);
+        if (trimmed) {
+            this.onAnswerSubmit()(trimmed);
+        }
     }
 }

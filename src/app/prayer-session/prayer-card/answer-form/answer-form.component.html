@@ -1,5 +1,5 @@
 @if (showAnswerForm()() && !dialogOpen()) {
-    <mat-form-field class="answer-textarea">
+    <mat-form-field class="answer-form answer-textarea">
         <textarea matInput [ngModel]="answerText()()" (ngModelChange)="answerText().set($event)" rows="4"
             placeholder="Describe the answer..." cdkTextareaAutosize cdkAutosizeMinRows="3"
             cdkAutosizeMaxRows="6"></textarea>
