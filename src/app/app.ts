@@ -178,21 +178,21 @@ export class App implements OnInit {
         if (url === '/') {
             // Main page - export all data
             data = this.importExport.exportAllData();
-            filename = `prayer-data-${new Date().toISOString().split('T')[0]}.json`;
+            filename = `prayer-data-${new Date().toLocaleDateString('en-CA')}.json`;
         } else if (url.startsWith('/list/')) {
             // List page - export list data
             const listId = this.currentListId;
             if (listId !== undefined) {
                 data = this.importExport.exportListData(listId);
                 const list = this.lists().find(l => l.id === listId);
-                filename = `prayer-list-${list?.name || 'unknown'}-${new Date().toISOString().split('T')[0]}.json`;
+                filename = `prayer-list-${list?.name || 'unknown'}-${new Date().toLocaleDateString('en-CA')}.json`;
             }
         } else if (url.startsWith('/topic/')) {
             // Topic page - export topic data
             const topicId = Number(url.split('/')[2]);
             if (!isNaN(topicId)) {
                 data = this.importExport.exportTopicData(topicId);
-                filename = `prayer-topic-${topicId}-${new Date().toISOString().split('T')[0]}.json`;
+                filename = `prayer-topic-${topicId}-${new Date().toLocaleDateString('en-CA')}.json`;
             }
         }
 
