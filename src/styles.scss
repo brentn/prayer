@@ -55,12 +55,12 @@ $theme-surface: #23140f;
 
 // Answered prayer cards - fixed color scheme independent of theme
 :root {
-    --answered-bg-gradient: linear-gradient(135deg, #FFD700, #FFA500, #FFD700, #FFED4E);
-    --answered-border: #FFD700;
-    --answered-shadow: rgba(255, 215, 0, 0.6);
-    --answered-text-primary: #8B4513;
-    --answered-text-secondary: #A0522D;
-    --answered-accent: #FFD700;
+    --answered-bg-gradient: linear-gradient(135deg, #0a0a0a, #1a1a1a, #0f0f0f, #2a2a2a, #0a0a0a);
+    --answered-border: #555555;
+    --answered-shadow: rgba(192, 192, 192, 0.4);
+    --answered-text-primary: #ffffff;
+    --answered-text-secondary: #e0e0e0;
+    --answered-accent: #E8E8E8;
 }
 
 // Dark brown theme using Material Design 3 theming API with CSS variables

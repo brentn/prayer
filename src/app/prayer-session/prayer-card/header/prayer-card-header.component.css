@@ -71,3 +71,22 @@
     color: var(--prayer-text-secondary);
     font-style: italic;
 }
+
+/* Special styling for answered prayer cards */
+:host-context(.card.answered) .priority-badge {
+    background: rgba(232, 232, 232, 0.9);
+    color: #1a1a1a;
+}
+
+:host-context(.card.answered) .prayer-count-badge {
+    background: rgba(232, 232, 232, 0.9);
+    color: #1a1a1a;
+}
+
+:host-context(.card.answered) .answered-summary {
+    color: var(--answered-text-primary);
+}
+
+:host-context(.card.answered) .answered-date {
+    color: var(--answered-text-secondary);
+}
