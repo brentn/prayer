@@ -4,7 +4,7 @@ section {
     margin: 0;
     padding: 12px 12px 24px;
     /* Theme-aware gradient */
-    background: linear-gradient(180deg, var(--prayer-bg-gradient-start) 0%, var(--prayer-bg-gradient-middle) 55%, var(--prayer-bg-gradient-end) 100%);
+    background: linear-gradient(175deg, var(--prayer-bg-gradient-start) 0%, var(--prayer-bg-gradient-middle) 50%, var(--prayer-bg-gradient-end) 100%);
 }
 
 .section-bar {
@@ -30,7 +30,7 @@ section {
 
 .close {
     justify-self: start;
-    color: var(--app-accent-color);
+    color: var(--theme-accent);
 }
 
 .right-spacer {
@@ -101,7 +101,7 @@ section {
     display: flex;
     flex-direction: column;
     height: 100%;
-    border: 2px solid var(--app-accent-color);
+    border: 2px solid var(--theme-accent);
 }
 
 .settings-slide .prayer-card .hint {

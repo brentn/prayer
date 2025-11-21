@@ -1,4 +1,67 @@
 @use '@angular/material' as mat;
+@use 'sass:color';
+
+// Define base theme colors using SCSS variables for derivation
+$theme-primary: #543121;
+$theme-secondary: #7e5831;
+$theme-accent: #943801;
+$theme-surface: #23140f;
+
+// Define base theme colors at the top
+:root {
+    // Default (dark brown) theme base colors
+    --theme-primary: #{$theme-primary};
+    --theme-secondary: #{$theme-secondary};
+    --theme-accent: #{$theme-accent};
+    --theme-surface: #{$theme-surface};
+}
+
+// Derive all other colors from base theme colors
+:root {
+    // Material Design system colors
+    --md-sys-color-surface: #{$theme-surface};
+    --md-sys-color-on-surface: #f7f3ef;
+    --md-sys-color-primary: #{$theme-primary};
+    --md-sys-color-on-primary: #fffaf6;
+    --md-sys-color-primary-container: #{$theme-accent};
+    --md-sys-color-on-primary-container: #{$theme-secondary};
+    --md-sys-color-tertiary: #{$theme-primary};
+    --md-sys-color-on-tertiary: #{$theme-secondary};
+    --app-color-primary-darker: #{$theme-secondary};
+
+    // Prayer session colors derived from theme
+    --prayer-bg-gradient-start: #{color.adjust($theme-surface, $lightness: -10%)};
+    --prayer-bg-gradient-middle: #{color.mix($theme-surface, $theme-primary, 70%)};
+    --prayer-bg-gradient-end: #{color.adjust($theme-surface, $lightness: -10%)};
+    --prayer-text-primary: rgba(255, 245, 235, 0.95);
+    --prayer-text-secondary: rgba(255, 255, 255, 0.85);
+    --prayer-text-muted: rgba(255, 255, 255, 0.75);
+    --prayer-card-bg: rgba(255, 255, 255, 0.07);
+    --prayer-card-border: #{color.adjust($theme-primary, $alpha: 0.12)};
+    --prayer-card-shadow: #{color.adjust($theme-secondary, $alpha: 0.45)};
+    --prayer-overlay-bg: rgba(0, 0, 0, 0.22);
+    --prayer-overlay-border: #{color.adjust($theme-primary, $alpha: 0.08)};
+    --prayer-footer-bg: #{color.adjust($theme-secondary, $alpha: 0.85)};
+    --prayer-footer-border: #{color.adjust($theme-primary, $alpha: 0.08)};
+    --prayer-session-list-bg: rgba(0, 0, 0, 0.18);
+    --prayer-session-list-border: #{color.adjust($theme-primary, $alpha: 0.1)};
+    --prayer-session-list-separator: #{color.adjust($theme-primary, $alpha: 0.08)};
+
+    // Slider colors derived from theme
+    --slider-active-track: rgba(255, 255, 255, 0.95);
+    --slider-inactive-track: rgba(255, 255, 255, 0.32);
+    --slider-handle: #{$theme-accent};
+}
+
+// Answered prayer cards - fixed color scheme independent of theme
+:root {
+    --answered-bg-gradient: linear-gradient(135deg, #FFD700, #FFA500, #FFD700, #FFED4E);
+    --answered-border: #FFD700;
+    --answered-shadow: rgba(255, 215, 0, 0.6);
+    --answered-text-primary: #8B4513;
+    --answered-text-secondary: #A0522D;
+    --answered-accent: #FFD700;
+}
 
 // Dark brown theme using Material Design 3 theming API with CSS variables
 $darkTheme: mat.define-theme((color: (theme-type: dark,
@@ -39,242 +102,134 @@ $cozyTheme: mat.define-theme((color: (theme-type: dark,
     @include mat.all-component-themes($cozyTheme);
 }
 
-:root {
-    /* App brown shades */
-    --app-brown-dark: #23140f;
-    --app-brown-medium: #6d4c41;
-    --app-accent-color: #9caf88;
-
-    /* Very dark brown app background and near-white text */
-    --md-sys-color-surface: var(--app-brown-dark);
-    /* app background */
-    --md-sys-color-on-surface: #f7f3ef;
-    /* default text */
-    /* Primary used for cards and primary buttons (regular/lighter brown) */
-    --md-sys-color-primary: var(--app-brown-medium);
-    /* regular brown */
-    --md-sys-color-on-primary: #fffaf6;
-    /* nearly white text */
-
-    /* Slightly lighter brown container for chips/badges if needed */
-    --md-sys-color-primary-container: var(--app-accent-color);
-    --md-sys-color-on-primary-container: var(--app-brown-dark);
-
-    /* Optional tertiary */
-    --md-sys-color-tertiary: var(--app-brown-medium);
-    --md-sys-color-on-tertiary: var(--app-brown-dark);
-
-    /* App-specific: a darker primary for headers/bars (between surface and primary) */
-    --app-color-primary-darker: var(--app-brown-dark);
-
-    /* Prayer session specific colors */
-    --prayer-bg-gradient-start: #3b2a24;
-    --prayer-bg-gradient-middle: #2f221d;
-    --prayer-bg-gradient-end: #251b17;
-    --prayer-text-primary: rgba(255, 245, 235, 0.95);
-    --prayer-text-secondary: rgba(255, 255, 255, 0.85);
-    --prayer-text-muted: rgba(255, 255, 255, 0.75);
-    --prayer-card-bg: rgba(255, 255, 255, 0.07);
-    --prayer-card-border: rgba(255, 255, 255, 0.12);
-    --prayer-card-shadow: rgba(26, 17, 14, 0.45);
-    --prayer-overlay-bg: rgba(0, 0, 0, 0.22);
-    --prayer-overlay-border: rgba(255, 255, 255, 0.08);
-    --prayer-footer-bg: rgba(20, 15, 12, 0.85);
-    --prayer-footer-border: rgba(255, 255, 255, 0.08);
-    --prayer-session-list-bg: rgba(0, 0, 0, 0.18);
-    --prayer-session-list-border: rgba(255, 255, 255, 0.1);
-    --prayer-session-list-separator: rgba(255, 255, 255, 0.08);
-
-    /* Slider colors for dark theme */
-    --slider-active-track: rgba(255, 255, 255, 0.95);
-    --slider-inactive-track: rgba(255, 255, 255, 0.32);
-    --slider-handle: #9caf88;
-}
-
+// Light theme base colors and derivations
 .light-theme {
-    /* Light ice-blue theme */
-    --app-brown-dark: #e3f2fd;
-    /* Very light blue */
-    --app-brown-medium: #42a5f5;
-    /* Ice blue */
-    --app-accent-color: #1e88e5;
-    /* Deeper blue */
+    $theme-primary: #42a5f5;
+    $theme-secondary: #e3f2fd;
+    $theme-accent: #1e88e5;
+    $theme-surface: #fafafa;
 
-    /* Light surface and dark text */
-    --md-sys-color-surface: #fafafa;
-    /* Near white */
-    --md-sys-color-on-surface: #0d47a1;
-    /* Dark blue text */
+    --theme-primary: #{$theme-primary};
+    --theme-secondary: #{$theme-secondary};
+    --theme-accent: #{$theme-accent};
+    --theme-surface: #{$theme-surface};
 
-    /* Primary for cards and buttons */
-    --md-sys-color-primary: var(--app-brown-medium);
+    --md-sys-color-surface: #{$theme-surface};
+    --md-sys-color-on-surface: #{color.adjust($theme-primary, $lightness: -40%)};
+    --md-sys-color-primary: #{$theme-primary};
     --md-sys-color-on-primary: #ffffff;
-    /* White text */
-
-    /* Primary container */
-    --md-sys-color-primary-container: var(--app-accent-color);
+    --md-sys-color-primary-container: #{$theme-accent};
     --md-sys-color-on-primary-container: #ffffff;
+    --md-sys-color-tertiary: #{$theme-primary};
+    --md-sys-color-on-tertiary: #{color.adjust($theme-primary, $lightness: -40%)};
+    --app-color-primary-darker: #{$theme-primary};
 
-    /* Tertiary */
-    --md-sys-color-tertiary: var(--app-brown-medium);
-    --md-sys-color-on-tertiary: #0d47a1;
-
-    /* App-specific */
-    --app-color-primary-darker: var(--app-brown-medium);
-
-    /* Prayer session specific colors for light theme */
-    --prayer-bg-gradient-start: #e1f5fe;
-    /* Very light blue */
-    --prayer-bg-gradient-middle: #b3e5fc;
-    /* Light blue */
-    --prayer-bg-gradient-end: #81d4fa;
-    /* Medium light blue */
-    --prayer-text-primary: rgba(13, 71, 161, 0.95);
-    /* Dark blue text */
-    --prayer-text-secondary: rgba(13, 71, 161, 0.85);
-    --prayer-text-muted: rgba(13, 71, 161, 0.75);
+    --prayer-bg-gradient-start: #{color.mix($theme-secondary, $theme-primary, 50%)};
+    --prayer-bg-gradient-middle: #{color.adjust($theme-secondary, $lightness: 5%)};
+    --prayer-bg-gradient-end: #{color.mix($theme-secondary, $theme-primary, 50%)};
+    --prayer-text-primary: #{color.adjust(color.adjust($theme-primary, $lightness: -40%), $alpha: 0.95)};
+    --prayer-text-secondary: #{color.adjust(color.adjust($theme-primary, $lightness: -40%), $alpha: 0.85)};
+    --prayer-text-muted: #{color.adjust(color.adjust($theme-primary, $lightness: -40%), $alpha: 0.75)};
     --prayer-card-bg: rgba(255, 255, 255, 0.9);
-    /* White cards */
-    --prayer-card-border: rgba(66, 165, 245, 0.3);
-    /* Blue border */
-    --prayer-card-shadow: rgba(66, 165, 245, 0.2);
-    /* Blue shadow */
+    --prayer-card-border: #{color.adjust($theme-primary, $alpha: 0.3)};
+    --prayer-card-shadow: #{color.adjust($theme-primary, $alpha: 0.2)};
     --prayer-overlay-bg: rgba(255, 255, 255, 0.8);
-    --prayer-overlay-border: rgba(66, 165, 245, 0.2);
+    --prayer-overlay-border: #{color.adjust($theme-primary, $alpha: 0.2)};
     --prayer-footer-bg: rgba(255, 255, 255, 0.95);
-    --prayer-footer-border: rgba(66, 165, 245, 0.3);
+    --prayer-footer-border: #{color.adjust($theme-primary, $alpha: 0.3)};
     --prayer-session-list-bg: rgba(255, 255, 255, 0.7);
-    --prayer-session-list-border: rgba(66, 165, 245, 0.3);
-    --prayer-session-list-separator: rgba(66, 165, 245, 0.2);
+    --prayer-session-list-border: #{color.adjust($theme-primary, $alpha: 0.3)};
+    --prayer-session-list-separator: #{color.adjust($theme-primary, $alpha: 0.2)};
 
-    /* Slider colors for light theme */
-    --slider-active-track: rgba(66, 165, 245, 0.9);
-    --slider-inactive-track: rgba(66, 165, 245, 0.4);
-    --slider-handle: #1976d2;
+    --slider-active-track: #{color.adjust($theme-primary, $alpha: 0.9)};
+    --slider-inactive-track: #{color.adjust($theme-primary, $alpha: 0.4)};
+    --slider-handle: #{color.adjust($theme-accent, $lightness: -10%)};
 }
 
 .minty-theme {
-    /* Minty fresh vibrant theme */
-    --app-brown-dark: #e8f5e8;
-    /* Very light mint */
-    --app-brown-medium: #4caf50;
-    /* Vibrant mint green */
-    --app-accent-color: #66bb6a;
-    /* Lighter mint */
+    $theme-primary: #4caf50;
+    $theme-secondary: #e8f5e8;
+    $theme-accent: #66bb6a;
+    $theme-surface: #f1f8e9;
 
-    /* Light surface with mint accents */
-    --md-sys-color-surface: #f1f8e9;
-    /* Very light mint background */
-    --md-sys-color-on-surface: #1b5e20;
-    /* Dark green text */
+    --theme-primary: #{$theme-primary};
+    --theme-secondary: #{$theme-secondary};
+    --theme-accent: #{$theme-accent};
+    --theme-surface: #{$theme-surface};
 
-    /* Primary for cards and buttons */
-    --md-sys-color-primary: var(--app-brown-medium);
+    --md-sys-color-surface: #{$theme-surface};
+    --md-sys-color-on-surface: #{color.adjust($theme-primary, $lightness: -40%)};
+    --md-sys-color-primary: #{$theme-primary};
     --md-sys-color-on-primary: #ffffff;
-    /* White text */
-
-    /* Primary container */
-    --md-sys-color-primary-container: var(--app-accent-color);
+    --md-sys-color-primary-container: #{$theme-accent};
     --md-sys-color-on-primary-container: #ffffff;
+    --md-sys-color-tertiary: #{$theme-primary};
+    --md-sys-color-on-tertiary: #{color.adjust($theme-primary, $lightness: -40%)};
+    --app-color-primary-darker: #{$theme-primary};
 
-    /* Tertiary */
-    --md-sys-color-tertiary: var(--app-brown-medium);
-    --md-sys-color-on-tertiary: #1b5e20;
-
-    /* App-specific */
-    --app-color-primary-darker: var(--app-brown-medium);
-
-    /* Prayer session specific colors for minty theme */
-    --prayer-bg-gradient-start: #f1f8e9;
-    /* Very light mint */
-    --prayer-bg-gradient-middle: #dcedc8;
-    /* Light mint */
-    --prayer-bg-gradient-end: #c5e1a5;
-    /* Medium light mint */
-    --prayer-text-primary: rgba(27, 94, 32, 0.95);
-    /* Dark green text */
-    --prayer-text-secondary: rgba(27, 94, 32, 0.85);
-    --prayer-text-muted: rgba(27, 94, 32, 0.75);
+    --prayer-bg-gradient-start: #{color.mix($theme-secondary, $theme-primary, 50%)};
+    --prayer-bg-gradient-middle: #{color.adjust($theme-secondary, $lightness: 5%)};
+    --prayer-bg-gradient-end: #{color.mix($theme-secondary, $theme-primary, 50%)};
+    --prayer-text-primary: #{color.adjust(color.adjust($theme-primary, $lightness: -40%), $alpha: 0.95)};
+    --prayer-text-secondary: #{color.adjust(color.adjust($theme-primary, $lightness: -40%), $alpha: 0.85)};
+    --prayer-text-muted: #{color.adjust(color.adjust($theme-primary, $lightness: -40%), $alpha: 0.75)};
     --prayer-card-bg: rgba(255, 255, 255, 0.95);
-    /* White cards with slight transparency */
-    --prayer-card-border: rgba(76, 175, 80, 0.3);
-    /* Mint border */
-    --prayer-card-shadow: rgba(76, 175, 80, 0.2);
-    /* Mint shadow */
+    --prayer-card-border: #{color.adjust($theme-primary, $alpha: 0.3)};
+    --prayer-card-shadow: #{color.adjust($theme-primary, $alpha: 0.2)};
     --prayer-overlay-bg: rgba(255, 255, 255, 0.85);
-    --prayer-overlay-border: rgba(76, 175, 80, 0.25);
+    --prayer-overlay-border: #{color.adjust($theme-primary, $alpha: 0.25)};
     --prayer-footer-bg: rgba(255, 255, 255, 0.95);
-    --prayer-footer-border: rgba(76, 175, 80, 0.3);
+    --prayer-footer-border: #{color.adjust($theme-primary, $alpha: 0.3)};
     --prayer-session-list-bg: rgba(255, 255, 255, 0.8);
-    --prayer-session-list-border: rgba(76, 175, 80, 0.3);
-    --prayer-session-list-separator: rgba(76, 175, 80, 0.2);
+    --prayer-session-list-border: #{color.adjust($theme-primary, $alpha: 0.3)};
+    --prayer-session-list-separator: #{color.adjust($theme-primary, $alpha: 0.2)};
 
-    /* Slider colors for minty theme */
-    --slider-active-track: rgba(76, 175, 80, 0.9);
-    --slider-inactive-track: rgba(76, 175, 80, 0.4);
-    --slider-handle: #2e7d32;
+    --slider-active-track: #{color.adjust($theme-primary, $alpha: 0.9)};
+    --slider-inactive-track: #{color.adjust($theme-primary, $alpha: 0.4)};
+    --slider-handle: #{color.adjust($theme-accent, $lightness: -10%)};
 }
 
 .cozy-theme {
-    /* Cozy warm dark theme */
-    --app-brown-dark: #1a1a1a;
-    /* Very dark gray/black */
-    --app-brown-medium: #9c27b0;
-    /* Purple */
-    --app-accent-color: #e91e63;
-    /* Pink */
+    $theme-primary: #9c27b0;
+    $theme-secondary: #1a1a1a;
+    $theme-accent: #e91e63;
+    $theme-surface: #121212;
 
-    /* Very dark surface with purple/pink accents */
-    --md-sys-color-surface: #121212;
-    /* Near black */
+    --theme-primary: #{$theme-primary};
+    --theme-secondary: #{$theme-secondary};
+    --theme-accent: #{$theme-accent};
+    --theme-surface: #{$theme-surface};
+
+    --md-sys-color-surface: #{$theme-surface};
     --md-sys-color-on-surface: #f8f8f8;
-    /* Very light gray text */
-
-    /* Primary for cards and buttons */
-    --md-sys-color-primary: var(--app-brown-medium);
+    --md-sys-color-primary: #{$theme-primary};
     --md-sys-color-on-primary: #ffffff;
-    /* White text */
-
-    /* Primary container */
-    --md-sys-color-primary-container: var(--app-accent-color);
+    --md-sys-color-primary-container: #{$theme-accent};
     --md-sys-color-on-primary-container: #ffffff;
-
-    /* Tertiary */
-    --md-sys-color-tertiary: var(--app-brown-medium);
+    --md-sys-color-tertiary: #{$theme-primary};
     --md-sys-color-on-tertiary: #f8f8f8;
+    --app-color-primary-darker: #{$theme-secondary};
 
-    /* App-specific */
-    --app-color-primary-darker: var(--app-brown-dark);
-
-    /* Prayer session specific colors for cozy theme */
-    --prayer-bg-gradient-start: #1a1a1a;
-    /* Very dark gray/black */
-    --prayer-bg-gradient-middle: #2d2d2d;
-    /* Dark gray */
-    --prayer-bg-gradient-end: #1e1e1e;
-    /* Slightly lighter dark */
+    --prayer-bg-gradient-start: #{color.mix($theme-secondary, $theme-primary, 20%)};
+    --prayer-bg-gradient-middle: #{color.adjust($theme-secondary, $lightness: 10%)};
+    --prayer-bg-gradient-end: #{color.mix($theme-secondary, $theme-primary, 20%)};
     --prayer-text-primary: rgba(248, 248, 248, 0.95);
-    /* Very light gray text */
     --prayer-text-secondary: rgba(248, 248, 248, 0.85);
     --prayer-text-muted: rgba(248, 248, 248, 0.75);
     --prayer-card-bg: rgba(255, 255, 255, 0.05);
-    /* Very subtle white overlay */
-    --prayer-card-border: rgba(156, 39, 176, 0.3);
-    /* Purple border */
-    --prayer-card-shadow: rgba(156, 39, 176, 0.2);
-    /* Purple shadow */
+    --prayer-card-border: #{color.adjust($theme-primary, $alpha: 0.3)};
+    --prayer-card-shadow: #{color.adjust($theme-primary, $alpha: 0.2)};
     --prayer-overlay-bg: rgba(0, 0, 0, 0.3);
-    --prayer-overlay-border: rgba(156, 39, 176, 0.25);
-    --prayer-footer-bg: rgba(18, 18, 18, 0.9);
-    --prayer-footer-border: rgba(156, 39, 176, 0.3);
+    --prayer-overlay-border: #{color.adjust($theme-primary, $alpha: 0.25)};
+    --prayer-footer-bg: #{color.adjust($theme-surface, $alpha: 0.9)};
+    --prayer-footer-border: #{color.adjust($theme-primary, $alpha: 0.3)};
     --prayer-session-list-bg: rgba(0, 0, 0, 0.25);
-    --prayer-session-list-border: rgba(156, 39, 176, 0.3);
-    --prayer-session-list-separator: rgba(156, 39, 176, 0.2);
+    --prayer-session-list-border: #{color.adjust($theme-primary, $alpha: 0.3)};
+    --prayer-session-list-separator: #{color.adjust($theme-primary, $alpha: 0.2)};
 
-    /* Slider colors for cozy theme */
-    --slider-active-track: rgba(156, 39, 176, 0.9);
-    --slider-inactive-track: rgba(156, 39, 176, 0.4);
-    --slider-handle: #7b1fa2;
+    --slider-active-track: #{color.adjust($theme-primary, $alpha: 0.9)};
+    --slider-inactive-track: #{color.adjust($theme-primary, $alpha: 0.4)};
+    --slider-handle: #{color.adjust($theme-accent, $lightness: -10%)};
 }
 
 html,

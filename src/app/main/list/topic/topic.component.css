@@ -7,7 +7,7 @@ section {
 
 .section-title {
     margin: 0;
-    color: var(--md-sys-color-on-surface, #4e342e);
+    font-weight: 400;
 }
 
 .section-bar {
@@ -16,7 +16,7 @@ section {
     align-items: center;
     position: relative;
     /* Darker brown than primary, lighter than surface */
-    background-color: var(--app-brown-medium) !important;
+    background-color: var(--theme-primary) !important;
     gap: 12px;
     padding: 1rem;
     padding-bottom: 0;
@@ -147,7 +147,7 @@ section {
 
 /* Use deep selectors so styles penetrate Angular view encapsulation for Material internals */
 :host ::ng-deep .tabs .mat-mdc-tab-header {
-    background-color: var(--app-brown-medium) !important;
+    background-color: var(--theme-primary) !important;
     color: var(--md-sys-color-on-primary) !important;
 }
 

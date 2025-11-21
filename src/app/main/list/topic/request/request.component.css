@@ -7,9 +7,9 @@
 }
 
 .save-button {
-    background-color: var(--app-accent-color) !important;
+    background-color: var(--theme-accent) !important;
     color: white !important;
-    --mdc-filled-button-container-color: var(--app-accent-color);
+    --mdc-filled-button-container-color: var(--theme-accent);
     --mdc-filled-button-label-text-color: white;
 }
 

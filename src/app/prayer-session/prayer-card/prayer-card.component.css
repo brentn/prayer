@@ -14,44 +14,44 @@
 }
 
 .card.answered {
-    background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700, #FFED4E);
+    background: var(--answered-bg-gradient);
     background-size: 400% 400%;
-    border: 3px solid #FFD700;
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6), inset 0 0 25px rgba(255, 215, 0, 0.4);
+    border: 3px solid var(--answered-border);
+    box-shadow: 0 0 25px var(--answered-shadow), inset 0 0 25px var(--answered-shadow);
     animation: shimmer 3s ease-in-out infinite, goldFlow 4s ease-in-out infinite;
 }
 
 .card.answered .priority-badge {
-    color: #8B4513 !important;
+    color: var(--answered-text-primary) !important;
 }
 
 .card.answered .prayer-count-badge {
     background: rgba(139, 69, 19, 0.9) !important;
-    color: #FFD700 !important;
+    color: var(--answered-accent) !important;
 }
 
 .card.answered .since-text {
-    color: #A0522D !important;
+    color: var(--answered-text-secondary) !important;
 }
 
 .card.answered .card-icon {
-    color: #FFD700 !important;
+    color: var(--answered-accent) !important;
 }
 
 .card.answered .card-topic {
-    color: #A0522D !important;
+    color: var(--answered-text-secondary) !important;
 }
 
 .card.answered .card-title {
-    color: #8B4513 !important;
+    color: var(--answered-text-primary) !important;
 }
 
 .card.answered .card-footer {
-    color: #A0522D !important;
+    color: var(--answered-text-secondary) !important;
 }
 
 .card.answered .card-details {
-    color: #A0522D !important;
+    color: var(--answered-text-secondary) !important;
 }
 
 @keyframes shimmer {
@@ -97,7 +97,7 @@
 }
 
 .new-request-button mat-icon {
-    color: var(--app-accent-color);
+    color: var(--theme-accent);
 }
 
 .dialog-overlay {

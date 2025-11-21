@@ -34,7 +34,7 @@
 
 /* Confirm button styling */
 .mat-mdc-unelevated-button {
-    background-color: var(--app-accent-color) !important;
+    background-color: var(--theme-accent) !important;
     color: white !important;
 }
 

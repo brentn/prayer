@@ -4,7 +4,7 @@
     min-height: 48vh;
     border-radius: 16px;
     background: linear-gradient(135deg, var(--prayer-overlay-bg), rgba(20, 20, 30, 0.35));
-    border: 2px solid var(--app-accent-color);
+    border: 2px solid var(--theme-accent);
     height: 100%;
     position: relative;
     box-shadow:
@@ -23,7 +23,7 @@
 
 .celebration-icon {
     font-size: 2rem;
-    color: var(--app-accent-color);
+    color: var(--theme-accent);
     margin-bottom: 4px;
 }
 
@@ -35,7 +35,7 @@
     overflow-x: hidden;
     padding: 16px 12px;
     scrollbar-width: thin;
-    scrollbar-color: var(--app-accent-color) rgba(0, 0, 0, 0.2);
+    scrollbar-color: var(--theme-accent) rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -54,7 +54,7 @@
 }
 
 .scrollable-content::-webkit-scrollbar-thumb {
-    background: var(--app-accent-color);
+    background: var(--theme-accent);
     border-radius: 3px;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .stats-section h4 {
-    color: var(--app-accent-color);
+    color: var(--theme-accent);
     font-size: 0.95rem;
     margin: 0 0 8px 0;
     display: flex;
@@ -84,7 +84,7 @@
 
 .stats-section h4 mat-icon {
     font-size: 1rem;
-    color: var(--app-accent-color);
+    color: var(--theme-accent);
 }
 
 .stat {
@@ -115,7 +115,7 @@
 }
 
 .value {
-    color: var(--app-accent-color);
+    color: var(--theme-accent);
     font-weight: 600;
     font-size: 0.9rem;
 }

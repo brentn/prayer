@@ -35,7 +35,7 @@
                     style="width: 100%;"></textarea>
                 <div class="dialog-actions">
                     <button mat-button style="color: grey;" (click)="closeDialog()">Cancel</button>
-                    <button mat-flat-button style="background-color: var(--app-accent-color); color: white;"
+                    <button mat-flat-button style="background-color: var(--theme-accent); color: white;"
                         (click)="onSave()">Save</button>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                 style="width: 100%;"></textarea>
             <div class="dialog-actions">
                 <button mat-button style="color: grey;" (click)="closeAnswerDialog()">Cancel</button>
-                <button mat-flat-button style="background-color: var(--app-accent-color); color: white;"
+                <button mat-flat-button style="background-color: var(--theme-accent); color: white;"
                     (click)="onSaveAnswer()">{{ answerDialogText().trim() ? 'Save' : 'Skip' }}</button>
             </div>
         </div>

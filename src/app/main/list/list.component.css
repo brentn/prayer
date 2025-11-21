@@ -23,7 +23,7 @@ section {
 .section-title {
     margin: 0;
     color: var(--md-sys-color-on-primary);
-    background-color: var(--app-brown-medium);
+    background-color: var(--theme-primary);
     flex-grow: 1;
     padding: .75rem;
     border: 1px solid rgba(255, 255, 255, 0.2);

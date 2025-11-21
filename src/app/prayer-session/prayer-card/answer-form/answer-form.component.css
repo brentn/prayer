@@ -64,7 +64,7 @@
     bottom: -.6rem;
     right: 0;
     background: transparent !important;
-    color: var(--app-accent-color) !important;
+    color: var(--theme-accent) !important;
     border: none !important;
     text-transform: none !important;
     font-size: 14px !important;
@@ -76,5 +76,5 @@
 
 .skip-save-button:hover {
     background-color: rgba(154, 175, 136, 0.1) !important;
-    color: var(--app-accent-color) !important;
+    color: var(--theme-accent) !important;
 }

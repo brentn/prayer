@@ -40,7 +40,7 @@
 }
 
 .prayer-count-badge {
-    background: var(--app-accent-color);
+    background: var(--theme-accent);
     color: var(--md-sys-color-on-primary);
     padding: 4px 8px;
     border-radius: 12px;
