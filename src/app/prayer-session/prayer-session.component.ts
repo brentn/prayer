@@ -848,6 +848,17 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     onClose() {
         try {
+            // Record stats if not already recorded
+            if (this.finalSessionDuration() === null) {
+                this.finalSessionDuration.set(this.sessionDuration());
+                this.finalPrayerCount.set(this.timerService.getSessionPrayerCount());
+
+                // Update cumulative stats
+                this.prayerStats.addSessionTime(this.sessionDuration());
+                this.prayerStats.addSessionRequestsPrayed(this.timerService.getSessionPrayerCount());
+                this.prayerStats.addSession();
+            }
+
             // In overlay (fullscreen) mode, emit close event; otherwise navigate home
             if (this.fullScreen) {
                 this.close.emit();
