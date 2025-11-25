@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, computed, inject, ViewChild, ElementRef, OnDestroy, AfterViewInit, effect, signal, EffectRef, DestroyRef, Injector, runInInjectionContext } from '@angular/core';
+import { Component, Input, Output, EventEmitter, computed, inject, ViewChild, ElementRef, OnDestroy, AfterViewInit, effect, signal, EffectRef, DestroyRef, Injector, runInInjectionContext, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -495,6 +495,8 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         this.initializeCarousel();
         this.initializeMeasureEffect();
         this.isInitialized.set(true);
+        // Disable back button by pushing current state
+        history.pushState(null, '', location.href);
     }
 
     // Answer dialog methods
@@ -835,6 +837,13 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
                 ...items.slice(index + 1)
             ]);
         }
+    }
+
+    @HostListener('window:popstate', ['$event'])
+    onPopState(event: PopStateEvent) {
+        // Disable back button during prayer session
+        event.preventDefault();
+        history.pushState(null, '', location.href);
     }
 
     onClose() {
