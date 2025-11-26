@@ -1,0 +1,1 @@
+import{b as o,c as e}from"./chunk-G4UJ4M4Q.js";var i=o("[Topics] Add",e()),p=o("[Topics] Add With Id",e()),r=o("[Topics] Update",e()),c=o("[Topics] Remove",e()),s=o("[Topics] Clear All");export{i as a,p as b,r as c,c as d,s as e};

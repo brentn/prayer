@@ -1,0 +1,1 @@
+import{b as t,c as e}from"./chunk-G4UJ4M4Q.js";var o=t("[Lists] Add",e()),i=t("[Lists] Add With Id",e()),r=t("[Lists] Update",e()),n=t("[Lists] Remove",e()),d=t("[Lists] Clear All");export{o as a,i as b,r as c,n as d,d as e};
