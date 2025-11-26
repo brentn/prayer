@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { PrayerSessionItem } from '../models/prayer-session.interface';
 
 export interface TimerConfig {
     timeMinutes: number;
@@ -14,10 +15,10 @@ export class TimerService {
     private countdownSeconds = signal<number>(0);
     private initialCountdownSeconds = signal<number>(0);
     private countdownStarted = signal<boolean>(false);
-    private countdownId?: any;
+    private countdownId?: number;
 
     // View timer for prayer registration
-    private viewTimerId?: any;
+    private viewTimerId?: number;
     private sessionCounted = new Set<number>();
 
     // Getters for reactive access
@@ -67,7 +68,7 @@ export class TimerService {
     startViewTimer(
         itemId: number,
         currentIndex: number,
-        selectedItems: any[],
+        selectedItems: PrayerSessionItem[],
         registerSeconds: number,
         onRegister: (itemId: number) => void
     ): void {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class WakeLockService {
-    private wakeLock: any | null = null;
+    private wakeLock: WakeLockSentinel | null = null;
     private isRequesting = false;
 
     async request() {
@@ -11,9 +11,11 @@ export class WakeLockService {
         try {
             if ('wakeLock' in navigator && 'request' in (navigator as any).wakeLock) {
                 this.wakeLock = await (navigator as any).wakeLock.request('screen');
-                this.wakeLock.addEventListener?.('release', () => {
-                    this.wakeLock = null;
-                });
+                if (this.wakeLock) {
+                    this.wakeLock.addEventListener?.('release', () => {
+                        this.wakeLock = null;
+                    });
+                }
             }
         } catch (e) {
             // Ignore errors; some browsers require user interaction or may not support it.

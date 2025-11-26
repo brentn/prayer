@@ -4,14 +4,26 @@ import { selectAllLists } from '../../store/lists/list.selectors';
 import { selectAllTopics } from '../../store/topics/topic.selectors';
 import { selectAllRequests } from '../../store/requests/request.selectors';
 import { PrayerStats } from './prayer-stats';
+import { List } from '../models/list';
+import { Topic } from '../models/topic';
+import { RequestEntity } from '../../store/requests/request.reducer';
+
+export interface ExportedStats {
+    totalTimePrayed: number;
+    totalRequestsPrayed: number;
+    totalRequestsAnswered: number;
+    totalSessions: number;
+    firstSessionDate: string | null;
+    lastSessionDate: string | null;
+}
 
 export interface ExportData {
     version: string;
     exportDate: string;
-    lists: any[];
-    topics: any[];
-    requests: any[];
-    stats?: any;
+    lists: List[];
+    topics: Topic[];
+    requests: RequestEntity[];
+    stats?: ExportedStats;
 }
 
 export interface ImportOptions {
@@ -165,11 +177,11 @@ export class ImportExportService {
             for (const request of data.requests) {
                 this.store.dispatch(addRequestWithId({
                     id: request.id,
-                    description: request.description || request.text || ''
+                    description: request.description
                 }));
 
                 // Update with additional properties
-                const changes: any = {};
+                const changes: Partial<Pick<RequestEntity, 'answeredDate' | 'answerDescription' | 'prayerCount' | 'priority' | 'archived' | 'createdDate'>> = {};
                 if (request.answeredDate !== undefined) changes.answeredDate = request.answeredDate;
                 if (request.answerDescription !== undefined) changes.answerDescription = request.answerDescription;
                 if (request.prayerCount !== undefined) changes.prayerCount = request.prayerCount || 0;
@@ -314,7 +326,7 @@ export class ImportExportService {
                 });
 
                 const existingRequest = topicRequests.find(r =>
-                    r.description === (importedRequest.description || importedRequest.text)
+                    r.description === importedRequest.description
                 );
 
                 if (existingRequest) {
@@ -322,7 +334,7 @@ export class ImportExportService {
                     this.store.dispatch(updateRequest({
                         id: existingRequest.id,
                         changes: {
-                            description: importedRequest.description || importedRequest.text || '',
+                            description: importedRequest.description,
                             answeredDate: importedRequest.answeredDate,
                             answerDescription: importedRequest.answerDescription,
                             prayerCount: importedRequest.prayerCount,
@@ -336,7 +348,7 @@ export class ImportExportService {
                     const nextId = currentRequests.length ? Math.max(...currentRequests.map(r => r.id)) + 1 : 1;
                     this.store.dispatch(addRequestWithId({
                         id: nextId,
-                        description: importedRequest.description || importedRequest.text || ''
+                        description: importedRequest.description
                     }));
 
                     // Update additional properties if they exist

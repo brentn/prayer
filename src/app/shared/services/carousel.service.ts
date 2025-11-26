@@ -1,7 +1,8 @@
 import { Injectable, signal, ElementRef } from '@angular/core';
+import { PrayerSessionItem } from '../models/prayer-session.interface';
 
 export interface CarouselConfig {
-    items: any[];
+    items: PrayerSessionItem[];
     viewportHeight?: number;
 }
 
@@ -156,17 +157,17 @@ export class CarouselService {
         return `translateX(${offset}px)`;
     }
 
-    getTotalSlides(items: any[]): number {
+    getTotalSlides(items: PrayerSessionItem[]): number {
         return items.length;
     }
 
-    getCurrentSlide(items: any[]): number {
+    getCurrentSlide(items: PrayerSessionItem[]): number {
         const idx = this.currentIndex();
         if (idx < 1) return 0;
         return Math.min(idx, items.length);
     }
 
-    getProgressPercent(items: any[]): number {
+    getProgressPercent(items: PrayerSessionItem[]): number {
         const totalSlides = items.length;
         if (totalSlides <= 0) return 0;
         const idx = this.currentIndex();

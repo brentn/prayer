@@ -19,20 +19,14 @@ import { PrayerCardComponent } from './prayer-card/prayer-card.component';
 import { StatsCard } from './stats-card/stats-card';
 import { TimerService } from '../shared/services/timer.service';
 import { CarouselService } from '../shared/services/carousel.service';
+import { Topic } from '../shared/models/topic';
+import { List } from '../shared/models/list';
 import { PrayerSessionItem } from '../shared/models/prayer-session.interface';
 import { WakeLockService } from '../shared/services/wake-lock.service';
-
-const REGISTER_SECONDS = 12; // seconds of viewing a request card to register a prayer
-
-// Utility function for Fisher-Yates shuffle
-function shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-}
+import { shuffleArray } from '../shared/utils/array-utils';
+import { PRAYER_SESSION_CONSTANTS } from '../shared/utils/prayer-session-constants';
+import { createRequestItem, createTopicItem, calculateRequestScore, clamp } from '../shared/utils/prayer-session-utils';
+import { RequestEntity } from '../store/requests/request.reducer';
 
 @Component({
     standalone: true,
@@ -123,7 +117,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         // Non-shuffle: sort requests by priority*10 - prayerCount (desc)
         const scored = scopedRequests.map(r => ({
             r,
-            score: (Number(r.priority) || 1) * 10 - (Number(r.prayerCount) || 0),
+            score: calculateRequestScore(r),
         }));
         scored.sort((a, b) => b.score - a.score);
         const items: PrayerSessionItem[] = [];
@@ -175,130 +169,91 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     });
 
     // Helper to create request item with proper typing and error handling
-    private createRequestItem(request: any, ownerTopic?: any, ownerList?: any): PrayerSessionItem {
-        if (!request?.id || !request?.description) {
-            console.warn('Invalid request data:', request);
-            return {
-                kind: 'request',
-                id: request?.id || 0,
-                description: request?.description || 'Unknown request',
-                listName: ownerList?.name,
-                topicName: ownerTopic?.name,
-                createdDate: request?.createdDate,
-                priority: Number(request?.priority) || 1,
-                prayerCount: Number(request?.prayerCount) || 0
-            };
-        }
-
-        return {
-            kind: 'request',
-            id: request.id,
-            description: request.description,
-            listName: ownerList?.name,
-            topicName: ownerTopic?.name,
-            createdDate: request.createdDate,
-            priority: Number(request.priority) || 1,
-            prayerCount: Number(request.prayerCount) || 0,
-            isAnswered: Boolean(request.answeredDate && !request.archived),
-            answeredDate: request.answeredDate,
-            answerDescription: request.answerDescription
-        };
+    private createRequestItem(request: RequestEntity, ownerTopic?: Topic, ownerList?: List): PrayerSessionItem {
+        return createRequestItem(request, ownerTopic, ownerList);
     }
 
     // Helper to create topic item with proper typing and error handling
-    private createTopicItem(topic: any, ownerList?: any): PrayerSessionItem {
-        if (!topic?.id || !topic?.name) {
-            console.warn('Invalid topic data:', topic);
-            return {
-                kind: 'topic',
-                id: topic?.id || 0,
-                name: topic?.name || 'Unknown topic',
-                listName: ownerList?.name
-            };
-        }
-
-        return {
-            kind: 'topic',
-            id: topic.id,
-            name: topic.name,
-            listName: ownerList?.name
-        };
+    private createTopicItem(topic: Topic, ownerList?: List): PrayerSessionItem {
+        return createTopicItem(topic, ownerList);
     }
 
     // Update shuffledItems only when the list changes and session hasn't started
     private initializeUpdateShuffledEffect() {
-        this.updateShuffledEffectRef = effect(() => {
-            const lid = this.effectiveListId();
-            const allTopics = this.topics();
-            const allRequests = this.requests();
-            const shuffle = this.settings.shuffleRequests();
+        this.updateShuffledEffectRef = runInInjectionContext(this.injector, () => {
+            return effect(() => {
+                const lid = this.effectiveListId();
+                const allTopics = this.topics();
+                const allRequests = this.requests();
+                const shuffle = this.settings.shuffleRequests();
 
-            // Compute ids to detect list changes
-            let scopedTopicIds: number[] | undefined;
-            if (lid) {
-                const list = this.lists().find(l => l.id === lid);
-                scopedTopicIds = list?.topicIds || [];
-            } else {
-                // When praying for all lists, exclude topics from lists marked as excludeFromAll
-                const excludedListIds = new Set(this.lists().filter(l => l.excludeFromAll).map(l => l.id));
-                scopedTopicIds = allTopics
-                    .filter(t => {
-                        // Find which list this topic belongs to
-                        const topicList = this.lists().find(l => (l.topicIds || []).includes(t.id));
-                        return topicList && !excludedListIds.has(topicList.id);
-                    })
-                    .map(t => t.id);
-            }
-            const topicSet = new Set(scopedTopicIds ?? allTopics.map(t => t.id));
-            const scopedTopics = allTopics.filter(t => topicSet.has(t.id));
-            const scopedRequests = allRequests.filter(r => scopedTopics.some(t => (t.requestIds || []).includes(r.id)) && !r.answeredDate && !r.archived);
-            const emptyTopics = scopedTopics.filter(t => (t.requestIds || []).length === 0);
-            const ids = [...scopedRequests.map(r => r.id), ...emptyTopics.map(t => t.id)].sort().join(',');
-
-            if ((this.lastIds !== ids || this.lastShuffle !== shuffle) && !this.sessionStarted()) {
-                this.lastIds = ids;
-                this.lastShuffle = shuffle;
-                this.timerService.getCountdownStarted().set(false); // Reset countdown flag for new session
-
-                if (shuffle) {
-                    // Expand requests by priority, include topics as single items
-                    const weighted: PrayerSessionItem[] = [];
-                    const { topicToListMap, requestToTopicMap } = this.ownerMaps();
-
-                    for (const r of scopedRequests) {
-                        const ownerTopic = requestToTopicMap.get(r.id);
-                        const ownerList = ownerTopic ? topicToListMap.get(ownerTopic.id) : undefined;
-                        const repeats = Math.max(1, Number(r.priority) || 1);
-                        const requestItem = this.createRequestItem(r, ownerTopic, ownerList);
-
-                        for (let i = 0; i < repeats; i++) {
-                            weighted.push(requestItem);
-                        }
-                    }
-
-                    for (const t of emptyTopics) {
-                        const ownerList = topicToListMap.get(t.id);
-                        weighted.push(this.createTopicItem(t, ownerList));
-                    }
-
-                    // Fisher-Yates shuffle
-                    const shuffled = shuffleArray(weighted);
-
-                    // Deduplicate by request id (keep first occurrence), topics are unique
-                    const seenReq = new Set<number>();
-                    const deduped: PrayerSessionItem[] = [];
-                    for (const item of shuffled) {
-                        if (item.kind === 'topic') { deduped.push(item); continue; }
-                        if (!seenReq.has(item.id)) {
-                            seenReq.add(item.id);
-                            deduped.push(item);
-                        }
-                    }
-                    this.shuffledItems.set(deduped);
+                // Compute ids to detect list changes
+                let scopedTopicIds: number[] | undefined;
+                if (lid) {
+                    const list = this.lists().find(l => l.id === lid);
+                    scopedTopicIds = list?.topicIds || [];
                 } else {
-                    this.shuffledItems.set(this.baseItems());
+                    // When praying for all lists, exclude topics from lists marked as excludeFromAll
+                    const excludedListIds = new Set(this.lists().filter(l => l.excludeFromAll).map(l => l.id));
+                    scopedTopicIds = allTopics
+                        .filter(t => {
+                            // Find which list this topic belongs to
+                            const topicList = this.lists().find(l => (l.topicIds || []).includes(t.id));
+                            return topicList && !excludedListIds.has(topicList.id);
+                        })
+                        .map(t => t.id);
                 }
-            }
+                const topicSet = new Set(scopedTopicIds ?? allTopics.map(t => t.id));
+                const scopedTopics = allTopics.filter(t => topicSet.has(t.id));
+                const scopedRequests = allRequests.filter(r => scopedTopics.some(t => (t.requestIds || []).includes(r.id)) && !r.answeredDate && !r.archived);
+                const emptyTopics = scopedTopics.filter(t => (t.requestIds || []).length === 0);
+                const ids = [...scopedRequests.map(r => r.id), ...emptyTopics.map(t => t.id)].sort().join(',');
+
+                if ((this.lastIds !== ids || this.lastShuffle !== shuffle) && !this.sessionStarted()) {
+                    this.lastIds = ids;
+                    this.lastShuffle = shuffle;
+                    this.timerService.getCountdownStarted().set(false); // Reset countdown flag for new session
+
+                    if (shuffle) {
+                        // Expand requests by priority, include topics as single items
+                        const weighted: PrayerSessionItem[] = [];
+                        const { topicToListMap, requestToTopicMap } = this.ownerMaps();
+
+                        for (const r of scopedRequests) {
+                            const ownerTopic = requestToTopicMap.get(r.id);
+                            const ownerList = ownerTopic ? topicToListMap.get(ownerTopic.id) : undefined;
+                            const repeats = Math.max(1, Number(r.priority) || 1);
+                            const requestItem = this.createRequestItem(r, ownerTopic, ownerList);
+
+                            for (let i = 0; i < repeats; i++) {
+                                weighted.push(requestItem);
+                            }
+                        }
+
+                        for (const t of emptyTopics) {
+                            const ownerList = topicToListMap.get(t.id);
+                            weighted.push(this.createTopicItem(t, ownerList));
+                        }
+
+                        // Fisher-Yates shuffle
+                        const shuffled = shuffleArray(weighted);
+
+                        // Deduplicate by request id (keep first occurrence), topics are unique
+                        const seenReq = new Set<number>();
+                        const deduped: PrayerSessionItem[] = [];
+                        for (const item of shuffled) {
+                            if (item.kind === 'topic') { deduped.push(item); continue; }
+                            if (!seenReq.has(item.id)) {
+                                seenReq.add(item.id);
+                                deduped.push(item);
+                            }
+                        }
+                        this.shuffledItems.set(deduped);
+                    } else {
+                        this.shuffledItems.set(this.baseItems());
+                    }
+                }
+            });
         });
     }
 
@@ -422,32 +377,40 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     // Keep selection count in sync with items length without overriding user choice unnecessarily
     private initializeSyncEffect() {
-        this.syncEffectRef = effect(() => {
-            const max = this.items().length;
-            const cur = this.selectCount();
-            if (max <= 0) {
-                if (cur !== 0) this.selectCount.set(0);
-                return;
-            }
-            if (cur < 1 || cur > max) {
-                this.selectCount.set(max);
-            }
+        this.syncEffectRef = runInInjectionContext(this.injector, () => {
+            return effect(() => {
+                const max = this.items().length;
+                const cur = this.selectCount();
+                if (max <= 0) {
+                    if (cur !== 0) this.selectCount.set(0);
+                    return;
+                }
+                if (cur < 1 || cur > max) {
+                    this.selectCount.set(max);
+                }
+            });
         });
     }
 
     private initializeSelectedItemsEffect() {
-        effect(() => {
-            this.selectCount();
-            this.selectedItems.set(this.computeSelectedItems());
+        runInInjectionContext(this.injector, () => {
+            effect(() => {
+                this.selectCount();
+                this.selectedItems.set(this.computeSelectedItems());
+            });
         });
-        effect(() => {
-            this.answeredValue();
-            this.selectedItems.set(this.computeSelectedItems());
+        runInInjectionContext(this.injector, () => {
+            effect(() => {
+                this.answeredValue();
+                this.selectedItems.set(this.computeSelectedItems());
+            });
         });
-        effect(() => {
-            this.items();
-            if (this.isInitialized()) return;
-            this.selectedItems.set(this.computeSelectedItems());
+        runInInjectionContext(this.injector, () => {
+            effect(() => {
+                this.items();
+                if (this.isInitialized()) return;
+                this.selectedItems.set(this.computeSelectedItems());
+            });
         });
     }
 
@@ -492,11 +455,18 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
+        this.initializeEffects();
         this.initializeCarousel();
-        this.initializeMeasureEffect();
         this.isInitialized.set(true);
         // Disable back button by pushing current state
         history.pushState(null, '', location.href);
+    }
+
+    private initializeEffects(): void {
+        this.initializeUpdateShuffledEffect();
+        this.initializeSyncEffect();
+        this.initializeSelectedItemsEffect();
+        this.initializeMeasureEffect();
     }
 
     // Answer dialog methods
@@ -546,7 +516,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
                 this.scrollDebounceId = setTimeout(() => {
                     this.initializeCarousel();
-                }, 50); // Small delay to batch updates
+                }, PRAYER_SESSION_CONSTANTS.CAROUSEL_MEASURE_DEBOUNCE_MS); // Small delay to batch updates
             });
         });
     }
@@ -662,7 +632,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
                 item.id,
                 idx,
                 selectedItems,
-                REGISTER_SECONDS,
+                PRAYER_SESSION_CONSTANTS.REGISTER_SECONDS,
                 (itemId: number) => {
                     this.handlePrayerCountIncrement(itemId);
                 }
@@ -690,7 +660,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     onSelectCountChange(val: number) {
         const max = this.maxSelectable;
-        const v = Math.max(1, Math.min(val, max));
+        const v = clamp(val, PRAYER_SESSION_CONSTANTS.MIN_SELECT_COUNT, max);
         this.selectCount.set(v);
         // persist
         this.settings.setPraySelectCount(v);
@@ -701,7 +671,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     onTimeChange(val: number) {
         // expect 1..61, where 61 = unlimited
-        const v = Math.max(1, Math.min(val, 61));
+        const v = clamp(val, PRAYER_SESSION_CONSTANTS.MIN_TIME_VALUE, PRAYER_SESSION_CONSTANTS.MAX_TIME_VALUE);
         this.timeValue.set(v);
         // persist
         this.settings.setPrayTimeValue(v);
@@ -709,7 +679,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     onAnsweredChange(val: number) {
         const max = this.answeredRequests().length;
-        const v = Math.max(0, Math.min(val, max));
+        const v = clamp(val, 0, max);
         this.answeredValue.set(v);
         // persist
         this.settings.setPrayAnsweredCount(v);

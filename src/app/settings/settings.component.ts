@@ -6,8 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { SettingsService } from '../shared/services/settings.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -16,8 +14,7 @@ import { selectAllTopics } from '../store/topics/topic.selectors';
 import { selectAllRequests } from '../store/requests/request.selectors';
 import { updateList, addListWithId } from '../store/lists/list.actions';
 import { updateTopic, addTopicWithId } from '../store/topics/topic.actions';
-import { updateRequest, addRequestWithId } from '../store/requests/request.actions';
-import { addList } from '../store/lists/list.actions';
+import { updateRequest, addRequestWithId, removeRequest } from '../store/requests/request.actions';
 
 @Component({
     standalone: true,
@@ -223,6 +220,24 @@ export class SettingsComponent {
                         changes: { topicIds: updatedTopicIds }
                     }));
                 }
+            }
+
+            // Step 9: Remove requests with empty descriptions
+            const requestsToRemove = requests.filter(r => !r.description || r.description.trim() === '');
+            if (requestsToRemove.length > 0) {
+                requestsToRemove.forEach(request => {
+                    this.store.dispatch(removeRequest({ id: request.id }));
+                });
+
+                // Also remove these request IDs from any topics that reference them
+                topics.forEach(topic => {
+                    const cleanedRequestIds = (topic.requestIds || []).filter(id =>
+                        !requestsToRemove.some(r => r.id === id)
+                    );
+                    if (cleanedRequestIds.length !== (topic.requestIds || []).length) {
+                        this.store.dispatch(updateTopic({ id: topic.id, changes: { requestIds: cleanedRequestIds } }));
+                    }
+                });
             }
 
             this.snackBar.open('Data cleanup completed successfully!', 'OK', { duration: 3000 });

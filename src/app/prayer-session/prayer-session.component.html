@@ -123,35 +123,20 @@
 </section>
 
 <!-- Answer Dialog -->
-<div *ngIf="showAnswerDialog()" class="answer-dialog-overlay" (click)="closeAnswerDialog()">
-    <div class="answer-dialog-content" (click)="$event.stopPropagation()">
-        <div class="dialog-header">
-            <h2>Add Answer</h2>
-        </div>
-        <p>Request: {{ answerDialogTitle() }}</p>
-        <textarea [(ngModel)]="answerDialogText" placeholder="Describe the answer..." rows="4"
-            style="width: 100%;"></textarea>
-        <div class="dialog-actions">
-            <button mat-button style="color: grey;" (click)="closeAnswerDialog()">Cancel</button>
-            <button mat-flat-button style="background-color: var(--theme-accent); color: white;"
-                (click)="onSaveAnswer()">{{ answerDialogText().trim() ? 'Save' : 'Skip' }}</button>
-        </div>
-    </div>
-</div>
-
-<div [style.display]="showAnswerDialog() ? 'block' : 'none'" class="answer-dialog-overlay"
-    (click)="closeAnswerDialog()">
-    <div class="answer-dialog-content" (click)="$event.stopPropagation()">
-        <div class="dialog-header">
-            <h2>Add Answer</h2>
-        </div>
-        <p>Request: {{ answerDialogTitle() }}</p>
-        <textarea [(ngModel)]="answerDialogText" placeholder="Describe the answer..." rows="4"
-            style="width: 100%;"></textarea>
-        <div class="dialog-actions">
-            <button mat-button style="color: grey;" (click)="closeAnswerDialog()">Cancel</button>
-            <button mat-flat-button style="background-color: var(--theme-accent); color: white;"
-                (click)="onSaveAnswer()">{{ answerDialogText().trim() ? 'Save' : 'Skip' }}</button>
+@if (showAnswerDialog()) {
+    <div class="answer-dialog-overlay" (click)="closeAnswerDialog()">
+        <div class="answer-dialog-content" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <h2>Add Answer</h2>
+            </div>
+            <p>Request: {{ answerDialogTitle() }}</p>
+            <textarea [(ngModel)]="answerDialogText" placeholder="Describe the answer..." rows="4"
+                style="width: 100%;"></textarea>
+            <div class="dialog-actions">
+                <button mat-button style="color: grey;" (click)="closeAnswerDialog()">Cancel</button>
+                <button mat-flat-button style="background-color: var(--theme-accent); color: white;"
+                    (click)="onSaveAnswer()">{{ answerDialogText().trim() ? 'Save' : 'Skip' }}</button>
+            </div>
         </div>
     </div>
-</div>
+}

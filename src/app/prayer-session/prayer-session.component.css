@@ -318,3 +318,101 @@ section {
     height: 100vh;
     margin: 0;
 }
+
+/* Answer Dialog Styles */
+.answer-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.answer-dialog-content {
+    background: var(--prayer-card-bg);
+    border: 1px solid var(--prayer-card-border);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px var(--prayer-card-shadow);
+}
+
+.dialog-header {
+    margin-bottom: 16px;
+}
+
+.dialog-header h2 {
+    margin: 0;
+    color: var(--prayer-text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.dialog-header p {
+    margin: 8px 0 0 0;
+    color: var(--prayer-text-secondary);
+    font-size: 0.9rem;
+}
+
+.answer-dialog-content textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid var(--prayer-card-border);
+    border-radius: 8px;
+    background: var(--prayer-overlay-bg);
+    color: var(--prayer-text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    margin: 16px 0;
+}
+
+.answer-dialog-content textarea:focus {
+    outline: none;
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 0 2px rgba(var(--theme-accent-rgb), 0.2);
+}
+
+.dialog-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.dialog-actions button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.dialog-actions button:first-child {
+    background: transparent;
+    border: 1px solid var(--prayer-card-border);
+    color: var(--prayer-text-secondary);
+}
+
+.dialog-actions button:first-child:hover {
+    background: var(--prayer-overlay-bg);
+}
+
+.dialog-actions button:last-child {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dialog-actions button:last-child:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

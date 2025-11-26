@@ -240,7 +240,7 @@ export class App implements OnInit {
         document.body.removeChild(input);
     }
 
-    getDepth(outlet: RouterOutlet): any {
+    getDepth(outlet: RouterOutlet): string | number {
         return outlet?.activatedRouteData?.['depth'] ?? 0;
     }
 }
