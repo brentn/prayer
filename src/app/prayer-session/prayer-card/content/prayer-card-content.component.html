@@ -3,16 +3,9 @@
     @if (topicName) {
         <div class="card-topic">{{topicName}}:</div>
     }
-    <div class="card-title">
-        @if (!editingTitle) {
-            <span class="title-text" [class.clickable]="!isTopic"
-                (click)="!isTopic && startEditTitle()">{{ title }}</span>
-        } @else {
-            <textarea class="title-input" [(ngModel)]="editingTitleValue" (blur)="saveTitleEdit()"
-                (keydown.ctrl.enter)="saveTitleEdit()" (keydown.escape)="cancelTitleEdit()" #titleInput rows="4"
-                placeholder="Edit prayer request..."></textarea>
-        }
-    </div>
+
+
+    <!-- Request mode: show actions for single request -->
     @if (!(isAnswered || localIsAnswered) && !showAnswerForm && !isTopic) {
         <div class="button-row">
             <button mat-button class="archive-button" (click)="archive.emit()" title="Archive Request">
@@ -26,6 +19,37 @@
     @if ((isAnswered || localIsAnswered) && (answerDescription || localAnswerDescription)) {
         <div class="answer-description-box" [@answerFadeIn]>
             {{ answerDescription || localAnswerDescription }}
+        </div>
+    }
+
+    <!-- Topic mode: list active requests with actions -->
+    @if (isTopic) {
+        <div class="topic-requests">
+            <ul class="request-list">
+                @for (req of openRequests(); track req.id) {
+                    <li class="request-row" (click)="toggleRequestActions(req.id, $event)"
+                        [class.active]="activeRequestId === req.id">
+                        <div class="row-head">
+                            <mat-icon class="chevron"
+                                [class.rotated]="activeRequestId === req.id">chevron_right</mat-icon>
+                            <div class="request-text">{{ req.description }}</div>
+                        </div>
+                        @if (activeRequestId === req.id) {
+                            <div class="request-actions">
+                                <button mat-button class="archive-button"
+                                    (click)="$event.stopPropagation(); archiveRequest(req.id)" title="Archive Request">
+                                    completed
+                                </button>
+                                <button mat-button class="answer-button"
+                                    (click)="$event.stopPropagation(); markAnswered(req.id)" title="Mark as Answered">
+                                    answered
+                                </button>
+                            </div>
+                        }
+                    </li>
+                }
+            </ul>
+            <!-- No empty-state message needed for topics without active requests -->
         </div>
     }
 </div>

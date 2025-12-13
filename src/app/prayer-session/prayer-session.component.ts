@@ -68,9 +68,8 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     listIdFromRoute = computed(() => Number(this.route.snapshot.paramMap.get('listId')) || undefined);
     effectiveListId = computed(() => this.listId ?? this.listIdFromRoute());
 
-    // Combined list of items to pray for: requests, plus topics with no requests
+    // Combined list of items to pray for: include all scoped topics (even with no requests)
     baseItems = computed(() => {
-        const archivingItems = this.archivingItems(); // Ensure reactivity
         const lid = this.effectiveListId();
         const allTopics = this.topics();
         const allRequests = this.requests();
@@ -85,52 +84,18 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             const excludedListIds = new Set(this.lists().filter(l => l.excludeFromAll).map(l => l.id));
             scopedTopicIds = allTopics
                 .filter(t => {
-                    // Find which list this topic belongs to
                     const topicList = this.lists().find(l => (l.topicIds || []).includes(t.id));
                     return topicList && !excludedListIds.has(topicList.id);
                 })
                 .map(t => t.id);
         }
 
-        // Build a set of scoped topics
         const topicSet = new Set(scopedTopicIds ?? allTopics.map(t => t.id));
         const scopedTopics = allTopics.filter(t => topicSet.has(t.id));
 
-        // Requests within the scoped topics
-        const requestIdSet = new Set<number>();
-        const scopedRequests = allRequests.map(r => ({
-            ...r,
-            // Default missing priority to 1 for backward compatibility
-            priority: (r as any).priority ?? 1,
-        })).filter(r => {
-            // Find topics that include this request id
-            // Avoid repeated includes by building set once
-            if (requestIdSet.has(r.id)) return true;
-            const belongs = scopedTopics.some(t => (t.requestIds || []).includes(r.id));
-            if (belongs) requestIdSet.add(r.id);
-            return belongs && !r.answeredDate && (r.archived !== true || archivingItems.has(r.id));
-        });
-
-        // Topics with no requests within scope
-        const emptyTopics = scopedTopics.filter(t => (t.requestIds || []).length === 0);
-
-        // Non-shuffle: sort requests by priority*10 - prayerCount (desc)
-        const scored = scopedRequests.map(r => ({
-            r,
-            score: calculateRequestScore(r),
-        }));
-        scored.sort((a, b) => b.score - a.score);
+        const { topicToListMap } = this.ownerMaps();
         const items: PrayerSessionItem[] = [];
-        const { topicToListMap, requestToTopicMap } = this.ownerMaps();
-
-        for (const { r } of scored) {
-            const ownerTopic = requestToTopicMap.get(r.id);
-            const ownerList = ownerTopic ? topicToListMap.get(ownerTopic.id) : undefined;
-            items.push(this.createRequestItem(r, ownerTopic, ownerList));
-        }
-
-        // Put topics with no requests after sorted requests (preserve earlier behavior)
-        for (const t of emptyTopics) {
+        for (const t of scopedTopics) {
             const ownerList = topicToListMap.get(t.id);
             items.push(this.createTopicItem(t, ownerList));
         }
@@ -205,86 +170,35 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
                 }
                 const topicSet = new Set(scopedTopicIds ?? allTopics.map(t => t.id));
                 const scopedTopics = allTopics.filter(t => topicSet.has(t.id));
-                const scopedRequests = allRequests.filter(r => scopedTopics.some(t => (t.requestIds || []).includes(r.id)) && !r.answeredDate && !r.archived);
-                const emptyTopics = scopedTopics.filter(t => (t.requestIds || []).length === 0);
-                const ids = [...scopedRequests.map(r => r.id), ...emptyTopics.map(t => t.id)].sort().join(',');
+                const scopedTopicIdsAll = scopedTopics.map(t => t.id);
+                const ids = [...scopedTopicIdsAll].sort().join(',');
 
                 if ((this.lastIds !== ids || this.lastShuffle !== shuffle) && !this.sessionStarted()) {
                     this.lastIds = ids;
                     this.lastShuffle = shuffle;
                     this.timerService.getCountdownStarted().set(false); // Reset countdown flag for new session
 
+                    const { topicToListMap } = this.ownerMaps();
+                    const allTopicItems: PrayerSessionItem[] = scopedTopicIdsAll.map(tid => {
+                        const topic = allTopics.find(t => t.id === tid)!;
+                        const ownerList = topicToListMap.get(tid);
+                        return this.createTopicItem(topic, ownerList);
+                    });
                     if (shuffle) {
-                        // Expand requests by priority, include topics as single items
-                        const weighted: PrayerSessionItem[] = [];
-                        const { topicToListMap, requestToTopicMap } = this.ownerMaps();
-
-                        for (const r of scopedRequests) {
-                            const ownerTopic = requestToTopicMap.get(r.id);
-                            const ownerList = ownerTopic ? topicToListMap.get(ownerTopic.id) : undefined;
-                            const repeats = Math.max(1, Number(r.priority) || 1);
-                            const requestItem = this.createRequestItem(r, ownerTopic, ownerList);
-
-                            for (let i = 0; i < repeats; i++) {
-                                weighted.push(requestItem);
-                            }
-                        }
-
-                        for (const t of emptyTopics) {
-                            const ownerList = topicToListMap.get(t.id);
-                            weighted.push(this.createTopicItem(t, ownerList));
-                        }
-
-                        // Fisher-Yates shuffle
-                        const shuffled = shuffleArray(weighted);
-
-                        // Deduplicate by request id (keep first occurrence), topics are unique
-                        const seenReq = new Set<number>();
-                        const deduped: PrayerSessionItem[] = [];
-                        for (const item of shuffled) {
-                            if (item.kind === 'topic') { deduped.push(item); continue; }
-                            if (!seenReq.has(item.id)) {
-                                seenReq.add(item.id);
-                                deduped.push(item);
-                            }
-                        }
-                        this.shuffledItems.set(deduped);
+                        const shuffled = shuffleArray(allTopicItems);
+                        this.shuffledItems.set(shuffled);
                     } else {
-                        this.shuffledItems.set(this.baseItems());
+                        this.shuffledItems.set(allTopicItems);
                     }
                 }
             });
         });
     }
 
-    // Final items with updated data from current requests
+    // Final items with updated data from current topics
     items = computed(() => {
         const shuffled = this.shuffledItems();
-        const currentRequests = this.requests();
-        return shuffled.filter(item => {
-            if (item.kind === 'request') {
-                const current = currentRequests.find(r => r.id === item.id);
-                return current && !current.archived;
-            }
-            return true; // Keep topic items
-        }).map(item => {
-            if (item.kind === 'request') {
-                const current = currentRequests.find(r => r.id === item.id);
-                if (current) {
-                    // Update all request properties that might have changed
-                    return {
-                        ...item,
-                        description: current.description,
-                        prayerCount: current.prayerCount,
-                        priority: current.priority || 1,
-                        isAnswered: Boolean(current.answeredDate && !current.archived),
-                        answeredDate: current.answeredDate || undefined,
-                        answerDescription: current.answerDescription
-                    };
-                }
-            }
-            return item;
-        });
+        return shuffled;
     });
 
     // UI state for carousel and session
@@ -330,49 +244,73 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     onAnswerSave: ((text: string) => void) | null = null;
     onAnswerCancel: (() => void) | null = null;
 
+    openRequestAnswerDialog(requestId: number, title: string) {
+        this.openAnswerDialog({
+            text: '',
+            title: title || '',
+            onSave: (text: string) => this.onRequestAnswered(requestId, { answerDescription: text }),
+            onCancel: () => { /* no-op */ }
+        });
+    }
+
     private computeSelectedItems(): PrayerSessionItem[] {
         try {
-            const all = this.items();
-            const count = this.selectCount();
-            let selected: PrayerSessionItem[] = [];
+            const topicItems = this.items();
+            const topicSelectCount = this.selectCount();
+            const answeredSelectCount = clamp(this.answeredValue(), 0, this.maxAnswered);
 
-            if (!all || all.length === 0) return selected;
+            const selected: PrayerSessionItem[] = [];
 
-            // Prepend answered requests if any
-            const answeredCount = this.answeredValue();
-            if (answeredCount > 0) {
-                const answeredReqs = this.answeredRequests();
-                if (answeredReqs.length > 0) {
-                    // Shuffle and take the first answeredCount
-                    const shuffledAnswered = shuffleArray(answeredReqs).slice(0, answeredCount);
-
-                    const { topicToListMap, requestToTopicMap } = this.ownerMaps();
-
-                    const answeredItems: PrayerSessionItem[] = shuffledAnswered.map(r => {
-                        const ownerTopic = requestToTopicMap.get(r.id);
-                        const ownerList = ownerTopic ? topicToListMap.get(ownerTopic.id) : undefined;
-
-                        return {
-                            ...this.createRequestItem(r, ownerTopic, ownerList),
-                            isAnswered: true,
-                            answeredDate: r.answeredDate || undefined,
-                            answerDescription: r.answerDescription
-                        };
-                    });
-                    selected = selected.concat(answeredItems);
-                }
+            if (!topicItems || topicItems.length === 0) {
+                // Even if no topics, still attempt answered cards (global scope)
+                const answeredCards = this.buildAnsweredItems(answeredSelectCount, undefined);
+                return selected.concat(answeredCards);
             }
 
-            // Then add the regular items
-            const regularItemsCount = Math.max(1, count);
-            const regularItems = count >= all.length ? all : all.slice(0, regularItemsCount);
-            selected = selected.concat(regularItems);
+            // Build a set of scoped topic ids from current items for filtering answered requests
+            const scopedTopicIds = new Set<number>(
+                topicItems.filter(it => it.kind === 'topic').map(it => it.id)
+            );
+
+            // Answered cards first (scoped to current topics)
+            const answeredCards = this.buildAnsweredItems(answeredSelectCount, scopedTopicIds);
+            selected.push(...answeredCards);
+
+            // Then add topic cards according to slider ("Number of topics")
+            const topicsToShow = topicSelectCount >= topicItems.length
+                ? topicItems
+                : topicItems.slice(0, Math.max(1, topicSelectCount));
+            selected.push(...topicsToShow);
 
             return selected;
         } catch (error) {
             console.error('Error computing selected items:', error);
             return [];
         }
+    }
+
+    // Build answered request items, optionally scoped to a set of topic IDs
+    private buildAnsweredItems(limit: number, scopedTopicIds?: Set<number>): PrayerSessionItem[] {
+        if (limit <= 0) return [];
+
+        const { requestToTopicMap, topicToListMap } = this.ownerMaps();
+        const answeredRequests = this.requests()
+            .filter(r => r.answeredDate && !r.archived)
+            .filter(r => {
+                if (!scopedTopicIds) return true;
+                const topic = requestToTopicMap.get(r.id);
+                return topic ? scopedTopicIds.has(topic.id) : false;
+            });
+
+        // Randomize the answered requests for each session
+        const randomized = shuffleArray(answeredRequests.slice());
+        const selected = randomized.slice(0, limit);
+
+        return selected.map(r => {
+            const topic = requestToTopicMap.get(r.id);
+            const ownerList = topic ? topicToListMap.get(topic.id) : undefined;
+            return this.createRequestItem(r, topic, ownerList);
+        });
     }
 
     // Keep selection count in sync with items length without overriding user choice unnecessarily
@@ -625,16 +563,24 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             const selectedItems = this.selectedItems();
             const item = selectedItems[idx - 1];
 
-            if (!item || item.kind !== 'request' || item.isAnswered) return;
-            if (this.sessionCounted.has(item.id)) return;
+            // In topic mode, count all active requests within the topic
+            if (!item || item.kind !== 'topic') return;
+            const topic = this.topics().find(t => t.id === item.id);
+            if (!topic) return;
+            const activeRequestIds = (topic.requestIds || [])
+                .map(id => this.requests().find(r => r.id === id))
+                .filter(r => !!r && !r!.answeredDate && !r!.archived)
+                .map(r => r!.id);
 
-            this.timerService.startViewTimer(
+            if (activeRequestIds.length === 0) return;
+
+            this.timerService.startTopicViewTimer(
                 item.id,
-                idx,
-                selectedItems,
+                activeRequestIds,
                 PRAYER_SESSION_CONSTANTS.REGISTER_SECONDS,
-                (itemId: number) => {
-                    this.handlePrayerCountIncrement(itemId);
+                (ids: number[]) => {
+                    // No per-request prayerCount increment in topic mode
+                    // Session counted handled in TimerService
                 }
             );
         } catch (error) {

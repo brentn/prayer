@@ -3,6 +3,6 @@
     <p>{{ data.message }}</p>
 </div>
 <div mat-dialog-actions align="end">
-    <button mat-button [mat-dialog-close]="false">{{ data.cancelText || 'Cancel' }}</button>
-    <button mat-flat-button color="primary" [mat-dialog-close]="true">{{ data.confirmText || 'OK' }}</button>
+    <button mat-button (click)="dialogRef.close(false)">{{ data.cancelText || 'Cancel' }}</button>
+    <button mat-flat-button color="primary" (click)="dialogRef.close(true)">{{ data.confirmText || 'OK' }}</button>
 </div>

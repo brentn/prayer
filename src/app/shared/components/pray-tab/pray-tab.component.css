@@ -1,33 +1,33 @@
 .pray-tab {
-  position: fixed;
-  bottom: 0;
-  left: 10%;
-  z-index: 1000;
-  --mdc-extended-fab-container-color: var(--md-sys-color-primary-container);
-  --mdc-fab-container-color: var(--md-sys-color-primary-container);
-  --mdc-extended-fab-label-text-color: var(--md-sys-color-on-primary);
-  --mdc-fab-foreground-color: var(--md-sys-color-on-primary);
-  --mat-fab-foreground-color: var(--md-sys-color-on-primary);
-  background-color: var(--md-sys-color-primary-container) !important;
-  color: var(--md-sys-color-on-primary) !important;
-  /* Square off the bottom edge to look attached to the screen bottom */
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
+    position: fixed;
+    bottom: 0;
+    left: 10%;
+    z-index: 700;
+    --mdc-extended-fab-container-color: var(--md-sys-color-primary-container);
+    --mdc-fab-container-color: var(--md-sys-color-primary-container);
+    --mdc-extended-fab-label-text-color: var(--md-sys-color-on-primary);
+    --mdc-fab-foreground-color: var(--md-sys-color-on-primary);
+    --mat-fab-foreground-color: var(--md-sys-color-on-primary);
+    background-color: var(--md-sys-color-primary-container) !important;
+    color: var(--md-sys-color-on-primary) !important;
+    /* Square off the bottom edge to look attached to the screen bottom */
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
 }
 
 .pray-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  background: var(--app-color-primary-darker);
-  display: flex;
-  flex-direction: column;
+    position: fixed;
+    inset: 0;
+    z-index: 800;
+    background: var(--app-color-primary-darker);
+    display: flex;
+    flex-direction: column;
 }
 
 /* Ensure PrayComponent fills completely when fullscreen */
 .pray-overlay app-pray,
-.pray-overlay app-pray > * {
-  flex: 1 1 auto;
+.pray-overlay app-pray>* {
+    flex: 1 1 auto;
 }
 
 /* close button removed; close is now in Pray header */

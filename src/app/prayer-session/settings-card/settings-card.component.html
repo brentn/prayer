@@ -7,19 +7,18 @@
             </div>
             <mat-slider [min]="0" [max]="maxAnswered()" [step]="1" [showTickMarks]="true">
                 <input matSliderThumb [(ngModel)]="answeredValueModel"
-                    (ngModelChange)="answeredValueChange.emit($event)"
-                    (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+                    (ngModelChange)="answeredValueChange.emit($event)" (pointerdown)="$event.stopPropagation()"
+                    (click)="$event.stopPropagation()">
             </mat-slider>
         </div>
     }
     <div class="control">
         <div class="label-value-row">
-            <div class="label">Number of requests</div>
+            <div class="label">Number of topics</div>
             <div class="value">{{ formatCountLabel() }}</div>
         </div>
         <mat-slider [min]="1" [max]="safeMaxSelectable()" [step]="1" [showTickMarks]="true">
-            <input matSliderThumb [(ngModel)]="selectCountModel"
-                (ngModelChange)="selectCountChange.emit($event)"
+            <input matSliderThumb [(ngModel)]="selectCountModel" (ngModelChange)="selectCountChange.emit($event)"
                 (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
         </mat-slider>
     </div>
@@ -29,9 +28,8 @@
             <div class="value">{{ formatTimeLabel() }}</div>
         </div>
         <mat-slider [min]="1" [max]="61" [step]="1" [showTickMarks]="true">
-            <input matSliderThumb [(ngModel)]="timeValueModel"
-                (ngModelChange)="timeChange.emit($event)" (pointerdown)="$event.stopPropagation()"
-                (click)="$event.stopPropagation()">
+            <input matSliderThumb [(ngModel)]="timeValueModel" (ngModelChange)="timeChange.emit($event)"
+                (pointerdown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
         </mat-slider>
     </div>
 </div>

@@ -44,6 +44,7 @@ export class PrayerCardComponent implements OnChanges {
     @Input() title: string = '';
     @Input() listName?: string;
     @Input() topicName?: string;
+    @Input() topicId?: number;
     @Input() createdDate?: string;
     @Input() prayerCount?: number;
     @Input() priority?: number;
@@ -55,6 +56,11 @@ export class PrayerCardComponent implements OnChanges {
     @Output() archive = new EventEmitter<void>();
     @Output() titleEdited = new EventEmitter<string>();
     @Output() addNewRequest = new EventEmitter<{ topicName: string; description: string }>();
+    // Topic-mode per-request actions
+    @Output() requestAnswered = new EventEmitter<{ id: number; answerDescription: string }>();
+    @Output() requestArchived = new EventEmitter<{ id: number }>();
+    @Output() requestTitleEdited = new EventEmitter<{ id: number; title: string }>();
+    @Output() requestAnswerAdd = new EventEmitter<{ id: number; title: string }>();
 
     showAnswerForm = signal(false);
     answerText = signal('');

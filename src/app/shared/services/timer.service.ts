@@ -97,6 +97,31 @@ export class TimerService {
         }, 1000 * registerSeconds);
     }
 
+    // Topic-mode view timer: after registerSeconds, count all open requests in the topic once per session
+    startTopicViewTimer(
+        topicId: number,
+        requestIds: number[],
+        registerSeconds: number,
+        onRegister: (requestIds: number[]) => void
+    ): void {
+        if (this.viewTimerId) {
+            clearTimeout(this.viewTimerId);
+            this.viewTimerId = undefined;
+        }
+
+        if (requestIds.length === 0) return;
+
+        // Only register if at least one of the requests hasn't been counted yet
+        const hasUncounted = requestIds.some(id => !this.sessionCounted.has(id));
+        if (!hasUncounted) return;
+
+        this.viewTimerId = setTimeout(() => {
+            // Mark all provided request ids as counted once per session
+            requestIds.forEach(id => this.sessionCounted.add(id));
+            onRegister(requestIds);
+        }, 1000 * registerSeconds);
+    }
+
     stopViewTimer(): void {
         if (this.viewTimerId) {
             clearTimeout(this.viewTimerId);

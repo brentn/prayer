@@ -2,13 +2,15 @@
     <app-prayer-card-header [priority]="priority" [isAnswered]="isAnswered" [localIsAnswered]="localIsAnswered()"
         [prayerCount]="prayerCount" [createdDate]="createdDate" [answeredDate]="answeredDate"
         [answeredSummary]="answeredSummary()" [answeredDateText]="answeredDateText()"
-        [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName" [onAnsweredClick]="onAnsweredClick.bind(this)">
+        [showAnswerForm]="showAnswerForm()" [isTopic]="icon === 'label'" [onAnsweredClick]="onAnsweredClick.bind(this)">
     </app-prayer-card-header>
     <app-prayer-card-content [icon]="icon" [title]="localTitleEdited() ? localTitle() : title" [topicName]="topicName"
-        [isAnswered]="isAnswered" [localIsAnswered]="localIsAnswered()" [answerDescription]="answerDescription"
-        [localAnswerDescription]="localAnswerDescription()" [onAnsweredClick]="onAnsweredClick.bind(this)"
-        [showAnswerForm]="showAnswerForm()" [isTopic]="!topicName" (archive)="archive.emit()"
-        (editTitle)="onTitleEdited($event)">
+        [topicId]="topicId" [isAnswered]="isAnswered" [localIsAnswered]="localIsAnswered()"
+        [answerDescription]="answerDescription" [localAnswerDescription]="localAnswerDescription()"
+        [onAnsweredClick]="onAnsweredClick.bind(this)" [showAnswerForm]="showAnswerForm()" [isTopic]="icon === 'label'"
+        (archive)="archive.emit()" (editTitle)="onTitleEdited($event)" (requestAnswered)="requestAnswered.emit($event)"
+        (requestArchived)="requestArchived.emit($event)" (requestTitleEdited)="requestTitleEdited.emit($event)"
+        (requestAnswerAdd)="requestAnswerAdd.emit($event)">
     </app-prayer-card-content>
     <app-answer-form [showAnswerForm]="showAnswerForm" [answerText]="answerText" [dialogOpen]="answerDialogOpen()"
         [onAnswerSubmit]="onAnswerSubmit.bind(this)" [onAnswerCancel]="onAnswerCancel.bind(this)"
