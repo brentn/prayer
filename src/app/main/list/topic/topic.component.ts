@@ -57,7 +57,7 @@ export class TopicComponent {
     back() {
         const l = this.currentList();
         if (l) this.router.navigate(['/list', l.id]);
-        else this.router.navigate(['/lists']);
+        else this.router.navigate(['/']);
     }
 
     startEdit() {
@@ -148,18 +148,19 @@ export class TopicComponent {
         });
         ref.afterClosed().subscribe(async ok => {
             if (!ok) return;
+            const list = this.currentList();
             const { removeTopic } = await import('../../../store/topics/topic.actions');
             this.store.dispatch(removeTopic({ id: topic.id }));
 
             // Clean up the topicId from the list
-            const list = this.currentList();
             if (list) {
                 const topicIds = (list.topicIds || []).filter(tid => tid !== topic.id);
                 const { updateList } = await import('../../../store/lists/list.actions');
                 this.store.dispatch(updateList({ id: list.id, changes: { topicIds } }));
+                this.router.navigate(['/list', list.id]);
+            } else {
+                this.router.navigate(['/']);
             }
-
-            this.back();
         });
     }
 
