@@ -31,11 +31,7 @@ export class PrayerCardContentComponent {
     @Input() topicName?: string;
     @Input() topicId?: number;
     @Input() isAnswered = false;
-    @Input() localIsAnswered = false;
     @Input() answerDescription?: string;
-    @Input() localAnswerDescription = '';
-    @Input() onAnsweredClick?: () => void;
-    @Input() showAnswerForm = false;
     @Input() isTopic = false;
     @Output() archive = new EventEmitter<void>();
     @Output() editTitle = new EventEmitter<string>();
@@ -46,6 +42,10 @@ export class PrayerCardContentComponent {
 
     editingTitle = false;
     editingTitleValue = '';
+
+    // Request editing
+    editingRequestId?: number;
+    editingRequestValue = '';
 
     private store = inject(Store);
     private dialog = inject(MatDialog);
@@ -89,6 +89,28 @@ export class PrayerCardContentComponent {
         this.editingTitleValue = '';
     }
 
+    // Request editing methods
+    startEditRequest(reqId: number, currentDescription: string) {
+        this.editingRequestId = reqId;
+        this.editingRequestValue = currentDescription;
+    }
+
+    saveRequestEdit() {
+        const newDescription = this.editingRequestValue.trim();
+        if (newDescription && this.editingRequestId) {
+            const currentReq = this.allRequests().find(r => r.id === this.editingRequestId);
+            if (currentReq && newDescription !== currentReq.description) {
+                this.requestTitleEdited.emit({ id: this.editingRequestId, title: newDescription });
+            }
+        }
+        this.cancelRequestEdit();
+    }
+
+    cancelRequestEdit() {
+        this.editingRequestId = undefined;
+        this.editingRequestValue = '';
+    }
+
     // Topic-mode actions
     activeRequestId?: number;
 
@@ -96,7 +118,21 @@ export class PrayerCardContentComponent {
         // If clicking inside the actions container or a button, ignore
         const target = ev?.target as HTMLElement | undefined;
         if (target && target.closest('.request-actions')) return;
-        this.activeRequestId = this.activeRequestId === reqId ? undefined : reqId;
+
+        // If clicking the same request, close it
+        if (this.activeRequestId === reqId) {
+            this.cancelRequestEdit();
+            this.activeRequestId = undefined;
+        } else {
+            // Close any existing editing
+            this.cancelRequestEdit();
+            // Open the new request and start editing
+            this.activeRequestId = reqId;
+            const req = this.openRequests().find(r => r.id === reqId);
+            if (req) {
+                this.startEditRequest(reqId, req.description);
+            }
+        }
     }
 
     markAnswered(reqId: number) {

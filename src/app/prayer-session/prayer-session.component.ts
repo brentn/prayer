@@ -245,8 +245,10 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     onAnswerCancel: (() => void) | null = null;
 
     openRequestAnswerDialog(requestId: number, title: string) {
+        const request = this.requests().find(r => r.id === requestId);
+        const existingAnswer = request?.answerDescription || '';
         this.openAnswerDialog({
-            text: '',
+            text: existingAnswer,
             title: title || '',
             onSave: (text: string) => this.onRequestAnswered(requestId, { answerDescription: text }),
             onCancel: () => { /* no-op */ }

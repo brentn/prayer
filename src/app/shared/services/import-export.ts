@@ -331,15 +331,18 @@ export class ImportExportService {
 
                 if (existingRequest) {
                     // Update existing request
+                    const changes: Partial<Pick<RequestEntity, 'description' | 'answeredDate' | 'answerDescription' | 'prayerCount' | 'priority'>> = {
+                        description: importedRequest.description,
+                        answeredDate: importedRequest.answeredDate,
+                        prayerCount: importedRequest.prayerCount,
+                        priority: importedRequest.priority
+                    };
+                    if (importedRequest.answerDescription !== undefined) {
+                        changes.answerDescription = importedRequest.answerDescription;
+                    }
                     this.store.dispatch(updateRequest({
                         id: existingRequest.id,
-                        changes: {
-                            description: importedRequest.description,
-                            answeredDate: importedRequest.answeredDate,
-                            answerDescription: importedRequest.answerDescription,
-                            prayerCount: importedRequest.prayerCount,
-                            priority: importedRequest.priority
-                        }
+                        changes
                     }));
                     // Map old ID to existing ID
                     idMappings.requests.set(importedRequest.id, existingRequest.id);
@@ -352,15 +355,16 @@ export class ImportExportService {
                     }));
 
                     // Update additional properties if they exist
-                    if (importedRequest.answeredDate || importedRequest.prayerCount || importedRequest.priority !== undefined) {
+                    const changes: Partial<Pick<RequestEntity, 'answeredDate' | 'answerDescription' | 'prayerCount' | 'priority'>> = {};
+                    if (importedRequest.answeredDate) changes.answeredDate = importedRequest.answeredDate;
+                    if (importedRequest.answerDescription !== undefined) changes.answerDescription = importedRequest.answerDescription;
+                    if (importedRequest.prayerCount) changes.prayerCount = importedRequest.prayerCount;
+                    if (importedRequest.priority !== undefined) changes.priority = importedRequest.priority;
+
+                    if (Object.keys(changes).length > 0) {
                         this.store.dispatch(updateRequest({
                             id: nextId,
-                            changes: {
-                                answeredDate: importedRequest.answeredDate,
-                                answerDescription: importedRequest.answerDescription,
-                                prayerCount: importedRequest.prayerCount,
-                                priority: importedRequest.priority
-                            }
+                            changes
                         }));
                     }
 

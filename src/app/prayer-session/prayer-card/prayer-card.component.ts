@@ -6,13 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { PrayerCardHeaderComponent } from './header/prayer-card-header.component';
 import { PrayerCardContentComponent } from './content/prayer-card-content.component';
-import { AnswerFormComponent } from './answer-form/answer-form.component';
 import { DateUtilsService } from '../../shared/services/date-utils.service';
+import { PrayerSessionItem } from '../../shared/models/prayer-session.interface';
 
 @Component({
     standalone: true,
     selector: 'app-prayer-card',
-    imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, PrayerCardHeaderComponent, PrayerCardContentComponent, AnswerFormComponent],
+    imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, PrayerCardHeaderComponent, PrayerCardContentComponent],
     templateUrl: './prayer-card.component.html',
     styleUrl: './prayer-card.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,17 +40,7 @@ export class PrayerCardComponent implements OnChanges {
     private dateUtils = inject(DateUtilsService);
     private cdr = inject(ChangeDetectorRef);
 
-    @Input() icon: string = 'favorite';
-    @Input() title: string = '';
-    @Input() listName?: string;
-    @Input() topicName?: string;
-    @Input() topicId?: number;
-    @Input() createdDate?: string;
-    @Input() prayerCount?: number;
-    @Input() priority?: number;
-    @Input() isAnswered: boolean = false;
-    @Input() answeredDate?: string;
-    @Input() answerDescription?: string;
+    @Input() item!: PrayerSessionItem;
 
     @Output() answered = new EventEmitter<{ answerDescription: string }>();
     @Output() archive = new EventEmitter<void>();
@@ -62,48 +52,33 @@ export class PrayerCardComponent implements OnChanges {
     @Output() requestTitleEdited = new EventEmitter<{ id: number; title: string }>();
     @Output() requestAnswerAdd = new EventEmitter<{ id: number; title: string }>();
 
-    showAnswerForm = signal(false);
-    answerText = signal('');
-    localIsAnswered = signal(false);
-    localAnswerDescription = signal('');
     localTitle = signal('');
     localTitleEdited = signal(false);
     showDialog = signal(false);
     newRequestText = signal('');
-    showAnswerDialog = signal(false);
-    answerDialogText = signal('');
-    answerDialogOpen = signal(false);
+
+    // Computed properties to extract values from item
+    get icon() { return this.item.kind === 'topic' ? 'label' : 'favorite'; }
+    get title() { return this.item.kind === 'topic' ? this.item.name : this.item.description; }
+    get listName() { return this.item.listName; }
+    get topicName() { return this.item.kind === 'request' ? this.item.topicName : undefined; }
+    get topicId() { return this.item.kind === 'topic' ? this.item.id : undefined; }
+    get createdDate() { return this.item.kind === 'request' ? this.item.createdDate : undefined; }
+    get prayerCount() { return this.item.kind === 'request' ? this.item.prayerCount : undefined; }
+    get priority() { return this.item.kind === 'request' ? this.item.priority : undefined; }
+    get isAnswered() { return this.item.kind === 'request' ? Boolean(this.item.isAnswered) : false; }
+    get answeredDate() { return this.item.kind === 'request' ? this.item.answeredDate : undefined; }
+    get answerDescription() { return this.item.kind === 'request' ? this.item.answerDescription : undefined; }
+
     answeredSummary = computed(() => this.dateUtils.formatAnsweredSummary(this.prayerCount, this.createdDate, this.answeredDate));
     answeredDateText = computed(() => this.dateUtils.formatAnsweredDateText(this.isAnswered, this.answeredDate));
 
     ngOnChanges(changes: SimpleChanges) {
-        // When the authoritative answerDescription is updated from props, clear local state
-        if (changes['answerDescription'] && changes['answerDescription'].currentValue) {
-            this.localIsAnswered.set(false);
-            this.localAnswerDescription.set('');
-        }
-        // When the authoritative title is updated from props, clear local title state
-        if (changes['title'] && changes['title'].currentValue) {
+        // When the item changes, clear local state
+        if (changes['item']) {
             this.localTitleEdited.set(false);
             this.localTitle.set('');
         }
-    }
-
-    onAnsweredClick() {
-        this.showAnswerForm.set(true);
-    }
-
-    onAnswerSubmit(text: string) {
-        this.answered.emit({ answerDescription: text });
-        this.localIsAnswered.set(true);
-        this.localAnswerDescription.set(text);
-        this.showAnswerForm.set(false);
-        this.answerText.set('');
-    }
-
-    onAnswerCancel() {
-        this.showAnswerForm.set(false);
-        this.answerText.set('');
     }
 
     onTitleEdited(newTitle: string) {
@@ -130,26 +105,5 @@ export class PrayerCardComponent implements OnChanges {
             this.addNewRequest.emit({ topicName: topic, description: desc });
             this.closeDialog();
         }
-    }
-
-    openAnswerDialog() {
-        this.answerDialogText.set(this.answerText());
-        this.showAnswerDialog.set(true);
-        this.answerDialogOpen.set(true);
-        this.cdr.markForCheck();
-    }
-
-    closeAnswerDialog() {
-        this.showAnswerDialog.set(false);
-        this.answerDialogText.set('');
-        this.answerDialogOpen.set(false);
-        this.showAnswerForm.set(false);
-        this.cdr.markForCheck();
-    }
-
-    onSaveAnswer() {
-        const answer = this.answerDialogText().trim();
-        this.onAnswerSubmit(answer || '');
-        this.closeAnswerDialog();
     }
 }

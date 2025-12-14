@@ -65,25 +65,15 @@
                 @for (item of selectedItems(); track item.kind + '-' + item.id) {
                     <div class="slide">
                         <div class="prayer-card">
-                            @if (item.kind === 'topic') {
-                                <app-prayer-card icon="label" [title]="item.name" [listName]="'from ' + item.listName"
-                                    [topicName]="item.name" [topicId]="item.id"
-                                    (requestAnswered)="onRequestAnswered($event.id, { answerDescription: $event.answerDescription })"
-                                    (requestArchived)="onRequestArchiveButton($event.id)"
-                                    (requestTitleEdited)="onTitleEdited($event.id, $event.title)"
-                                    (requestAnswerAdd)="openRequestAnswerDialog($event.id, $event.title)"
-                                    (addNewRequest)="onAddNewRequest($event, $index)"></app-prayer-card>
-                            } @else if (item.kind === 'request') {
-                                <app-prayer-card icon="favorite" [title]="item.description"
-                                    [listName]="item.listName ? ('from ' + item.listName) : undefined"
-                                    [topicName]="item.topicName" [createdDate]="item.createdDate"
-                                    [prayerCount]="item.prayerCount" [priority]="item.priority"
-                                    [isAnswered]="!!item.isAnswered" [answeredDate]="item.answeredDate"
-                                    [answerDescription]="item.answerDescription"
-                                    (answered)="onRequestAnswered(item.id, $event)"
-                                    (archive)="onRequestArchiveButton(item.id)"
-                                    (titleEdited)="onTitleEdited(item.id, $event)"></app-prayer-card>
-                            }
+                            <app-prayer-card [item]="item"
+                                (requestAnswered)="onRequestAnswered($event.id, { answerDescription: $event.answerDescription })"
+                                (requestArchived)="onRequestArchiveButton($event.id)"
+                                (requestTitleEdited)="onTitleEdited($event.id, $event.title)"
+                                (requestAnswerAdd)="openRequestAnswerDialog($event.id, $event.title)"
+                                (addNewRequest)="onAddNewRequest($event, $index)"
+                                (answered)="onRequestAnswered(item.id, $event)"
+                                (archive)="onRequestArchiveButton(item.id)"
+                                (titleEdited)="onTitleEdited(item.id, $event)"></app-prayer-card>
                         </div>
                     </div>
                 }

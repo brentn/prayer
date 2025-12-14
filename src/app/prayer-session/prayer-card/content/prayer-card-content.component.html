@@ -3,23 +3,19 @@
     @if (topicName) {
         <div class="card-topic">{{topicName}}:</div>
     }
-
-
-    <!-- Request mode: show actions for single request -->
-    @if (!(isAnswered || localIsAnswered) && !showAnswerForm && !isTopic) {
-        <div class="button-row">
-            <button mat-button class="archive-button" (click)="archive.emit()" title="Archive Request">
-                completed
-            </button>
-            <button mat-button class="answer-button" (click)="onAnsweredClick?.()" title="Mark as Answered">
-                answered
-            </button>
-        </div>
+    @if (isTopic) {
+        <div class="card-title">{{ title }}</div>
     }
-    @if ((isAnswered || localIsAnswered) && (answerDescription || localAnswerDescription)) {
-        <div class="answer-description-box" [@answerFadeIn]>
-            {{ answerDescription || localAnswerDescription }}
+
+    @if (isAnswered) {
+        <div class="request-description-box">
+            {{ title }}
         </div>
+        @if (answerDescription) {
+            <div class="answer-description-box" [@answerFadeIn]>
+                {{ answerDescription }}
+            </div>
+        }
     }
 
     <!-- Topic mode: list active requests with actions -->
@@ -32,7 +28,15 @@
                         <div class="row-head">
                             <mat-icon class="chevron"
                                 [class.rotated]="activeRequestId === req.id">chevron_right</mat-icon>
-                            <div class="request-text">{{ req.description }}</div>
+                            @if (activeRequestId === req.id) {
+                                <textarea class="request-input" [(ngModel)]="editingRequestValue"
+                                    (blur)="saveRequestEdit()"
+                                    (keydown.enter)="$event.preventDefault(); saveRequestEdit()"
+                                    (click)="$event.stopPropagation()" rows="2"
+                                    placeholder="Edit request description..."></textarea>
+                            } @else {
+                                <div class="request-text">{{ req.description }}</div>
+                            }
                         </div>
                         @if (activeRequestId === req.id) {
                             <div class="request-actions">

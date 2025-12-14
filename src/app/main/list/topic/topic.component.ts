@@ -209,12 +209,12 @@ export class TopicComponent {
 
     async saveInline(event: { id: number, text: string, priority: number }, requestState: 'open' | 'answered' | 'archived') {
         const text = (event.text || '').trim();
-        if (!text) return;
 
         const changes: any = {};
         if (requestState === 'answered') {
             changes.answerDescription = text;
         } else {
+            if (!text) return; // Don't save empty descriptions for open/archived requests
             changes.description = text;
             changes.priority = event.priority;
         }
@@ -263,7 +263,7 @@ export class TopicComponent {
     async markUnansweredInline(id: number) {
         // For answered requests, we want to clear the answer and reset to open state
         // The editingRequestText contains the answer description, which we can ignore
-        const changes: any = { answeredDate: null, priority: this.editingRequestPriority() };
+        const changes: any = { answeredDate: null, answerDescription: undefined, priority: this.editingRequestPriority() };
         this.store.dispatch(updateRequest({ id, changes }));
         this.resetEditingState();
         // Move to Requests tab after marking unanswered

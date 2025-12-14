@@ -1,25 +1,19 @@
-<div class="card" [class.answered]="isAnswered || localIsAnswered()">
-    <app-prayer-card-header [priority]="priority" [isAnswered]="isAnswered" [localIsAnswered]="localIsAnswered()"
+<div class="card" [class.answered]="isAnswered">
+    <app-prayer-card-header [priority]="priority" [isAnswered]="isAnswered" [localIsAnswered]="false"
         [prayerCount]="prayerCount" [createdDate]="createdDate" [answeredDate]="answeredDate"
-        [answeredSummary]="answeredSummary()" [answeredDateText]="answeredDateText()"
-        [showAnswerForm]="showAnswerForm()" [isTopic]="icon === 'label'" [onAnsweredClick]="onAnsweredClick.bind(this)">
+        [answeredSummary]="answeredSummary()" [answeredDateText]="answeredDateText()" [showAnswerForm]="false"
+        [isTopic]="icon === 'label'">
     </app-prayer-card-header>
     <app-prayer-card-content [icon]="icon" [title]="localTitleEdited() ? localTitle() : title" [topicName]="topicName"
-        [topicId]="topicId" [isAnswered]="isAnswered" [localIsAnswered]="localIsAnswered()"
-        [answerDescription]="answerDescription" [localAnswerDescription]="localAnswerDescription()"
-        [onAnsweredClick]="onAnsweredClick.bind(this)" [showAnswerForm]="showAnswerForm()" [isTopic]="icon === 'label'"
-        (archive)="archive.emit()" (editTitle)="onTitleEdited($event)" (requestAnswered)="requestAnswered.emit($event)"
-        (requestArchived)="requestArchived.emit($event)" (requestTitleEdited)="requestTitleEdited.emit($event)"
-        (requestAnswerAdd)="requestAnswerAdd.emit($event)">
+        [topicId]="topicId" [isAnswered]="isAnswered" [answerDescription]="answerDescription"
+        [isTopic]="icon === 'label'" (archive)="archive.emit()" (editTitle)="onTitleEdited($event)"
+        (requestAnswered)="requestAnswered.emit($event)" (requestArchived)="requestArchived.emit($event)"
+        (requestTitleEdited)="requestTitleEdited.emit($event)" (requestAnswerAdd)="requestAnswerAdd.emit($event)">
     </app-prayer-card-content>
-    <app-answer-form [showAnswerForm]="showAnswerForm" [answerText]="answerText" [dialogOpen]="answerDialogOpen()"
-        [onAnswerSubmit]="onAnswerSubmit.bind(this)" [onAnswerCancel]="onAnswerCancel.bind(this)"
-        (openAnswerDialog)="openAnswerDialog()">
-    </app-answer-form>
-    @if (listName || (!isAnswered && !localIsAnswered())) {
+    @if (listName || !isAnswered) {
         <div class="card-footer">
             <span *ngIf="listName">{{ listName}}</span>
-            <div *ngIf="!isAnswered && !localIsAnswered()" class="new-request-button">
+            <div *ngIf="!isAnswered" class="new-request-button">
                 <button mat-icon-button (click)="onNewRequest()">
                     <mat-icon>add</mat-icon>
                 </button>
@@ -43,19 +37,4 @@
             </div>
         </div>
     }
-    <div [style.display]="showAnswerDialog() ? 'block' : 'none'" class="dialog-overlay" (click)="closeAnswerDialog()">
-        <div class="dialog-content" (click)="$event.stopPropagation()">
-            <div class="dialog-header">
-                <h2>Add Answer</h2>
-            </div>
-            <p>Request: {{ title }}</p>
-            <textarea [(ngModel)]="answerDialogText" placeholder="Describe the answer..." rows="4"
-                style="width: 100%;"></textarea>
-            <div class="dialog-actions">
-                <button mat-button style="color: grey;" (click)="closeAnswerDialog()">Cancel</button>
-                <button mat-flat-button style="background-color: var(--theme-accent); color: white;"
-                    (click)="onSaveAnswer()">{{ answerDialogText().trim() ? 'Save' : 'Skip' }}</button>
-            </div>
-        </div>
-    </div>
 </div>
