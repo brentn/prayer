@@ -1,1 +1,0 @@
-import{b as e,c as t}from"./chunk-G4UJ4M4Q.js";var s=e("[Requests] Add",t()),n=e("[Requests] Add With Id",t()),i=e("[Requests] Update",t()),o=e("[Requests] Remove",t()),d=e("[Requests] Clear All");export{s as a,n as b,i as c,o as d,d as e};
