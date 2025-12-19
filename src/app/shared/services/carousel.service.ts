@@ -21,6 +21,11 @@ export class CarouselService {
     private viewportHeight = signal(0);
     private animationFrameId: number | null = null;
 
+    // Small threshold (px) to consider a movement a drag vs a tap
+    private readonly DRAG_THRESHOLD = 8;
+    private wasDragged = false;
+    private dragClearTimeout: any = null;
+
     // DOM references
     private carousel?: ElementRef<HTMLDivElement>;
     private track?: ElementRef<HTMLDivElement>;
@@ -100,6 +105,13 @@ export class CarouselService {
         const target = ev.target as HTMLElement;
         if (target.closest('mat-slider, button, input')) return;
 
+        // Clear any previous drag flag
+        this.wasDragged = false;
+        if (this.dragClearTimeout) {
+            clearTimeout(this.dragClearTimeout);
+            this.dragClearTimeout = null;
+        }
+
         this.isDragging = true;
         this.startX = ev.clientX;
         this.deltaX.set(0);
@@ -117,6 +129,8 @@ export class CarouselService {
         this.animationFrameId = requestAnimationFrame(() => {
             const dx = ev.clientX - this.startX;
             this.deltaX.set(dx);
+            // Mark as drag if movement exceeds small threshold
+            if (Math.abs(dx) >= this.DRAG_THRESHOLD) this.wasDragged = true;
             this.animationFrameId = null;
         });
     }
@@ -142,7 +156,21 @@ export class CarouselService {
         next = Math.max(0, Math.min(next, maxIndex));
         this.deltaX.set(0);
         this.setIndex(next);
+
+        // Keep the wasDragged flag briefly to allow click handlers to detect a drag
+        if (this.wasDragged) {
+            if (this.dragClearTimeout) clearTimeout(this.dragClearTimeout);
+            this.dragClearTimeout = setTimeout(() => {
+                this.wasDragged = false;
+                this.dragClearTimeout = null;
+            }, 150);
+        }
+
         return next;
+    }
+
+    getWasDragged(): boolean {
+        return this.wasDragged;
     }
 
     setIndex(idx: number): void {

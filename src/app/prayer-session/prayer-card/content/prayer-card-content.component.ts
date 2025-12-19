@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, computed, inject } from '@angular/core';
+import { CarouselService } from '../../../shared/services/carousel.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,6 +52,10 @@ export class PrayerCardContentComponent {
     private dialog = inject(MatDialog);
     private allRequests = this.store.selectSignal(selectAllRequests);
     private allTopics = this.store.selectSignal(selectAllTopics);
+
+    // Carousel service is used to detect recent drag gestures so we can
+    // avoid toggling request actions when the user is swiping
+    private carouselService = inject(CarouselService);
 
     // Active requests for current topic (unanswered and not archived)
     openRequests = computed(() => {
@@ -115,6 +120,9 @@ export class PrayerCardContentComponent {
     activeRequestId?: number;
 
     toggleRequestActions(reqId: number, ev?: MouseEvent) {
+        // If a drag just occurred, ignore this click (it was likely the end of a swipe)
+        if (this.carouselService.getWasDragged()) return;
+
         // If clicking inside the actions container or a button, ignore
         const target = ev?.target as HTMLElement | undefined;
         if (target && target.closest('.request-actions')) return;
