@@ -1,16 +1,22 @@
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
 .card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: stretch;
     gap: 10px;
-    min-height: 48vh;
+    height: 100%;
     border-radius: 12px;
     padding: 18px 12px;
     background: var(--prayer-overlay-bg);
     border: 1px solid var(--prayer-overlay-border);
-    height: calc(100% - 2.5rem);
     position: relative;
+    box-sizing: border-box;
 }
 
 .card.answered {

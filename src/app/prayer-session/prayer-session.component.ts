@@ -508,6 +508,8 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             const selectedItemsLength = this.selectedItems().length;
             const clamped = Math.max(0, Math.min(idx, selectedItemsLength + 1)); // +1 for stats slide
 
+            // Update carousel service max index for rubber-band effect
+            this.carouselService.setMaxIndex(selectedItemsLength + 1);
             this.carouselService.setIndex(clamped);
 
             // Mark session as started when user begins praying

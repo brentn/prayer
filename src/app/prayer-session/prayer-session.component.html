@@ -15,8 +15,8 @@
         <div class="carousel-viewport" #carousel [style.height.px]="viewportHeight()"
             (pointerdown)="onPointerDown($event)" (pointermove)="onPointerMove($event)"
             (pointerup)="onPointerUp($event)" (pointerleave)="onPointerUp($event)" (pointercancel)="onPointerUp($event)"
-            [class.dragging]="isDragging">
-            <div class="carousel-track" #track [style.transform]="carouselTransform()" [class.dragging]="isDragging">
+            [class.dragging]="isDragging()">
+            <div class="carousel-track" #track [style.transform]="carouselTransform()" [class.dragging]="isDragging()">
                 <!-- Settings slide (index 0) -->
                 <div class="slide settings-slide">
                     <div class="prayer-card">
