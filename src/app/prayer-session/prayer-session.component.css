@@ -5,7 +5,6 @@ section {
     height: calc(100vh - 6rem);
     margin: 0;
     padding: 12px;
-    /* Theme-aware gradient */
     background: linear-gradient(175deg, var(--prayer-bg-gradient-start) 0%, var(--prayer-bg-gradient-middle) 50%, var(--prayer-bg-gradient-end) 100%);
 }
 
@@ -13,10 +12,10 @@ section {
     display: grid;
     grid-template-columns: 40px 1fr 40px;
     align-items: center;
-    gap: 0.25rem;
+    gap: .25rem;
     padding: 10px 12px;
     margin: 4px 0 12px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, .06);
     border-radius: 14px;
     backdrop-filter: blur(8px);
 }
@@ -26,7 +25,7 @@ section {
     text-align: center;
     font-weight: 600;
     font-size: 1.28rem;
-    letter-spacing: 0.04em;
+    letter-spacing: .04em;
     color: var(--prayer-text-primary);
 }
 
@@ -44,18 +43,16 @@ section {
     max-width: 880px;
     margin: 0 auto;
     padding: 10px 8px;
-    /* Theme-aware card styling */
-    background: linear-gradient(180deg, var(--prayer-card-bg), rgba(255, 255, 255, 0.04));
-    border: 0px;
+    background: linear-gradient(180deg, var(--prayer-card-bg), rgba(255, 255, 255, .04));
+    border: 0;
     border-radius: 16px;
-    box-shadow: 0 14px 36px var(--prayer-card-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    box-shadow: 0 14px 36px var(--prayer-card-shadow), inset 0 1px 0 rgba(255, 255, 255, .07);
 }
 
 .list {
     padding: 2px 4px;
 }
 
-/* Carousel (gesture-based) */
 .carousel-viewport {
     --peek: 16px;
     flex: 1;
@@ -65,11 +62,9 @@ section {
     position: relative;
     touch-action: pan-y;
     cursor: grab;
-    /* Prevent text selection during drag */
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-    /* Better tap highlighting */
     -webkit-tap-highlight-color: transparent;
     margin-bottom: 0;
     padding-bottom: 5.5rem;
@@ -82,22 +77,18 @@ section {
 .carousel-track {
     display: flex;
     flex-direction: row;
-    /* Improved hardware acceleration */
     will-change: transform;
-    transition: transform 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 280ms cubic-bezier(.25, .46, .45, .94);
     height: 100%;
-    /* Force GPU acceleration */
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0);
-    /* Better rendering on mobile */
     perspective: 1000px;
     -webkit-perspective: 1000px;
 }
 
 .carousel-track.dragging {
-    /* No transition during drag for instant feedback */
     transition: none;
     will-change: transform;
 }
@@ -112,9 +103,7 @@ section {
     display: flex;
     align-items: stretch;
     justify-content: center;
-    /* Optimize rendering */
     contain: layout style paint;
-    /* Prevent flickering on mobile */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     border-radius: 14px;
@@ -144,7 +133,6 @@ section {
     touch-action: none;
 }
 
-/* Improve slider visibility on theme-aware background */
 .settings-slide mat-slider {
     --mdc-slider-active-track-color: var(--slider-active-track) !important;
     --mdc-slider-inactive-track-color: var(--slider-inactive-track) !important;
@@ -153,8 +141,11 @@ section {
     --mdc-slider-hover-handle-color: var(--slider-handle) !important;
 }
 
-/* Force slider thumb color */
-.settings-slide ::ng-deep .mdc-slider__thumb {
+.settings-slide ::ng-deep .mdc-slider__thumb,
+.settings-slide ::ng-deep .mdc-slider__thumb::before,
+.settings-slide ::ng-deep .mdc-slider__thumb::after,
+.settings-slide ::ng-deep .mdc-slider__thumb-knob::before,
+.settings-slide ::ng-deep .mdc-slider__thumb-knob::after {
     background-color: transparent !important;
 }
 
@@ -163,23 +154,6 @@ section {
     border-color: var(--slider-handle) !important;
 }
 
-.settings-slide ::ng-deep .mdc-slider__thumb::before {
-    background-color: transparent !important;
-}
-
-.settings-slide ::ng-deep .mdc-slider__thumb::after {
-    background-color: transparent !important;
-}
-
-.settings-slide ::ng-deep .mdc-slider__thumb-knob::before {
-    background-color: transparent !important;
-}
-
-.settings-slide ::ng-deep .mdc-slider__thumb-knob::after {
-    background-color: transparent !important;
-}
-
-/* In carousel, make cards full width so adjacent borders peek correctly */
 .carousel-track .prayer-card {
     max-width: 880px;
     width: 100%;
@@ -189,18 +163,14 @@ section {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    /* Improve touch responsiveness */
     touch-action: pan-y;
-    /* Prevent tap delay on mobile */
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
 }
 
-
 .control {
     display: flex;
     flex-direction: column;
-    /* gap: 8px; */
 }
 
 .control .label-value-row {
@@ -263,7 +233,6 @@ section {
     color: var(--prayer-text-muted);
 }
 
-/* Temporary session list on first card */
 .session-list {
     margin-bottom: 12px;
     padding: 8px 10px;
@@ -294,10 +263,8 @@ section {
 
 .list-sub {
     font-size: .85rem;
-    color: var(--prayer-text-muted);
 }
 
-/* Fixed footer */
 .pray-footer {
     position: fixed;
     left: 0;
@@ -306,14 +273,13 @@ section {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    /* Reduced gap between progress bars */
     padding: 12px 18px 18px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, .06);
     border-top: 1px solid var(--prayer-footer-border);
     border-radius: 16px 16px 0 0;
     transform: translateY(100%);
     opacity: 0;
-    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    transition: transform .3s ease-out, opacity .3s ease-out;
     width: 100%;
     box-sizing: border-box;
 }
@@ -334,7 +300,6 @@ section {
     color: var(--prayer-text-secondary);
     white-space: nowrap;
     width: 60px;
-    /* Fixed width to ensure equal progress bar lengths */
     flex-shrink: 0;
 }
 
@@ -352,20 +317,18 @@ section {
     opacity: .8;
 }
 
-/* Full-screen overlay mode tweaks */
 :host.fullscreen section {
     height: 100vh;
     margin: 0;
 }
 
-/* Answer Dialog Styles */
 .answer-dialog-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, .45);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -374,21 +337,21 @@ section {
 }
 
 .answer-dialog-content {
-    background: #ffffff;
-    color: #2b2b2b;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    color: #222;
+    border: 1px solid rgba(0, 0, 0, .12);
     border-radius: 12px;
     padding: 20px 24px;
     max-width: 500px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24), 0 2px 8px rgba(0, 0, 0, 0.14);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .24), 0 2px 8px rgba(0, 0, 0, .14);
 }
 
 .dialog-header h2 {
     margin: 0 0 12px 0;
-    color: #2b2b2b;
+    color: #222;
     font-size: 1.25rem;
     font-weight: 600;
 }
@@ -410,25 +373,16 @@ section {
 }
 
 .answer-dialog-content textarea {
-    background: #fff;
-    color: #2b2b2b;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    padding: 10px 12px;
-    outline: none;
-    font-size: 0.95rem;
-}
-
-.answer-dialog-content textarea {
     width: 100%;
     min-height: 100px;
     padding: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, .2);
     border-radius: 8px;
     background: #fff;
-    color: #2b2b2b;
+    color: #222;
     font-family: inherit;
     font-size: 1rem;
+    outline: none;
     resize: vertical;
     margin: 16px 0;
 }
