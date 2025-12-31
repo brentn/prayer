@@ -1,0 +1,27 @@
+<div class="card">
+    <div class="card-header">
+        <div class="meta">
+            <div class="answered-summary">{{ answeredSummary() }}</div>
+            <div class="answered-date">{{ answeredDateText() }}</div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        @if (listName()) {
+            <div class="card-subtitle">{{ listName() }}</div>
+        }
+        @if (topicName()) {
+            <div class="card-topic">{{ topicName() }}</div>
+        }
+        <div class="title-row">
+            <mat-icon class="card-icon">favorite</mat-icon>
+            <div class="titles">
+                <div class="card-title">{{ title() }}</div>
+            </div>
+        </div>
+
+        @if (item.answerDescription) {
+            <div class="answer-box">{{ item.answerDescription }}</div>
+        }
+    </div>
+</div>

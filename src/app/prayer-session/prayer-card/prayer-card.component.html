@@ -1,32 +1,23 @@
-<div class="card" [class.answered]="isAnswered">
-    <app-prayer-card-header [priority]="priority" [isAnswered]="isAnswered" [localIsAnswered]="false"
-        [prayerCount]="prayerCount" [createdDate]="createdDate" [answeredDate]="answeredDate"
-        [answeredSummary]="answeredSummary()" [answeredDateText]="answeredDateText()" [showAnswerForm]="false"
-        [isTopic]="icon === 'label'">
-    </app-prayer-card-header>
-    <app-prayer-card-content [icon]="icon" [title]="localTitleEdited() ? localTitle() : title" [topicName]="topicName"
-        [topicId]="topicId" [isAnswered]="isAnswered" [answerDescription]="answerDescription"
-        [isTopic]="icon === 'label'" (archive)="archive.emit()" (editTitle)="onTitleEdited($event)"
-        (requestAnswered)="requestAnswered.emit($event)" (requestArchived)="requestArchived.emit($event)"
-        (requestTitleEdited)="requestTitleEdited.emit($event)" (requestAnswerAdd)="requestAnswerAdd.emit($event)">
+<div class="card">
+    <app-prayer-card-content [title]="title" [topicId]="topicId" (requestAnswered)="requestAnswered.emit($event)"
+        (requestArchived)="requestArchived.emit($event)" (requestTitleEdited)="requestTitleEdited.emit($event)"
+        (requestAnswerAdd)="requestAnswerAdd.emit($event)">
     </app-prayer-card-content>
-    @if (listName || !isAnswered) {
-        <div class="card-footer">
-            <span *ngIf="listName">{{ listName}}</span>
-            <div *ngIf="!isAnswered" class="new-request-button">
-                <button mat-icon-button (click)="onNewRequest()">
-                    <mat-icon>add</mat-icon>
-                </button>
-            </div>
+    <div class="card-footer" *ngIf="listName">
+        <span>{{ listName }}</span>
+        <div class="new-request-button">
+            <button mat-icon-button (click)="onNewRequest()">
+                <mat-icon>add</mat-icon>
+            </button>
         </div>
-    }
+    </div>
     @if (showDialog()) {
         <div class="dialog-overlay" (click)="closeDialog()">
             <div class="dialog-content" (click)="$event.stopPropagation()">
                 <div class="dialog-header">
                     <h2>New Prayer Request</h2>
                 </div>
-                <p>Topic: {{ topicName || title }}</p>
+                <p>Topic: {{ title }}</p>
                 <textarea [(ngModel)]="newRequestText" placeholder="Enter your prayer request..." rows="4"
                     style="width: 100%;"></textarea>
                 <div class="dialog-actions">

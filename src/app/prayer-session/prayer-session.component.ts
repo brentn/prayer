@@ -16,6 +16,7 @@ import { PrayerStats } from '../shared/services/prayer-stats';
 import { updateRequest, addRequestWithId } from '../store/requests/request.actions';
 import { updateTopic } from '../store/topics/topic.actions';
 import { PrayerCardComponent } from './prayer-card/prayer-card.component';
+import { AnswerCardComponent } from './prayer-card/answer-card/answer-card.component';
 import { StatsCard } from './stats-card/stats-card';
 import { TimerService } from '../shared/services/timer.service';
 import { CarouselService } from '../shared/services/carousel.service';
@@ -31,7 +32,7 @@ import { RequestEntity } from '../store/requests/request.reducer';
 @Component({
     standalone: true,
     selector: 'app-prayer-session',
-    imports: [CommonModule, FormsModule, MatListModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressBarModule, PrayerCardComponent, StatsCard],
+    imports: [CommonModule, FormsModule, MatListModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressBarModule, PrayerCardComponent, AnswerCardComponent, StatsCard],
     templateUrl: './prayer-session.component.html',
     styleUrl: './prayer-session.component.css',
     host: { '[class.fullscreen]': 'fullScreen' }
@@ -675,6 +676,31 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
 
     get currentSlide(): number {
         return this.carouselService.getCurrentSlide(this.selectedItems());
+    }
+
+    // Topic card event helpers to keep template simple
+    onTopicRequestAnswered(event: any) {
+        this.onRequestAnswered(event.id, { answerDescription: event.answerDescription });
+    }
+
+    onTopicRequestArchived(event: any) {
+        this.onRequestArchiveButton(event.id);
+    }
+
+    onTopicRequestTitleEdited(event: any) {
+        this.onTitleEdited(event.id, event.title);
+    }
+
+    onTopicRequestAnswerAdd(event: any) {
+        this.openRequestAnswerDialog(event.id, event.title);
+    }
+
+    onTopicAddNewRequest(event: any, index: number) {
+        this.onAddNewRequest(event, index);
+    }
+
+    onTopicTitleEdited(event: any, topicId: number) {
+        this.onTitleEdited(topicId, event);
     }
 
     onRequestAnswered(requestId: number, event: { answerDescription: string }) {

@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Store } from '@ngrx/store';
 import { selectAllRequests } from '../../../store/requests/request.selectors';
 import { selectAllTopics } from '../../../store/topics/topic.selectors';
@@ -16,25 +15,11 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
     selector: 'app-prayer-card-content',
     imports: [CommonModule, MatIconModule, MatButtonModule, FormsModule, MatDialogModule],
     templateUrl: './prayer-card-content.component.html',
-    styleUrl: './prayer-card-content.component.css',
-    animations: [
-        trigger('answerFadeIn', [
-            transition('void => *', [
-                style({ opacity: 0, transform: 'translateY(-10px)' }),
-                animate('350ms 200ms cubic-bezier(0.4, 0.0, 0.2, 1)') // Start after form begins closing
-            ])
-        ])
-    ]
+    styleUrl: './prayer-card-content.component.css'
 })
 export class PrayerCardContentComponent {
-    @Input() icon = 'favorite';
     @Input() title = '';
-    @Input() topicName?: string;
     @Input() topicId?: number;
-    @Input() isAnswered = false;
-    @Input() answerDescription?: string;
-    @Input() isTopic = false;
-    @Output() archive = new EventEmitter<void>();
     @Output() editTitle = new EventEmitter<string>();
     @Output() requestAnswered = new EventEmitter<{ id: number; answerDescription: string }>();
     @Output() requestArchived = new EventEmitter<{ id: number }>();
@@ -59,8 +44,7 @@ export class PrayerCardContentComponent {
 
     // Active requests for current topic (unanswered and not archived)
     openRequests = computed(() => {
-        if (!this.isTopic) return [];
-        const tid = this.topicId ?? this.allTopics().find(t => t.name === this.topicName)?.id;
+        const tid = this.topicId;
         if (!tid) return [];
         const topic = this.allTopics().find(t => t.id === tid);
         const ids = topic?.requestIds || [];

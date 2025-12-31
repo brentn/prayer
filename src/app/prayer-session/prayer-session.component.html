@@ -65,15 +65,16 @@
                 @for (item of selectedItems(); track item.kind + '-' + item.id) {
                     <div class="slide">
                         <div class="prayer-card">
-                            <app-prayer-card [item]="item"
-                                (requestAnswered)="onRequestAnswered($event.id, { answerDescription: $event.answerDescription })"
-                                (requestArchived)="onRequestArchiveButton($event.id)"
-                                (requestTitleEdited)="onTitleEdited($event.id, $event.title)"
-                                (requestAnswerAdd)="openRequestAnswerDialog($event.id, $event.title)"
-                                (addNewRequest)="onAddNewRequest($event, $index)"
-                                (answered)="onRequestAnswered(item.id, $event)"
-                                (archive)="onRequestArchiveButton(item.id)"
-                                (titleEdited)="onTitleEdited(item.id, $event)"></app-prayer-card>
+                            @if (item.kind === 'topic') {
+                                <app-prayer-card [item]="item" (requestAnswered)="onTopicRequestAnswered($event)"
+                                    (requestArchived)="onTopicRequestArchived($event)"
+                                    (requestTitleEdited)="onTopicRequestTitleEdited($event)"
+                                    (requestAnswerAdd)="onTopicRequestAnswerAdd($event)"
+                                    (addNewRequest)="onTopicAddNewRequest($event, $index)"
+                                    (titleEdited)="onTopicTitleEdited($event, item.id)"></app-prayer-card>
+                            } @else {
+                                <app-answer-card [item]="item"></app-answer-card>
+                            }
                         </div>
                     </div>
                 }
