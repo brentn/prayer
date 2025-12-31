@@ -24,6 +24,8 @@ import { Topic } from '../shared/models/topic';
 import { List } from '../shared/models/list';
 import { PrayerSessionItem } from '../shared/models/prayer-session.interface';
 import { WakeLockService } from '../shared/services/wake-lock.service';
+import { PrayerOrderingService } from '../shared/services/prayer-ordering.service';
+import { PrayerSessionStateService } from '../shared/services/prayer-session-state.service';
 import { shuffleArray } from '../shared/utils/array-utils';
 import { PRAYER_SESSION_CONSTANTS } from '../shared/utils/prayer-session-constants';
 import { createRequestItem, createTopicItem, calculateRequestScore, clamp } from '../shared/utils/prayer-session-utils';
@@ -33,6 +35,7 @@ import { RequestEntity } from '../store/requests/request.reducer';
     standalone: true,
     selector: 'app-prayer-session',
     imports: [CommonModule, FormsModule, MatListModule, MatIconModule, MatButtonModule, MatSliderModule, MatProgressBarModule, PrayerCardComponent, AnswerCardComponent, StatsCard],
+    providers: [PrayerSessionStateService],
     templateUrl: './prayer-session.component.html',
     styleUrl: './prayer-session.component.css',
     host: { '[class.fullscreen]': 'fullScreen' }
@@ -46,6 +49,8 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     private readonly carouselService = inject(CarouselService);
     private readonly injector = inject(Injector);
     private readonly wake = inject(WakeLockService);
+    private readonly orderingService = inject(PrayerOrderingService);
+    readonly sessionState = inject(PrayerSessionStateService);
     readonly prayerStats = inject(PrayerStats);
     private readonly destroyRef = inject(DestroyRef);
 
@@ -107,9 +112,6 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     shuffledItems = signal<PrayerSessionItem[]>([]);
     private lastIds = '';
     private lastShuffle = false;
-    private readonly sessionStarted = signal(false);
-    private readonly sessionStartTime = signal<number | null>(null);
-    readonly archivingItems = signal<Set<number>>(new Set());
 
     // Computed owner maps for better performance - memoized
     private ownerMaps = computed(() => {
@@ -174,7 +176,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
                 const scopedTopicIdsAll = scopedTopics.map(t => t.id);
                 const ids = [...scopedTopicIdsAll].sort().join(',');
 
-                if ((this.lastIds !== ids || this.lastShuffle !== shuffle) && !this.sessionStarted()) {
+                if ((this.lastIds !== ids || this.lastShuffle !== shuffle) && !this.sessionState.isSessionStarted()) {
                     this.lastIds = ids;
                     this.lastShuffle = shuffle;
                     this.timerService.getCountdownStarted().set(false); // Reset countdown flag for new session
@@ -186,10 +188,13 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
                         return this.createTopicItem(topic, ownerList);
                     });
                     if (shuffle) {
-                        const shuffled = shuffleArray(allTopicItems);
+                        // Use weighted shuffle that biases toward higher-priority topics
+                        const shuffled = this.orderingService.weightedShuffleTopics(allTopicItems, allTopics);
                         this.shuffledItems.set(shuffled);
                     } else {
-                        this.shuffledItems.set(allTopicItems);
+                        // Sort by priority score (highest first)
+                        const sorted = this.orderingService.sortTopicsByPriority(allTopicItems, allTopics);
+                        this.shuffledItems.set(sorted);
                     }
                 }
             });
@@ -359,23 +364,20 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     countdownSeconds = this.timerService.getCountdownSeconds();
     initialCountdownSeconds = this.timerService.getInitialCountdownSeconds();
     sessionDuration = computed(() => {
-        const final = this.finalSessionDuration();
+        const final = this.sessionState.getFinalDuration();
         if (final !== null) return final;
 
         if (this.unlimited) {
-            const start = this.sessionStartTime();
+            const start = this.sessionState.sessionStartTime();
             return start ? Math.floor(Date.now() / 1000 - start) : 0;
         } else {
             return this.initialCountdownSeconds() - this.countdownSeconds();
         }
     });
     finalPrayerCountValue = computed(() => {
-        const final = this.finalPrayerCount();
+        const final = this.sessionState.getFinalPrayerCount();
         return final !== null ? final : this.timerService.getSessionPrayerCount();
     });
-    private finalSessionDuration = signal<number | null>(null);
-    private finalPrayerCount = signal<number | null>(null);
-    private sessionCounted = new Set<number>();
     private isInitialized = signal(false);
 
     constructor() {
@@ -388,10 +390,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         this.carouselService.setIndex(0);
 
         // Reset session state
-        this.sessionStarted.set(false);
-        this.finalSessionDuration.set(null);
-        this.finalPrayerCount.set(null);
-        this.sessionCounted.clear();
+        this.sessionState.reset();
         this.timerService.resetSessionCounted();
     }
 
@@ -514,9 +513,8 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             this.carouselService.setIndex(clamped);
 
             // Mark session as started when user begins praying
-            if (clamped >= 1 && !this.sessionStarted()) {
-                this.sessionStarted.set(true);
-                this.sessionStartTime.set(Date.now() / 1000);
+            if (clamped >= 1 && !this.sessionState.isSessionStarted()) {
+                this.sessionState.startSession();
                 if (this.settings.keepAwake()) {
                     this.wake.request();
                 }
@@ -530,9 +528,11 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
             this.handleViewTimer();
 
             // Snapshot session duration when reaching stats slide
-            if (clamped === selectedItemsLength + 1 && this.finalSessionDuration() === null) {
-                this.finalSessionDuration.set(this.sessionDuration());
-                this.finalPrayerCount.set(this.timerService.getSessionPrayerCount());
+            if (clamped === selectedItemsLength + 1 && this.sessionState.getFinalDuration() === null) {
+                this.sessionState.finalizeSessionStats(
+                    this.sessionDuration(),
+                    this.timerService.getSessionPrayerCount()
+                );
 
                 // Update cumulative stats
                 this.prayerStats.addSessionTime(this.sessionDuration());
@@ -597,7 +597,7 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
         try {
             const currentItem = this.selectedItems().find(i => i.kind === 'request' && i.id === itemId);
             if (currentItem && currentItem.kind === 'request') {
-                this.sessionCounted.add(itemId);
+                this.sessionState.markAsCounted(itemId);
                 const newCount = (currentItem.prayerCount || 0) + 1;
                 this.store.dispatch(updateRequest({
                     id: itemId,
@@ -795,9 +795,11 @@ export class PrayerSessionComponent implements AfterViewInit, OnDestroy {
     onClose() {
         try {
             // Record stats if not already recorded
-            if (this.finalSessionDuration() === null) {
-                this.finalSessionDuration.set(this.sessionDuration());
-                this.finalPrayerCount.set(this.timerService.getSessionPrayerCount());
+            if (this.sessionState.getFinalDuration() === null) {
+                this.sessionState.finalizeSessionStats(
+                    this.sessionDuration(),
+                    this.timerService.getSessionPrayerCount()
+                );
 
                 // Update cumulative stats
                 this.prayerStats.addSessionTime(this.sessionDuration());
