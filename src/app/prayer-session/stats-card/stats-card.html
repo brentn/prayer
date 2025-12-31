@@ -8,7 +8,7 @@
         <div class="stats-section">
             <h4><mat-icon>today</mat-icon> This Session</h4>
             <div class="stat">
-                <span class="label"><mat-icon>favorite</mat-icon> Requests Prayed For</span>
+                <span class="label"><mat-icon>favorite</mat-icon> Topics Prayed For</span>
                 <span class="value">{{ prayerCount }} / {{totalItems}}</span>
             </div>
             <div class="stat">
@@ -17,7 +17,7 @@
             </div>
             @if (prayerCount > 0) {
                 <div class="stat">
-                    <span class="label"><mat-icon>speed</mat-icon> Avg time per Prayer</span>
+                    <span class="label"><mat-icon>speed</mat-icon> Avg time per Request</span>
                     <span class="value">{{ formatDuration(averageTimePerPrayer) }}</span>
                 </div>
             }
