@@ -133,6 +133,11 @@ section {
     touch-action: none;
 }
 
+.settings-slide input,
+.answer-dialog-content textarea {
+    font-size: 16px;
+}
+
 .settings-slide mat-slider {
     --mdc-slider-active-track-color: var(--slider-active-track) !important;
     --mdc-slider-inactive-track-color: var(--slider-inactive-track) !important;
@@ -381,7 +386,7 @@ section {
     background: #fff;
     color: #222;
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 16px;
     outline: none;
     resize: vertical;
     margin: 16px 0;

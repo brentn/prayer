@@ -33,6 +33,10 @@
     width: 100%;
 }
 
+.controls input {
+    font-size: 16px;
+}
+
 /* Improve slider visibility on theme-aware background */
 mat-slider {
     --mdc-slider-active-track-color: var(--slider-active-track);
