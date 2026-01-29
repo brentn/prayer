@@ -32,6 +32,7 @@
 .answer-textarea {
     width: 100%;
     position: relative;
+    font-size: 16px;
 }
 
 .answer-textarea ::ng-deep textarea {
