@@ -98,6 +98,8 @@ export class PrayerCardContentComponent {
     cancelRequestEdit() {
         this.editingRequestId = undefined;
         this.editingRequestValue = '';
+        // Ensure the active request UI is closed when cancelling edits
+        this.activeRequestId = undefined;
     }
 
     // Topic-mode actions
