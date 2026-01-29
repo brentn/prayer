@@ -26,6 +26,18 @@
     color: var(--prayer-text-muted);
 }
 
+.card-header {
+    position: relative;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--prayer-text-muted);
+    margin-bottom: 8px;
+}
+
+.card-header .list-name {
+    display: inline-block;
+}
+
 .new-request-button {
     position: absolute;
     right: 0;
@@ -92,6 +104,7 @@
     border-radius: 4px;
     font-family: inherit;
     font-size: 16px;
+    -webkit-text-size-adjust: 100%;
 }
 
 .dialog-actions {

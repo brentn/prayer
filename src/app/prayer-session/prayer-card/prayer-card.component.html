@@ -1,10 +1,12 @@
 <div class="card">
+    <div class="card-header" *ngIf="listName">
+        <span class="list-name">{{ listName }}</span>
+    </div>
     <app-prayer-card-content [title]="title" [topicId]="topicId" (requestAnswered)="requestAnswered.emit($event)"
         (requestArchived)="requestArchived.emit($event)" (requestTitleEdited)="requestTitleEdited.emit($event)"
         (requestAnswerAdd)="requestAnswerAdd.emit($event)">
     </app-prayer-card-content>
     <div class="card-footer" *ngIf="listName">
-        <span>{{ listName }}</span>
         <div class="new-request-button">
             <button mat-icon-button (click)="onNewRequest()">
                 <mat-icon>add</mat-icon>
